@@ -472,6 +472,7 @@ main.inner{padding-bottom:88px}
 .g-form{display:grid;gap:14px;background:linear-gradient(180deg,rgba(23,48,58,.72),rgba(12,28,36,.72));border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:18px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .g-doors{display:grid;width:100%}
 .g-doors button{padding:10px;font-size:15px}
+.g-mrj{font-family:var(--brand-font);font-size:24px;line-height:1;letter-spacing:.05em;direction:ltr;display:inline-block}
 .g-lbl{display:grid;gap:6px;font-size:13px;color:#a3b8c2;font-weight:700}
 .g-lbl input,.g-lbl select{height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(4,12,17,.6);color:#eef4f6;padding:0 14px;font:inherit;font-size:18px!important;letter-spacing:.06em;outline:none;transition:border-color .2s,box-shadow .2s}
 #gCode{text-align:center;direction:ltr;font-size:22px!important;letter-spacing:.2em}
@@ -542,7 +543,7 @@ html.staff .row .name{cursor:default}
     <div class="g-hero"><svg class="g-bot" viewBox="0 0 64 64" aria-hidden="true"><circle cx="8" cy="34" r="7" fill="#ff8a1f"/><circle cx="56" cy="34" r="7" fill="#ff8a1f"/><rect x="7" y="7" width="50" height="50" rx="17" fill="#f4f6f8"/><rect x="7" y="40" width="50" height="17" rx="8" fill="#d7dde2"/><rect x="11.5" y="13" width="41" height="35" rx="12" fill="#ff8a1f"/><rect x="15" y="16.5" width="34" height="28" rx="9" fill="#0a161d"/><text x="32" y="35.5" text-anchor="middle" font-size="15" fill="#3ee6d2">MR/J</text></svg><b class="g-word">MR-J</b><span class="g-sub" id="gSub">أ/ محمد جمال · البرمجة</span></div>
     <div class="g-load" id="gLoad"><i></i><i></i><i></i></div>
     <form class="g-form" id="gForm" hidden autocomplete="off">
-      <div class="seg g-doors" id="gDoors" role="group" aria-label="مين بيدخل"><button type="button" data-d="owner">المستر</button><button type="button" data-d="staff">المساعد</button></div>
+      <div class="seg g-doors" id="gDoors" role="group" aria-label="مين بيدخل"><button type="button" data-d="owner"><span class="g-mrj">MR-J</span></button><button type="button" data-d="staff">المساعد</button></div>
       <label class="g-lbl"><span id="gLbl">كود الدخول</span><input id="gCode" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go"></label>
       <label class="g-lbl" id="gCode2Wrap" hidden><span>اكتب الكود تاني</span><input id="gCode2" type="password" autocomplete="off"></label>
       <button class="btn big" id="gGo" type="submit">دخول</button>
@@ -565,7 +566,7 @@ html.staff .row .name{cursor:default}
       <button class="btn big" id="jGo" type="submit">ابعت</button>
       <p class="g-msg on" id="jMsg" role="alert"></p>
     </form>
-    <div class="card j-done" id="jDone" hidden><b>تمام يا <span id="jDoneName"></span> ✓</b><p>طلبك وصل للمستر، وهيتواصل معاك قريب.</p></div>
+    <div class="card j-done" id="jDone" hidden><b>تمام يا <span id="jDoneName"></span> ✓</b><p>طلبك وصل لـ Mr J، وهيتواصل معاك قريب.</p></div>
   </div>
 </div>
 <header><div class="inner">
@@ -1671,14 +1672,14 @@ function gDraw(){
   $("#gCode").type=st?"text":"password";
   $("#gCode2Wrap").hidden=!gSetup;
   $("#gGo").textContent=gSetup?"اعمل الحساب وادخل":"دخول";
-  $("#gHint").textContent=gSetup?"أول مرة بس: اختار كود ٦ حروف أو أرقام على الأقل، واحفظه كويس. هتدخل بيه من أي موبايل.":st?"الكود اللي المستر بعتهولك على واتساب.":"";
+  $("#gHint").textContent=gSetup?"أول مرة بس: اختار كود ٦ حروف أو أرقام على الأقل، واحفظه كويس. هتدخل بيه من أي موبايل.":st?"الكود اللي Mr J بعتهولك على واتساب.":"";
 }
 document.querySelectorAll("#gDoors button").forEach(b=>b.onclick=()=>{gDoor=b.dataset.d;gSetup=false;lsSet("door",gDoor);$("#gMsg").textContent="";$("#gMsg").className="g-msg";gDraw();$("#gCode").value="";$("#gCode").focus()});
 $("#gRetry").onclick=()=>location.reload();
 function authErr(e){const c=e&&e.code||"";
   if(c.includes("network"))return "مفيش نت. اتأكد إن النت شغال وجرّب تاني.";
   if(c.includes("too-many"))return "جربت كتير. استنى دقيقة وجرّب تاني.";
-  return gDoor==="staff"?"الكود غلط أو اتلغى. اطلب كود جديد من المستر.":"الكود غلط.";}
+  return gDoor==="staff"?"الكود غلط أو اتلغى. اطلب كود جديد من Mr J.":"الكود غلط.";}
 $("#gForm").addEventListener("submit",async e=>{e.preventDefault();
   const btn=$("#gGo"),raw=$("#gCode").value.trim();if(!raw){$("#gCode").focus();return}
   btn.disabled=true;$("#gMsg").textContent="";
@@ -1716,7 +1717,7 @@ async function boot(){
     else{
       try{const d=await fs.doc("staff/"+u.uid).get();
         if(d.exists&&d.data().active===true){ROLE="staff";ME=d.data()}
-        else{await fauth.signOut();gDoor="staff";gate("login","الكود ده اتلغى. اطلب كود جديد من المستر.");return}}
+        else{await fauth.signOut();gDoor="staff";gate("login","الكود ده اتلغى. اطلب كود جديد من Mr J.");return}}
       catch(e){gate("offline","مش قادر أوصل للنت. افتح البرنامج تاني لما النت يرجع.");return}}
     document.documentElement.classList.toggle("staff",ROLE==="staff");
     db={doc:p=>fs.doc(ACC.base+"/"+p),collection:c=>fs.collection(ACC.base+"/"+c)};
