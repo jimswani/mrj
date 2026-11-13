@@ -519,6 +519,8 @@ html.staff nav.tabbar .inner{grid-template-columns:repeat(2,1fr)}
 html.staff header .brand .bt{display:none}
 .g-form .btn{width:100%;justify-self:stretch}
 .code{white-space:nowrap}
+.stc{display:flex;gap:8px;width:100%;margin-top:8px}.stc input{flex:1;min-width:0;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit;letter-spacing:.1em}
+#stList .bk{flex-wrap:wrap}
 html.staff .row .name{cursor:default}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -656,13 +658,10 @@ html.staff .row .name{cursor:default}
       <p class="hint">ابعت اللينك في جروبات الطلبة، أو اطبع صورة الـ QR وعلّقها في السنتر. الطالب بيكتب اسمه ورقمه ورقم ولي الأمر وسنته، وطلبه بيظهرلك فوق في «الفلوس».</p>
       <div class="prow"><button class="btn" id="jQr" type="button">صورة QR</button><button class="btn soft" id="jWa" type="button">ابعت اللينك</button><button class="btn soft" id="jCopy" type="button">نسخ</button></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></svg></span><span class="act"><b>المساعد</b><small>يسجّل الدفع والحضور بس</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
-      <p class="hint">المساعد بيدخل بكود خاص بيه. بيشوف الطلبة ويسجّل الدفع والحضور بس، من غير الإجمالي والإعدادات والدرجات. لو شلته مش هيقدر يدخل تاني.</p>
+      <p class="hint">انت اللي بتختار الكود اللي المساعد هيدخل بيه. بيشوف الطلبة ويسجّل الدفع والحضور بس، من غير الإجمالي والإعدادات والدرجات. لو شلته مش هيقدر يدخل تاني.</p>
       <div class="bklist" id="stList"></div>
-      <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label></div>
+      <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
-    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><span class="act"><b>نقل البيانات</b><small>من البرنامج القديم على Claude</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
-      <p class="hint" id="impInfo">اختار ملف <b>mrj-data.json</b> اللي اتبعتلك، وكل الطلبة والفلوس والحضور والدرجات هيتنقلوا هنا.</p>
-      <label class="btn soft filebtn">اختار الملف<input id="impFile" type="file" accept=".json,application/json"></label></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
     <p class="ver">MR-J · v5.0</p>
   </div>
@@ -1668,7 +1667,7 @@ function gDraw(){
   document.querySelectorAll("#gDoors button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===gDoor));
   const st=gDoor==="staff";
   $("#gLbl").textContent=gSetup?"اختار كود الدخول بتاعك":st?"كود المساعد":"كود الدخول";
-  $("#gCode").placeholder=st?"XXXX-XXXX":"••••••";
+  $("#gCode").placeholder=st?"الكود":"••••••";
   $("#gCode").type=st?"text":"password";
   $("#gCode2Wrap").hidden=!gSetup;
   $("#gGo").textContent=gSetup?"اعمل الحساب وادخل":"دخول";
@@ -1779,35 +1778,38 @@ $("#jCopy").onclick=async()=>{try{await navigator.clipboard.writeText(joinUrl())
 $("#jWa").onclick=()=>{const m=`سجّل في مجموعات ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher} من اللينك ده 👇\n${joinUrl()}`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
 $("#jQr").onclick=async()=>{const b=$("#jQr");b.disabled=true;try{const blob=await makeJoinImage();repBlob=blob;repName="MR-J-تسجيل.png";await shareOrSave(blob,repName)}catch(e){toast("ماقدرتش أعمل الصورة")}b.disabled=false};
 /* ---------- assistant accounts ---------- */
-function genCode(){const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789",v=new Uint32Array(8);crypto.getRandomValues(v);let s="";v.forEach(n=>s+=A[n%A.length]);return s.slice(0,4)+"-"+s.slice(4)}
 function staffMsg(x){return `أهلاً ${x.name} 👋\nده برنامج MR-J بتاع ${APP.teacher||THEME.teacher}:\n${appUrl()}\n\n١. افتح اللينك من Safari ودوس زرار المشاركة ← «إضافة إلى الشاشة الرئيسية».\n٢. افتح البرنامج واختار «المساعد» واكتب الكود ده:\n${x.code}`}
 function renderStaff(){const box=$("#stList");if(!box)return;
   box.innerHTML=staffList.length?staffList.map(x=>`<div class="bk" data-uid="${esc(x.uid)}"><div><b>${esc(x.name)}</b><br><small>${esc(x.phone||"")}${x.phone?" · ":""}الكود: <span class="code">${esc(x.code)}</span></small></div>
-    <div class="bka">${x.phone?`<a class="btn soft sm" href="${waLink(x.phone,staffMsg(x))}" target="_blank" rel="noopener">ابعتله</a>`:""}<button class="del" data-st="rm" type="button">شيله</button></div></div>`).join(""):`<p class="hint">مفيش مساعد لسه.</p>`}
-$("#stList").addEventListener("click",async e=>{const b=e.target.closest("[data-st=rm]");if(!b)return;const uid=b.closest("[data-uid]").dataset.uid;
+    <div class="bka">${x.phone?`<a class="btn soft sm" href="${waLink(x.phone,staffMsg(x))}" target="_blank" rel="noopener">ابعتله</a>`:""}<button class="btn soft sm" data-st="code" type="button">غيّر الكود</button><button class="del" data-st="rm" type="button">شيله</button></div></div>`).join(""):`<p class="hint">مفيش مساعد لسه.</p>`}
+$("#stList").addEventListener("click",async e=>{
+  const cb=e.target.closest("[data-st=code]");
+  if(cb){const card=cb.closest("[data-uid]"),old=staffList.find(x=>x.uid===card.dataset.uid);if(!old)return;
+    let f=card.querySelector(".stc");if(!f){card.insertAdjacentHTML("beforeend",`<div class="stc"><input dir="ltr" autocapitalize="characters" spellcheck="false" placeholder="الكود الجديد"><button class="btn sm" type="button" data-st="save">حفظ</button></div>`);card.querySelector(".stc input").focus();return}
+    return}
+  const sv=e.target.closest("[data-st=save]");
+  if(sv){const card=sv.closest("[data-uid]"),old=staffList.find(x=>x.uid===card.dataset.uid),code=normCode(card.querySelector(".stc input").value);if(!old)return;
+    if(code.length<6){toast("الكود لازم يبقى ٦ حروف إنجليزي أو أرقام على الأقل");return}
+    sv.disabled=true;
+    try{const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(FIREBASE_CONFIG,"sec");
+      const cred=await sec.auth().createUserWithEmailAndPassword(ACC.staff(code),code);const uid=cred.user.uid;await sec.auth().signOut();
+      const x={name:old.name,phone:old.phone||"",code,active:true,at:old.at||Date.now()};await fs.doc("staff/"+uid).set(x);await fs.doc("staff/"+old.uid).delete();
+      toast("الكود اتغيّر. الكود القديم مابقاش شغال");if(x.phone)window.open(waLink(x.phone,staffMsg(x)),"_blank")}
+    catch(x){const c=x&&x.code||"";toast(c.includes("email-already")?"الكود ده مستخدم قبل كده، اختار كود تاني":"ماتغيّرش، جرّب تاني");sv.disabled=false}
+    return}
+  const b=e.target.closest("[data-st=rm]");if(!b)return;const uid=b.closest("[data-uid]").dataset.uid;
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ شيله";setTimeout(()=>{b.classList.remove("confirm");b.textContent="شيله"},3000);return}
   b.disabled=true;try{await fs.doc("staff/"+uid).delete();toast("المساعد اتشال، ومش هيقدر يدخل تاني")}catch(x){toast("ماتشالش، جرّب تاني");b.disabled=false}});
-$("#stAdd").onclick=async()=>{const name=$("#stName").value.trim(),phone=$("#stPhone").value.trim();if(!name){$("#stName").focus();return}
+$("#stAdd").onclick=async()=>{const name=$("#stName").value.trim(),phone=$("#stPhone").value.trim(),code=normCode($("#stCode").value);if(!name){$("#stName").focus();return}
+  if(code.length<6){toast("الكود لازم يبقى ٦ حروف إنجليزي أو أرقام على الأقل");$("#stCode").focus();return}
   const b=$("#stAdd");b.disabled=true;
-  try{const code=genCode();const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(FIREBASE_CONFIG,"sec");
+  try{const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(FIREBASE_CONFIG,"sec");
     const cred=await sec.auth().createUserWithEmailAndPassword(ACC.staff(code),normCode(code));const uid=cred.user.uid;await sec.auth().signOut();
     const x={name,phone,code,active:true,at:Date.now()};await fs.doc("staff/"+uid).set(x);
-    $("#stName").value="";$("#stPhone").value="";toast("اتعمل حساب "+name);
+    $("#stName").value="";$("#stPhone").value="";$("#stCode").value="";toast("اتعمل حساب "+name);
     if(phone)window.open(waLink(phone,staffMsg(x)),"_blank");}
-  catch(e){toast(e&&e.code&&e.code.includes("network")?"مفيش نت":"ماتعملش، جرّب تاني")}
+  catch(e){const c=e&&e.code||"";toast(c.includes("email-already")?"الكود ده مستخدم قبل كده، اختار كود تاني":c.includes("network")?"مفيش نت":"ماتعملش، جرّب تاني")}
   b.disabled=false};
-/* ---------- import data moved from the old app ---------- */
-$("#impFile").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
-  let J;try{J=JSON.parse(await f.text())}catch(x){toast("الملف ده مش ملف بيانات MR-J");return}
-  if(!J||J.format!=="mrj-export"||!J.data){toast("الملف ده مش ملف بيانات MR-J");return}
-  const n=Object.keys(J.data.students||{}).length;
-  if(!confirm(`هيتنقل ${n} طالب بكل الفلوس والحضور والدرجات. البيانات اللي بنفس الأسماء هتتكتب فوق. نكمّل؟`))return;
-  $("#impInfo").textContent="جاري النقل…";
-  try{const ops=[];for(const c in J.data){if(c==="settings"&&!J.data[c])continue;for(const id in J.data[c]){if(c==="settings"&&id==="lock")continue;/* keep the PIN chosen on this app */let d=J.data[c][id];if(c==="groups"&&!d.year)d={...d,year:"2"};ops.push([c+"/"+id,d])}}
-    for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([p,d])=>b.set(db.doc(p),d));await b.commit()}
-    $("#impInfo").textContent=`اتنقل ${fmt(ops.length)} حاجة. البيانات كلها بقت هنا ✓`;toast("البيانات اتنقلت");}
-  catch(x){$("#impInfo").textContent="النقل وقف في النص. جرّب تاني (مش هيتكرر حاجة).";}
-});
 $("#signOut").onclick=()=>{const b=$("#signOut");if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ اخرج";setTimeout(()=>{b.classList.remove("confirm");b.textContent="خروج من الحساب"},3000);return}signOutAll()};
 /* ---------- share / save an image (iPhone share sheet, else download) ---------- */
 async function shareOrSave(blob,name){
