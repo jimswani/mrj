@@ -701,7 +701,6 @@ main.inner{padding-bottom:120px}
       <label class="g-lbl"><span>رقم موبايلك</span><input id="jPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>رقم ولي الأمر</span><input id="jParent" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>السنة</span><select id="jYear"><option value="1">أولى ثانوي</option><option value="2" selected>تانية ثانوي</option></select></label>
-      <label class="g-lbl" id="jGrpWrap" hidden><span>المعاد اللي يناسبك</span><select id="jGrp"></select></label>
       <button class="btn big" id="jGo" type="submit">ابعت</button>
       <p class="g-msg on" id="jMsg" role="alert"></p>
     </form>
@@ -814,7 +813,7 @@ main.inner{padding-bottom:120px}
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.1</p>
+    <p class="ver">MR-J · v6.2</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -2119,14 +2118,12 @@ async function joinBoot(){
   try{await loadFirebase(false)}catch(e){$("#jMsg").textContent="مفيش نت. افتح اللينك تاني لما النت يرجع.";return}
   let X={};try{const a=await fs.doc(ACC.base+"/settings/app").get();if(a.exists){X=a.data()||{};$("#jTeacher").textContent=(X.teacher||THEME.teacher)+" · "+(X.subject||THEME.subject)}}catch(e){}
   let G=[];try{const sn=await fs.collection(ACC.base+"/groups").get();G=sn.docs.map(d=>({id:d.id,...d.data()})).filter(g=>!g.hidden)}catch(e){}
-  const fill=()=>{const y=$("#jYear").value,L=G.filter(g=>yearOfG(g)===y);$("#jGrpWrap").hidden=!L.length;$("#jGrp").innerHTML=`<option value="">أي معاد يناسبني</option>`+L.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}${schedTxt(g)?" · "+esc(schedTxt(g)):""}</option>`).join("")};
-  $("#jYear").onchange=fill;fill();
   $("#jForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("#jName").value.trim().replace(/\s+/g," "),phone=$("#jPhone").value.replace(/\D/g,""),pp=$("#jParent").value.replace(/\D/g,"");
     if(name.split(" ").length<2){$("#jMsg").textContent="اكتب اسمك الثنائي على الأقل";$("#jName").focus();return}
     if(phone.length<10){$("#jMsg").textContent="اكتب رقم موبايلك صح";$("#jPhone").focus();return}
     if(pp.length<10){$("#jMsg").textContent="اكتب رقم ولي الأمر صح";$("#jParent").focus();return}
     const b=$("#jGo");b.disabled=true;$("#jMsg").textContent="";
-    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};if($("#jGrp").value)d.groupId=$("#jGrp").value;
+    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};
     try{await fs.collection(ACC.base+"/requests").add(d);$("#jForm").hidden=true;$("#jDone").hidden=false;$("#jDoneName").textContent=name.split(" ")[0];renderIntro(X,G.filter(g=>yearOfG(g)===d.year),d.year);$("#join").scrollTop=0}
     catch(x){$("#jMsg").textContent="ماتبعتش. اتأكد من النت وجرّب تاني.";b.disabled=false}});
 }
