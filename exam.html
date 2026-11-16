@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>امتحان · MR-J</title>
+<meta name="theme-color" content="#0b0f1c">
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* MR-J online exam — student page. "Night IDE" look: ink-navy editor, mint cursor, violet syntax. */
+:root{
+  --bg:#0b0f1c;--s1:#121830;--s2:#182040;--line:#26305a;--ink:#ecf1ff;--muted:#8f9bc2;
+  --mint:#38e3a6;--mint-s:rgba(56,227,166,.13);--vio:#9a8cff;--vio-s:rgba(154,140,255,.14);
+  --amber:#ffbf5a;--amber-s:rgba(255,191,90,.14);--bad:#ff7a7a;--bad-s:rgba(255,122,122,.14);
+  --mono:"JetBrains Mono","Courier New",monospace;--body:"Almarai","Segoe UI",Tahoma,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;min-height:100vh;
+  background-image:radial-gradient(60% 35% at 90% -5%,rgba(154,140,255,.18),transparent 70%),radial-gradient(55% 35% at 0% 105%,rgba(56,227,166,.12),transparent 70%);background-attachment:fixed}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px}
+.wrap{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+button{font:inherit;cursor:pointer}
+input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px;width:100%;min-width:0}
+input:focus,textarea:focus{outline:none;border-color:var(--mint);box-shadow:0 0 0 3px var(--mint-s)}
+.card{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:800;font-size:16px;color:#07150f;background:linear-gradient(90deg,var(--mint),#7cf0c6);box-shadow:0 8px 22px rgba(56,227,166,.25)}
+.btn:disabled{opacity:.5}
+.btn.soft{background:var(--vio-s);color:var(--vio);box-shadow:none;border:1px solid var(--line)}
+.btn.warn{background:linear-gradient(90deg,var(--amber),#ffd78e);color:#211300}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.msg{font-size:14px;color:var(--bad);margin:0;min-height:1em}
+/* brand head */
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.logo{white-space:nowrap;font-size:13px!important;width:46px;height:42px;border-radius:12px;background:var(--s2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-weight:700;color:var(--mint);font-size:15px}
+.logo i{color:var(--vio);font-style:normal}
+.hd b{display:block;font-size:15px}.hd small{color:var(--muted);font-size:12.5px}
+.code-line{font-family:var(--mono);font-size:12px;color:var(--muted);direction:ltr;text-align:left}
+.code-line .k{color:var(--vio)}.code-line .s{color:var(--mint)}.code-line .c{color:#5d6894}
+h1{font-size:22px;margin:0;line-height:1.35}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--s1);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--muted)}
+.pill b{color:var(--ink);font-weight:700}
+.lbl{display:grid;gap:6px;font-size:13.5px;font-weight:700;color:var(--muted)}
+.codein{font-family:var(--mono);font-size:24px;letter-spacing:.35em;text-align:center;direction:ltr}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.rules li{display:flex;gap:10px;font-size:14.5px}
+.rules li span{flex:none;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:var(--mint-s);color:var(--mint);font-size:14px}
+.big-n{font-family:var(--mono);font-size:44px;font-weight:700;text-align:center;direction:ltr;color:var(--mint);letter-spacing:.04em}
+.center{text-align:center}
+.ok-ic{width:72px;height:72px;border-radius:22px;margin:0 auto;display:grid;place-items:center;font-size:36px;background:var(--mint-s);color:var(--mint);border:1px solid rgba(56,227,166,.35)}
+.score{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--mint);direction:ltr}
+.foot{margin-top:22px;text-align:center;font-size:12.5px;color:var(--muted)}
+.foot a{color:var(--muted)}
+/* exam screen */
+.bar{position:sticky;top:0;z-index:5;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));
+  background:rgba(11,15,28,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:grid;gap:8px}
+.bar-top{display:flex;align-items:center;gap:10px}
+.timer{font-family:var(--mono);font-weight:700;font-size:26px;direction:ltr;color:var(--mint);background:var(--mint-s);border:1px solid rgba(56,227,166,.3);border-radius:12px;padding:2px 12px;min-width:118px;text-align:center}
+.timer.low{color:var(--amber);background:var(--amber-s);border-color:rgba(255,191,90,.4)}
+.timer.crit{color:var(--bad);background:var(--bad-s);border-color:rgba(255,122,122,.45);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.who{flex:1;min-width:0}.who b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.who small{font-size:12px;color:var(--muted)}
+.save{font-size:12px;color:var(--muted);white-space:nowrap}.save.ok{color:var(--mint)}.save.off{color:var(--amber)}
+.prog{height:3px;border-radius:3px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--vio),var(--mint));transition:width 1s linear}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tabs button{border:0;background:none;color:var(--muted);font-weight:800;padding:9px;border-radius:10px;font-size:14.5px}
+.tabs button[aria-pressed=true]{background:var(--vio-s);color:var(--ink)}
+.tabs small{font-family:var(--mono);font-weight:500;color:var(--mint);margin-inline-start:4px}
+.pages{display:grid;gap:12px;margin-top:14px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.page{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4);position:relative;min-height:160px}
+.page img{display:block;width:100%;height:auto;pointer-events:none}
+.page em{position:absolute;inset:auto 8px 8px auto;background:rgba(11,15,28,.75);color:#fff;font-style:normal;font-size:12px;border-radius:8px;padding:2px 8px;font-family:var(--mono)}
+.page.load{display:grid;place-items:center;color:#667;font-size:14px}
+.zoom{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.zoom button{border:1px solid var(--line);background:var(--s1);color:var(--ink);border-radius:10px;padding:6px 14px}
+.sheet{display:grid;gap:10px;margin-top:14px}
+.q{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:grid;gap:10px}
+.q.done{border-color:rgba(56,227,166,.35)}
+.q-h{display:flex;align-items:center;gap:8px}
+.q-n{font-family:var(--mono);font-weight:700;min-width:34px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--vio-s);color:var(--vio);padding:0 8px}
+.q.done .q-n{background:var(--mint-s);color:var(--mint)}
+.q-h small{color:var(--muted);font-size:12.5px;margin-inline-start:auto}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{min-width:52px;height:46px;border-radius:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-weight:800;font-size:18px;padding:0 14px}
+.opt[aria-pressed=true]{background:var(--mint);color:#07150f;border-color:var(--mint);box-shadow:0 6px 16px rgba(56,227,166,.3)}
+.q textarea{min-height:96px;font-family:var(--body);line-height:1.6}
+.q textarea.code{font-family:var(--mono);font-size:14px}
+.q-tools{display:flex;gap:8px;align-items:center}
+.q-tools button{border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:9px;padding:3px 10px;font-size:12.5px}
+.q-tools button[aria-pressed=true]{color:var(--vio);border-color:var(--vio)}
+.ph{display:flex;flex-wrap:wrap;gap:8px}
+.ph .th{width:78px;height:78px;border-radius:12px;background:var(--bg) center/cover;border:1px solid var(--line);position:relative;display:grid;place-items:center;color:var(--mint);font-size:13px}
+.ph .th b{position:absolute;top:-7px;left:-7px;width:24px;height:24px;border-radius:50%;background:var(--bad);color:#fff;border:0;display:grid;place-items:center;font-size:13px;cursor:pointer}
+.ph .th.up::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(11,15,28,.55)}
+.ph .add{width:78px;height:78px;border-radius:12px;border:1.5px dashed var(--line);background:none;color:var(--muted);display:grid;place-items:center;font-size:12.5px;line-height:1.3}
+.submit-box{margin-top:16px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;background:var(--s2);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:10px 16px;font-size:14px;box-shadow:0 14px 36px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+.toast.warn{border-color:var(--amber);color:var(--amber)}
+.ov{position:fixed;inset:0;z-index:30;background:rgba(5,8,16,.78);display:grid;place-items:center;padding:20px}
+.ov .card{max-width:420px;width:100%}
+.warnbox{background:var(--amber-s);border:1px solid rgba(255,191,90,.4);color:var(--amber);border-radius:14px;padding:10px 12px;font-size:14px}
+.lockov{position:fixed;inset:0;z-index:40;background:rgba(5,8,16,.97);display:grid;place-items:center;padding:20px}
+.lockov .card{max-width:400px;width:100%;text-align:center}
+.lock-ic{width:70px;height:70px;border-radius:22px;margin:0 auto;display:grid;place-items:center;font-size:34px;background:var(--bad-s);border:1px solid rgba(255,122,122,.45)}
+.dots3{display:flex;justify-content:center;gap:8px}.dots3 i{width:14px;height:14px;border-radius:50%;background:var(--line)}.dots3 i.on{background:var(--bad)}
+.spin{width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--mint);animation:sp 0.9s linear infinite;margin:30px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="spin" id="boot"></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="lockov" id="lockOv" hidden><div class="card" id="lockBox"></div></div>
+<div class="ov" id="ov" hidden><div class="card" id="ovBox"></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* same Firebase project as the Mr J app; students never sign in — the student code + the exam code ARE the key */
+const FIREBASE_CONFIG={apiKey:"AIzaSyC_6SZm-yuApkiq5SBsGRgu5gJzkuJNZyE",authDomain:"mr-j-db42a.firebaseapp.com",projectId:"mr-j-db42a",storageBucket:"mr-j-db42a.firebasestorage.app",messagingSenderId:"82946343696",appId:"1:82946343696:web:c4c828357e43ea58cb5b95"};
+const BASE="t/main",TEACHER="أ/ محمد جمال",PHONE="01069982196";
+const LET={ar:["أ","ب","ج","د","هـ","و"],en:["a","b","c","d","e","f"],num:["1","2","3","4","5","6"]};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ar=n=>Number(n||0).toLocaleString("ar-EG",{maximumFractionDigits:1});
+const pad=n=>String(n).padStart(2,"0");
+const ms=t=>t&&t.toMillis?t.toMillis():Number(t)||0;
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const DAYS=["الأحد","الاتنين","التلات","الأربع","الخميس","الجمعة","السبت"];
+function clock(t){const d=new Date(t);let h=d.getHours(),m=d.getMinutes();const pm=h>=12;h=h%12||12;return ar(h)+":"+pad(m).replace(/\d/g,x=>"٠١٢٣٤٥٦٧٨٩"[x])+(pm?" م":" ص")}
+const dayTxt=t=>{const d=new Date(t);return DAYS[d.getDay()]+" "+ar(d.getDate())+"/"+ar(d.getMonth()+1)};
+function toast(t,warn){const el=$("#toast");el.textContent=t;el.className="toast"+(warn?" warn":"");el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3200)}
+const head=()=>`<div class="hd"><div class="logo" dir="ltr"><span>&lt;<i>J</i>/&gt;</span></div><div><b>${esc(TEACHER)}</b><small>امتحان أونلاين · MR-J</small></div></div>`;
+const foot=()=>`<div class="foot">${esc(TEACHER)} · <a href="tel:${PHONE}">${PHONE}</a></div>`;
+function show(h){$("#app").innerHTML=h;window.scrollTo(0,0)}
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const fs=firebase.firestore();
+const D=p=>fs.doc(BASE+"/"+p);
+const EID=(new URLSearchParams(location.search).get("e")||"").replace(/[^A-Za-z0-9]/g,"");
+let EX=null,ACC=null,AID="",SUB=null,offset=0,deadline=0,answers={},leaves=[],tab=lsGet("exTab")||"q",tick=null,saveT=null,saving=false,dirty=false,finished=false,away=null,zoom=1,pageImgs=[],picking=0,locked=false;
+const PIN=()=>AID.split("_")[2]||"";
+const MAXL=()=>Number.isFinite(+EX.maxLeaves)?+EX.maxLeaves:3;
+const counted=()=>leaves.filter(x=>!x.p).length;
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const now=()=>Date.now()+offset;
+
+async function boot(){
+  if(!EID){show(head()+`<div class="card"><h1>اللينك ناقص</h1><p class="hint">افتح لينك الامتحان اللي اتبعت لولي الأمر زي ما هو.</p></div>`+foot());return}
+  try{const d=await D("exams/"+EID).get();if(!d.exists)throw{code:"nf"};EX=d.data()}
+  catch(e){show(head()+`<div class="card"><h1>الامتحان مش متاح</h1><p class="hint">${e&&e.code==="unavailable"?"مفيش نت. اتأكد إن النت شغال وافتح اللينك تاني.":"اللينك ده مش شغال، أو الامتحان لسه ماتنشرش. اتأكد من اللينك أو كلّم المستر."}</p></div>`+foot());return}
+  document.title=EX.title+" · امتحان";
+  loginScreen();
+}
+function infoPills(){return `<div class="meta"><span class="pill">📅 <b>${esc(dayTxt(ms(EX.openAt)))}</b></span><span class="pill">🕒 من <b>${clock(ms(EX.openAt))}</b> لـ <b>${clock(ms(EX.closeAt))}</b></span><span class="pill">⏱ <b>${ar(EX.dur)}</b> دقيقة</span>${MAXL()?`<span class="pill">🔒 الخروج <b>${ar(MAXL())}</b> مرات = تسليم</span>`:""}<span class="pill">📝 <b>${ar((EX.qs||[]).length)}</b> سؤال، <b>${ar(EX.total)}</b> درجة</span></div>`}
+function rulesHTML(){const M=MAXL(),o=ms(EX.openAt),c=ms(EX.closeAt);
+  return `<div class="card" style="margin-top:14px"><h2 style="font-size:17px;margin:0">📋 إرشادات الامتحان</h2><ul class="rules">
+    <li><span>📅</span><div>الامتحان بيفتح ${esc(dayTxt(o))} الساعة <b>${clock(o)}</b>، وبيقفل الساعة <b>${clock(c)}</b>. ابدأ في أي وقت بينهم.</div></li>
+    <li><span>⏱</span><div>مدة الامتحان <b>${ar(EX.dur)} دقيقة</b> من أول ما تدوس «ابدأ»، والعداد مش بيقف حتى لو قفلت الصفحة. لو بدأت متأخر، لازم تخلّص قبل ${clock(c)}.</div></li>
+    <li><span>📝</span><div>الامتحان ${ar((EX.qs||[]).length)} سؤال من ${ar(EX.total)} درجة. بتشوف الأسئلة في «الامتحان»، وتجاوب في «الإجابة».${(EX.qs||[]).some(q=>q.t==="photo")?" فيه أسئلة بتحلها على ورقة وتصوّرها، فجهّز ورقة وقلم.":""}</div></li>
+    <li><span>🔑</span><div>بتدخل بـ <b>كود الطالب</b> بتاعك + <b>كود الامتحان</b> اللي اتبعت لولي الأمر. ولي الأمر هو اللي يكتبه وهو جنبك.</div></li>
+    <li><span>🚫</span><div>لو خرجت من صفحة الامتحان لأي برنامج، <b>الامتحان بيتقفل</b> ومش بيفتح غير بكود ولي الأمر.${M?` ولو خرجت <b style="color:var(--bad)">${ar(M)} مرات، الامتحان بيتسلّم لوحده</b> بالإجابات اللي اتحفظت.`:""}</div></li>
+    <li><span>💾</span><div>إجاباتك بتتحفظ لوحدها. لو النت فصل، كمّل عادي، ولو الصفحة اتقفلت افتح اللينك تاني بنفس الأكواد.</div></li>
+    <li><span>✅</span><div>لما تخلّص دوس «سلّم الامتحان». بعد التسليم مش هتقدر تغيّر حاجة، ولو الوقت خلص بيتسلّم لوحده.</div></li>
+  </ul></div>`}
+function loginScreen(msg){
+  const saved=lsGet("ex_"+EID)||"";
+  show(head()+`<div class="card">
+    <div class="code-line"><span class="k">exam</span>.<span class="s">open</span>(<span class="s">"${esc(EID.slice(0,6))}…"</span>) <span class="c">// ${esc(EX.subject||"البرمجة")}</span></div>
+    <h1>${esc(EX.title)}</h1>${infoPills()}
+    <form id="lf" class="card" style="background:var(--bg);box-shadow:none;padding:14px" autocomplete="off">
+      <label class="lbl">كود الطالب<input id="lCode" class="codein" inputmode="numeric" maxlength="6" placeholder="0000" value="${esc(saved.split("_")[0]||"")}"></label>
+      <label class="lbl">كود الامتحان <small style="font-weight:400">(اتبعت لولي الأمر على واتساب)</small><input id="lPin" class="codein" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"></label>
+      <button class="btn" id="lGo">دخول</button>
+      <p class="msg" id="lMsg">${esc(msg||"")}</p>
+    </form>
+  </div>${rulesHTML()}`+foot());
+  $("#lf").addEventListener("submit",async e=>{e.preventDefault();
+    const code=$("#lCode").value.replace(/\D/g,""),pin=$("#lPin").value.replace(/\D/g,"");
+    if(!code){$("#lCode").focus();return}if(pin.length<6){$("#lMsg").textContent="كود الامتحان ٦ أرقام";$("#lPin").focus();return}
+    const b=$("#lGo");b.disabled=true;$("#lMsg").textContent="";
+    const aid=EID+"_"+code.padStart(4,"0")+"_"+pin;
+    try{const a=await D("examAccess/"+aid).get();if(!a.exists){$("#lMsg").textContent="الكود غلط. اتأكد من كود الطالب وكود الامتحان.";b.disabled=false;return}
+      ACC=a.data();AID=aid;lsSet("ex_"+EID,code.padStart(4,"0"));await afterLogin()}
+    catch(x){$("#lMsg").textContent=x&&x.code==="unavailable"?"مفيش نت. جرّب تاني.":"الكود غلط. اتأكد من كود الطالب وكود الامتحان.";b.disabled=false}
+  });
+}
+async function afterLogin(){
+  let s=null;try{const d=await D("subs/"+AID).get({source:"server"});s=d.exists?d.data():null}catch(e){}
+  if(s){SUB=s;answers=s.answers||{};leaves=s.leaves||[];
+    if(s.submitted){doneScreen();return}
+    /* resume: ask the server what time it is, so the countdown can't be cheated by the phone clock */
+    try{const t0=Date.now();await D("subs/"+AID).update({lastSeen:firebase.firestore.FieldValue.serverTimestamp()});const t1=Date.now();
+      const d=await D("subs/"+AID).get({source:"server"});SUB=d.data();offset=ms(SUB.lastSeen)-(t0+t1)/2}
+    catch(e){doneScreen(true);return}
+    setDeadline();if(now()>=deadline){doneScreen(true);return}
+    const aw=+lsGet("away_"+AID)||0;lsSet("away_"+AID,"");
+    if(aw&&aw<now()){leaves.push({at:aw,s:Math.round((now()-aw)/1000),r:1})}
+    startExam();if(aw)changed();
+    if(MAXL()&&counted()>=MAXL()){showLock(true);submit(true,true);return}
+    if(leaves.some(x=>!x.p&&!x.ok))showLock();return}
+  const t=Date.now(),o=ms(EX.openAt),c=ms(EX.closeAt);
+  if(t>c){show(head()+`<div class="card center"><h1>الامتحان قفل</h1><p class="hint">ميعاد الامتحان خلص الساعة ${clock(c)}.</p></div>`+foot());return}
+  if(t<o){waitScreen();return}
+  startScreen();
+}
+function waitScreen(){
+  show(head()+`<div class="card center"><h1>أهلاً ${esc(first(ACC.name))} 👋</h1><p class="hint">الامتحان هيفتح ${esc(dayTxt(ms(EX.openAt)))} الساعة ${clock(ms(EX.openAt))}</p><div class="big-n" id="wN">--:--</div><p class="hint">سيب الصفحة مفتوحة، وهتفتح لوحدها في الميعاد.</p></div>`+foot());
+  const f=()=>{const left=ms(EX.openAt)-Date.now();if(left<=0){clearInterval(w);startScreen();return}const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),s=Math.floor(left%60000/1000);const el=$("#wN");if(el)el.textContent=(h?pad(h)+":":"")+pad(m)+":"+pad(s)};
+  const w=setInterval(f,1000);f();
+}
+const first=n=>String(n||"").trim().split(/\s+/)[0];
+function startScreen(){
+  const c=ms(EX.closeAt),mins=Math.min(EX.dur,Math.floor((c-Date.now())/60000));
+  show(head()+`<div class="card"><h1>جاهز يا ${esc(first(ACC.name))}؟</h1>${infoPills()}
+    <ul class="rules">
+      <li><span>⏱</span><div>أول ما تدوس «ابدأ» العداد بيشتغل ومش بيقف، حتى لو قفلت الصفحة. ${mins<EX.dur?`<b style="color:var(--amber)">الامتحان بيقفل الساعة ${clock(c)}، فهيبقى معاك ${ar(Math.max(mins,0))} دقيقة بس.</b>`:""}</div></li>
+      <li><span>💾</span><div>إجاباتك بتتحفظ لوحدها. لو النت فصل أو الموبايل قفل، افتح اللينك تاني بنفس الكود وكمّل.</div></li>
+      <li><span>👁</span><div>لو خرجت من صفحة الامتحان، الامتحان بيتقفل ومش هيفتح غير بكود ولي الأمر${MAXL()?`، و<b style="color:var(--bad)">لو خرجت ${ar(MAXL())} مرات الامتحان بيتسلّم لوحده</b>`:""}.</div></li>
+      <li><span>👨‍👩‍👦</span><div>ولي الأمر يفضل جنبك لحد ما تسلّم.</div></li>
+    </ul>
+    <button class="btn" id="sGo">ابدأ الامتحان</button><p class="msg" id="sMsg"></p></div>`+foot());
+  $("#sGo").onclick=async()=>{const b=$("#sGo");b.disabled=true;$("#sMsg").textContent="";goFull();
+    try{const t0=Date.now();
+      await D("subs/"+AID).set({eid:EID,sid:ACC.sid,name:ACC.name,startedAt:firebase.firestore.FieldValue.serverTimestamp(),lastSeen:firebase.firestore.FieldValue.serverTimestamp(),answers:{},leaves:[],submitted:false,dev:(navigator.userAgent||"").slice(0,120)});
+      const t1=Date.now();const d=await D("subs/"+AID).get({source:"server"});SUB=d.data();offset=ms(SUB.startedAt)-(t0+t1)/2;answers={};leaves=[];setDeadline();startExam()}
+    catch(x){/* maybe it already exists (double tap / another phone) */
+      try{const d=await D("subs/"+AID).get({source:"server"});if(d.exists){afterLogin();return}}catch(y){}
+      $("#sMsg").textContent=Date.now()<ms(EX.openAt)?"الامتحان لسه مافتحش.":Date.now()>ms(EX.closeAt)?"الامتحان قفل.":"ماقدرتش أبدأ. اتأكد من النت وجرّب تاني.";b.disabled=false}};
+}
+/* ---------- parent locks the phone on the exam (iPhone: Guided Access · Android: App pinning) ---------- */
+/* Android: full screen; leaving it counts as leaving the exam */
+function goFull(){if(isIOS)return;const d=document.documentElement;try{const r=(d.requestFullscreen||d.webkitRequestFullscreen).call(d,{navigationUI:"hide"});if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+const isFull=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+let wasFull=false;
+function onFs(){if(finished)return;if(isFull()){wasFull=true;return}if(!wasFull||locked)return;wasFull=false;addLeave({at:now(),s:0,fs:1})}
+function addLeave(x){if(finished)return;leaves.push(x);changed();
+  if(MAXL()&&counted()>=MAXL()){showLock(true);toast("خرجت "+ar(counted())+" مرات، الامتحان بيتسلّم…",1);submit(true,true);return}
+  showLock()}
+function showLock(final){locked=true;const n=counted(),M=MAXL();
+  $("#lockBox").innerHTML=`<div class="lock-ic">🔒</div><h1 style="font-size:20px">${final?"الامتحان اتسلّم":"الامتحان اتقفل"}</h1>
+    <p class="hint">${final?`خرجت من الامتحان ${ar(n)} مرات، فاتسلّم لوحده بالإجابات اللي اتحفظت.`:`خرجت من صفحة الامتحان. خلّي ولي الأمر يكتب <b>كود الامتحان</b> عشان تكمّل.`}</p>
+    ${M?`<div class="dots3">${Array.from({length:M},(_,i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div>${!final?`<p class="hint" style="color:var(--bad)">${M-n===1?"المرة الجاية الامتحان هيتسلّم لوحده":"فاضل "+ar(M-n)+" مرات والامتحان يتسلّم لوحده"}</p>`:""}`:""}
+    ${final?"":`<input id="ulPin" class="codein" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"><button class="btn" id="ulGo">كمّل الامتحان</button><p class="msg" id="ulMsg"></p><p class="hint">العداد شغال ومش واقف.</p>`}`;
+  $("#lockOv").hidden=false;
+  const go=$("#ulGo");if(go)go.onclick=()=>{if($("#ulPin").value.replace(/\D/g,"")!==PIN()){$("#ulMsg").textContent="الكود غلط";return}
+    leaves.forEach(x=>{if(!x.p)x.ok=1});locked=false;$("#lockOv").hidden=true;changed();goFull();onTick()}}
+function setDeadline(){deadline=Math.min(ms(SUB.startedAt)+EX.dur*60000,ms(EX.closeAt))}
+/* ---------- the exam ---------- */
+const qs=()=>EX.qs||[];
+const answered=i=>{const a=answers[i];if(a==null||a==="")return false;if(typeof a==="object")return(a.p||[]).length>0;return true};
+const nDone=()=>qs().filter((q,i)=>answered(i)).length;
+function startExam(){
+  show(`<div class="bar"><div class="bar-top"><div class="timer" id="tm">--:--</div><div class="who"><b>${esc(EX.title)}</b><small>${esc(ACC.name)}</small></div><span class="save" id="sv"></span></div>
+    <div class="prog"><i id="pg"></i></div>
+    <div class="tabs"><button data-t="q" aria-pressed="${tab==="q"}">📄 الامتحان</button><button data-t="a" aria-pressed="${tab==="a"}">✍ الإجابة<small id="cnt"></small></button></div></div>
+    <div id="pq"${tab==="q"?"":" hidden"}><div class="pages" id="pages"></div><div class="zoom"><button data-z="-">－ صغّر</button><button data-z="+">＋ كبّر</button></div><div class="submit-box"><button class="btn soft" style="width:100%" data-t="a">روح لورقة الإجابة ‹</button></div></div>
+    <div id="pa"${tab==="a"?"":" hidden"}><div class="sheet" id="sheet"></div><div class="submit-box"><button class="btn" style="width:100%" id="subBtn">سلّم الامتحان</button></div></div>`+foot());
+  document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+  document.querySelectorAll("[data-z]").forEach(b=>b.onclick=()=>{zoom=Math.max(1,Math.min(2.4,zoom+(b.dataset.z==="+"?.35:-.35)));$("#pages").style.width=(zoom*100)+"%";$("#pq").style.overflowX=zoom>1?"auto":""});
+  $("#subBtn").onclick=askSubmit;
+  drawSheet();loadPages();
+  clearInterval(tick);tick=setInterval(onTick,500);onTick();
+  document.addEventListener("visibilitychange",onVis);document.addEventListener("fullscreenchange",onFs);document.addEventListener("webkitfullscreenchange",onFs);wasFull=isFull();window.addEventListener("pagehide",()=>{if(dirty)save(true)});
+  setSave("ok");
+}
+function setTab(t){tab=t;lsSet("exTab",t);$("#pq").hidden=t!=="q";$("#pa").hidden=t!=="a";document.querySelectorAll(".tabs [data-t]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t));window.scrollTo(0,0)}
+async function loadPages(){
+  const box=$("#pages"),n=EX.pages||0;box.innerHTML=Array.from({length:n},(_,i)=>`<div class="page load" id="pp${i}">بيحمّل صفحة ${ar(i+1)}…</div>`).join("");
+  for(let i=0;i<n;i++){if(pageImgs[i]){fillPage(i);continue}
+    try{const d=await D("examPages/"+EID+"_"+i).get();pageImgs[i]=d.exists?d.data().data:"";fillPage(i)}
+    catch(e){const el=$("#pp"+i);if(el){el.textContent="الصفحة ماحمّلتش — دوس هنا";el.onclick=()=>{el.onclick=null;loadPages()}}}}
+}
+function fillPage(i){const el=$("#pp"+i);if(!el)return;el.className="page";el.innerHTML=`<img alt="صفحة ${i+1}" src="${pageImgs[i]}"><em>${i+1}/${EX.pages}</em>`;el.oncontextmenu=e=>e.preventDefault()}
+function drawSheet(){
+  const L=LET[EX.letters]||LET.ar;
+  $("#sheet").innerHTML=qs().map((q,i)=>{const a=answers[i],lab=esc(q.l||String(i+1));let body="";
+    if(q.t==="mcq")body=`<div class="opts">${L.slice(0,q.o||4).map((x,k)=>`<button class="opt" data-q="${i}" data-o="${k}" aria-pressed="${a===k}">${x}</button>`).join("")}</div>`;
+    else if(q.t==="tf")body=`<div class="opts"><button class="opt" data-q="${i}" data-o="0" aria-pressed="${a===0}">✓ صح</button><button class="opt" data-q="${i}" data-o="1" aria-pressed="${a===1}">✗ غلط</button></div>`;
+    else if(q.t==="text"){const code=lsGet("code_"+i)==="1";body=`<textarea data-q="${i}" class="${code?"code":""}" dir="auto" placeholder="اكتب إجابتك هنا" spellcheck="false">${esc(typeof a==="string"?a:"")}</textarea><div class="q-tools"><button type="button" data-cd="${i}" aria-pressed="${code}">&lt;/&gt; كود</button></div>`}
+    else if(q.t==="photo"){const p=(a&&a.p)||[];body=`<div class="ph" id="ph${i}">${p.map(n=>`<div class="th" data-n="${n}" style="${thumbs[i+"_"+n]?`background-image:url(${thumbs[i+"_"+n]})`:""}">${thumbs[i+"_"+n]?"":"✓"}<b data-rm="${i}" data-n="${n}">✕</b></div>`).join("")}${p.length<4?`<button class="add" data-ph="${i}">📷<br>صوّر ورقتك</button>`:""}</div><p class="hint">حل على ورقة وصوّرها واضحة. لحد ٤ صور.</p>`}
+    return `<div class="q${answered(i)?" done":""}" id="q${i}"><div class="q-h"><span class="q-n">${lab}</span><b style="font-size:14px">${{mcq:"اختار",tf:"صح ولا غلط",text:"اكتب",photo:"صوّر الحل"}[q.t]||""}</b><small>${ar(q.m)} ${q.m==1?"درجة":"درجات"}</small></div>${body}</div>`}).join("");
+  updCount();
+}
+const thumbs={};
+$("#app").addEventListener("click",e=>{
+  const o=e.target.closest(".opt");if(o){const i=+o.dataset.q,k=+o.dataset.o;answers[i]=answers[i]===k?null:k;if(answers[i]==null)delete answers[i];
+    o.parentNode.querySelectorAll(".opt").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.o===answers[i]));$("#q"+i).classList.toggle("done",answered(i));changed();return}
+  const cd=e.target.closest("[data-cd]");if(cd){const i=cd.dataset.cd,on=cd.getAttribute("aria-pressed")!=="true";lsSet("code_"+i,on?"1":"0");cd.setAttribute("aria-pressed",on);const ta=$(`textarea[data-q="${i}"]`);if(ta)ta.classList.toggle("code",on);return}
+  const ph=e.target.closest("[data-ph]");if(ph){pickPhoto(+ph.dataset.ph);return}
+  const rm=e.target.closest("[data-rm]");if(rm){const i=+rm.dataset.rm,n=+rm.dataset.n;const a=answers[i]||{p:[]};a.p=(a.p||[]).filter(x=>x!==n);answers[i]=a;drawSheet();changed();return}
+});
+$("#app").addEventListener("input",e=>{const t=e.target.closest("textarea[data-q]");if(!t)return;const i=+t.dataset.q,v=t.value.slice(0,6000);if(v.trim())answers[i]=v;else delete answers[i];$("#q"+i).classList.toggle("done",answered(i));changed()});
+function updCount(){const c=$("#cnt");if(c)c.textContent=ar(nDone())+"/"+ar(qs().length)}
+function changed(){dirty=true;updCount();setSave("wait");clearTimeout(saveT);saveT=setTimeout(()=>save(),1200)}
+function setSave(s){const el=$("#sv");if(!el)return;el.className="save "+(s==="ok"?"ok":s==="off"?"off":"");el.textContent=s==="ok"?"✓ اتحفظ":s==="off"?"⚠ مستني النت":"… بيحفظ"}
+function clean(o){const r={};for(const k in o){const v=o[k];if(v!=null&&v!=="")r[k]=v}return r}
+async function save(fast){if(finished)return;if(saving){dirty=true;return}saving=true;dirty=false;
+  const p=D("subs/"+AID).update({answers:clean(answers),leaves:leaves.slice(-60),lastSeen:firebase.firestore.FieldValue.serverTimestamp()});
+  const off=setTimeout(()=>setSave("off"),4000);
+  try{await p;clearTimeout(off);setSave(dirty?"wait":"ok")}
+  catch(e){clearTimeout(off);if(now()>=deadline){timeUp();saving=false;return}setSave("off");dirty=true;setTimeout(()=>{if(dirty)save()},5000)}
+  saving=false;if(dirty&&!fast){clearTimeout(saveT);saveT=setTimeout(()=>save(),800)}}
+function onTick(){const left=Math.max(0,deadline-now()),tot=Math.max(1,deadline-ms(SUB.startedAt));
+  const m=Math.floor(left/60000),s=Math.floor(left%60000/1000),el=$("#tm");if(!el)return;
+  el.textContent=(m>=60?Math.floor(m/60)+":"+pad(m%60):pad(m))+":"+pad(s);el.className="timer"+(left<60000?" crit":left<300000?" low":"");
+  $("#pg").style.width=(left/tot*100)+"%";
+  if(left<=300000&&!onTick.w5){onTick.w5=1;toast("⏰ فاضل ٥ دقايق",1)}
+  if(left<=0)timeUp()}
+function onVis(){if(finished)return;
+  if(document.visibilityState==="hidden"){away={out:now(),pick:picking&&Date.now()-picking<120000};if(!away.pick&&!locked)lsSet("away_"+AID,String(away.out));save(true)}
+  else if(away){lsSet("away_"+AID,"");const back=now(),sec=Math.round((back-away.out)/1000),pk=away.pick;away=null;onTick();if(finished)return;
+    if(pk){if(sec>=2)leaves.push({at:back-sec*1000,s:sec,p:1});changed();return}
+    if(sec>=2&&!locked)addLeave({at:back-sec*1000,s:sec})}}
+/* photos: shrink on the phone, then save each one as its own small record */
+function pickPhoto(i){picking=Date.now();const inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.onchange=async()=>{setTimeout(()=>picking=0,1500);const f=inp.files&&inp.files[0];if(!f)return;
+  const a=answers[i]&&typeof answers[i]==="object"?answers[i]:{p:[]};const used=a.p||[];if(used.length>=4)return;
+  let n=0;while(used.includes(n)||(a.all||[]).includes(n))n++;
+  try{const data=await shrink(f);thumbs[i+"_"+n]=data;
+    const box=$("#ph"+i);if(box)box.insertAdjacentHTML("afterbegin",`<div class="th up" style="background-image:url(${data})"></div>`);
+    toast("بيرفع الصورة…");
+    await D("subPhotos/"+AID+"_"+i+"_"+n).set({acc:AID,eid:EID,q:i,n,data,at:firebase.firestore.FieldValue.serverTimestamp()});
+    a.p=[...used,n];a.all=[...new Set([...(a.all||[]),n])];answers[i]=a;drawSheet();changed();toast("✓ الصورة اترفعت")}
+  catch(e){drawSheet();toast(now()>=deadline?"الوقت خلص":"الصورة ماترفعتش. جرّب تاني",1)}};inp.click()}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const M=1500,r=Math.min(1,M/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);let q=.68,d=c.toDataURL("image/jpeg",q);while(d.length>700000&&q>.3){q-=.1;d=c.toDataURL("image/jpeg",q)}res(d)};img.onerror=rej;img.src=u})}
+function askSubmit(){const left=qs().length-nDone();
+  ov(`<h1 style="font-size:19px">تسلّم الامتحان؟</h1><p class="hint">${left?`<b style="color:var(--amber)">لسه فيه ${ar(left)} ${left===1?"سؤال":"أسئلة"} ماجاوبتش عليهم.</b><br>`:""}بعد التسليم مش هتقدر تغيّر أي إجابة.</p>
+    <button class="btn" id="ok">أيوه، سلّم</button><button class="btn soft" id="no">لأ، أراجع</button>`);
+  $("#no").onclick=closeOv;$("#ok").onclick=()=>submit(false)}
+function ov(h){$("#ovBox").innerHTML=h;$("#ov").hidden=false}
+function closeOv(){$("#ov").hidden=true}
+async function submit(auto,force){if(finished)return;
+  const b=$("#ok");if(b)b.disabled=true;
+  try{clearTimeout(saveT);await D("subs/"+AID).update({answers:clean(answers),leaves:leaves.slice(-60),submitted:true,submittedAt:firebase.firestore.FieldValue.serverTimestamp(),lastSeen:firebase.firestore.FieldValue.serverTimestamp()});finish(false,force)}
+  catch(e){if(now()>=deadline-1000||auto){finish(true,force);return}if(b)b.disabled=false;toast("ماتسلّمش. اتأكد من النت ودوس تاني",1)}}
+let tu=false;function timeUp(){if(tu||finished)return;tu=true;clearTimeout(saveT);toast("⏰ الوقت خلص، بيتسلّم…",1);submit(true)}
+function finish(byTime,byLeave){finished=true;clearInterval(tick);closeOv();$("#lockOv").hidden=true;try{if(isFull())(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}doneScreen(byTime,byLeave)}
+async function doneScreen(byTime,byLeave){finished=true;clearInterval(tick);if(!byLeave&&SUB&&MAXL()&&(SUB.leaves||leaves||[]).filter(x=>!x.p).length>=MAXL())byLeave=true;
+  show(head()+`<div class="card center"><div class="ok-ic">✓</div><h1>${byLeave?"الامتحان اتسلّم لوحده":byTime?"الوقت خلص":"اتسلّم الامتحان"}</h1>${byLeave?`<p class="hint" style="color:var(--amber)">عشان خرجت من صفحة الامتحان ${ar(MAXL())} مرات.</p>`:""}
+    <p class="hint">${byTime?"إجاباتك اللي اتحفظت وصلت للمستر.":"إجاباتك وصلت للمستر، وهو اللي هيصححها."}</p><div id="res"></div></div>`+foot());
+  if(EX.published){try{const g=await D("examGrades/"+AID).get();if(g.exists){const x=g.data();$("#res").innerHTML=`<p class="hint" style="margin-top:8px">درجتك</p><div class="score">${ar(x.total)} / ${ar(EX.total)}</div>`}}catch(e){}}
+}
+boot();
+</script>
+</body>
+</html>

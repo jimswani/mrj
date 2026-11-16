@@ -626,7 +626,7 @@ html.staff #ghSeg [data-v=grades]{display:none}
 @keyframes pb{to{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
 /* floating glass dock */
 nav.tabbar.dock{position:fixed;inset:auto 0 0 0;z-index:9;background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0 max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));pointer-events:none}
-.dock .dk{pointer-events:auto;position:relative;display:grid;grid-template-columns:repeat(5,1fr);max-width:520px;margin:0 auto;padding:6px;border-radius:26px;background:var(--dock);border:1px solid var(--edge-2);-webkit-backdrop-filter:blur(22px) saturate(1.3);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.07)}
+.dock .dk{pointer-events:auto;position:relative;display:grid;grid-template-columns:repeat(6,1fr);max-width:560px;margin:0 auto;padding:6px;border-radius:26px;background:var(--dock);border:1px solid var(--edge-2);-webkit-backdrop-filter:blur(22px) saturate(1.3);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.07)}
 nav.tabbar.dock button{position:relative;z-index:1;display:grid;justify-items:center;gap:3px;padding:8px 0 6px;font-size:11px;font-weight:700;color:var(--muted);border-radius:20px}
 nav.tabbar.dock button::before{display:none}
 nav.tabbar.dock button[aria-selected="true"]{color:var(--ink)}
@@ -635,7 +635,7 @@ nav.tabbar.dock svg{transition:transform .35s cubic-bezier(.2,.9,.25,1),stroke .
 .dglow{position:absolute;top:6px;bottom:6px;right:6px;width:0;opacity:0;border-radius:20px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 26%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);box-shadow:0 0 22px color-mix(in srgb,var(--accent) 25%,transparent);transition:right .45s cubic-bezier(.2,.9,.25,1),width .45s,opacity .3s}
 .dbadge{position:absolute;top:2px;inset-inline-start:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--holo);color:#04201c;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 5px}
 html.staff .dock .dk{grid-template-columns:repeat(2,1fr);max-width:260px}
-html.staff nav.tabbar [data-view=home],html.staff nav.tabbar [data-view=rep],html.staff nav.tabbar [data-view=set]{display:none}
+html.staff nav.tabbar [data-view=home],html.staff nav.tabbar [data-view=rep],html.staff nav.tabbar [data-view=set],html.staff nav.tabbar [data-view=exams]{display:none}
 main.inner{padding-bottom:120px}
 .fab{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
 .toast,.snack{bottom:calc(160px + env(safe-area-inset-bottom,0px))!important}
@@ -660,6 +660,78 @@ main.inner{padding-bottom:120px}
 .ji-soc .fb{border-color:rgba(66,133,244,.45)}.ji-soc .tt{border-color:rgba(255,0,80,.45)}.ji-soc .ig{border-color:rgba(225,48,108,.45)}.ji-soc .yt{border-color:rgba(255,0,0,.45)}
 .sub-h{display:block;margin-top:6px;font-size:14px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== v6.2 الامتحانات الأونلاين ===== */
+nav.tabbar.dock button{font-size:10.5px;white-space:nowrap}
+.ex-new{display:flex!important;align-items:center;gap:12px}
+.ex-new b{display:block;font-size:16px}.ex-new small{color:var(--muted);font-size:12.5px}
+.ex-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:800;color:var(--btn-ink);background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.ex-how ol{margin:0;padding-inline-start:20px;display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.ex-card{display:grid!important;gap:6px}
+.ex-ch{display:flex;align-items:center;gap:8px}.ex-ch b{font-size:16px;flex:1;min-width:0}
+.ex-card>small{color:var(--muted);font-size:13px}
+.ex-meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--muted)}
+.ex-st{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--accent-soft);color:var(--muted);white-space:nowrap}
+.ex-st.ok{background:var(--ok-soft);color:var(--ok)}.ex-st.warn{background:var(--warn-soft);color:var(--warn)}.ex-st.bad{background:var(--bad-soft);color:var(--bad)}
+.ex-st i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:exP 1.2s infinite}@keyframes exP{50%{opacity:.25}}
+.ex-st.sm{font-size:11px;padding:1px 8px}
+.ex-hd{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.ex-hd>b{font-size:17px}
+.ex-top .ex-title{font-size:19px}.ex-top>small{color:var(--muted);font-size:13px}
+.ex-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.ex-stats span{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 2px;display:grid}
+.ex-stats b{font-size:20px;font-weight:800}.ex-stats b.ok{color:var(--ok)}.ex-stats b.holo{color:var(--holo)}.ex-stats small{font-size:11.5px;color:var(--muted)}
+.ex-tabs{display:grid!important;grid-template-columns:1fr 1fr}
+.ex-tabs small{background:var(--bad);color:#fff;border-radius:999px;padding:0 6px;font-size:11px;opacity:1!important}
+.ex-row{gap:10px}.ex-row.tap{cursor:pointer}
+.ex-rn{min-width:0;display:grid;gap:2px}.ex-rn b{font-size:14.5px}.ex-rn small{font-size:12.5px;color:var(--muted)}
+.ex-lv{color:var(--warn);font-size:12px;font-weight:700}
+.ex-sc{font-size:18px;font-weight:800;color:var(--ok);font-variant-numeric:tabular-nums}.ex-sc small{font-size:12px;color:var(--muted);font-weight:500}
+.ex-sc.big{font-size:28px}
+.ex-pub{margin-top:4px}
+.ex-file{display:flex;align-items:center;gap:10px;width:100%;text-align:right;font:inherit;color:var(--ink);background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;padding:10px 12px;cursor:pointer}
+.ex-file.ok{border-style:solid;border-color:var(--ok)}
+.ex-file b{display:block;font-size:14.5px}.ex-file small{color:var(--muted);font-size:12.5px}
+.ex-fi{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--accent-soft);font-size:18px}
+.ex-file.ok .ex-fi{background:var(--ok-soft);color:var(--ok);font-weight:800}
+.ex-file:disabled{opacity:.5}
+.ex-qh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ex-add{display:grid;grid-template-columns:1fr 70px 96px auto;gap:6px;align-items:end}
+.ex-add label{display:grid;gap:3px;font-size:11.5px;color:var(--muted);font-weight:700}
+.ex-add .btn{justify-self:stretch;padding:9px 14px}
+select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.exqs{display:grid;gap:6px}
+.exq{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--surface)}
+.exq input,.exq select{width:auto!important;flex:none}
+.exq .exq-l{width:54px!important}.exq-m input{width:60px!important}
+.exq-l{width:52px;text-align:center;padding:6px 4px;font-weight:800}
+.exq select{padding:5px 8px;font-size:13px}
+.exq-m{display:flex;align-items:center;gap:4px;margin-inline-start:auto}.exq-m input{width:58px;padding:6px;text-align:center}.exq-m small{color:var(--muted);font-size:12px}
+.exq-x{border:0;background:none;color:var(--bad);font-size:15px;cursor:pointer;padding:4px 6px}
+.exq-k{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.exq-k .chip{min-width:44px;justify-content:center;font-weight:800}
+.exq-k .chip.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+.exq-need{color:var(--warn);font-size:12px}
+.exq-man{flex-basis:100%;color:var(--muted);font-size:12px}
+.ex-save{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:3;padding:8px;border-radius:16px;background:var(--hdr);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.ex-save .btn.big{flex:1}
+.exsheet{max-height:94vh}
+.gqs{display:grid;gap:8px}
+.gq{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:8px;background:var(--surface)}
+.gq-h{display:flex;align-items:center;gap:8px}
+.gq .q-n{font-weight:800;min-width:30px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);padding:0 6px}
+.gq-m{display:flex;align-items:center;gap:4px;margin-inline-start:auto}.gq-m input{width:64px;text-align:center;padding:6px;font-weight:800}.gq-m small{color:var(--muted)}
+.gq-a{display:flex;align-items:center;gap:10px}
+.gq-ans{font-weight:800;font-size:16px;border-radius:10px;padding:3px 12px;background:var(--accent-soft)}
+.gq-ans.ok{background:var(--ok-soft);color:var(--ok)}.gq-ans.bad{background:var(--bad-soft);color:var(--bad)}
+.gq-a small{color:var(--muted)}
+.gq-txt{margin:0;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:14.5px;background:var(--bg);border-radius:10px;padding:8px 10px;max-height:320px;overflow:auto}
+.gq-ph,.gq-ans-pages{display:grid;gap:8px}
+.gq-ph img,.gq-ans-pages img{width:100%;border-radius:10px;background:#fff;cursor:zoom-in}
+.gq-ans-pages img.zoomed,.gq-ph img.zoomed{width:200%;max-width:none;cursor:zoom-out}
+.gq-ans-pages,.gq-ph{overflow-x:auto}
+.g-foot{position:sticky;bottom:-18px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 4px;background:linear-gradient(180deg,transparent,var(--surface) 30%)}
+.muted{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -701,6 +773,7 @@ main.inner{padding-bottom:120px}
       <label class="g-lbl"><span>رقم موبايلك</span><input id="jPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>رقم ولي الأمر</span><input id="jParent" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>السنة</span><select id="jYear"><option value="1">أولى ثانوي</option><option value="2" selected>تانية ثانوي</option></select></label>
+      <label class="g-lbl" id="jGrpWrap" hidden><span>المعاد اللي يناسبك</span><select id="jGrp"></select></label>
       <button class="btn big" id="jGo" type="submit">ابعت</button>
       <p class="g-msg on" id="jMsg" role="alert"></p>
     </form>
@@ -729,6 +802,7 @@ main.inner{padding-bottom:120px}
   <section class="vw" id="homeView" hidden></section>
   <section class="vw" id="groupsView" hidden></section>
   <section class="vw" id="repView" hidden></section>
+  <section class="vw" id="examsView" hidden></section>
   <div class="gh" id="grpHead" hidden>
     <div class="gh-top"><button class="gh-back" id="ghBack" type="button">› المجاميع</button><div class="gh-t"><b id="ghName"></b><small id="ghSub"></small></div></div>
     <div class="seg gh-seg" id="ghSeg" role="group" aria-label="القسم"><button type="button" data-v="att">الحضور</button><button type="button" data-v="grades">الدرجات</button><button type="button" data-v="pay">الدفع</button></div>
@@ -813,7 +887,7 @@ main.inner{padding-bottom:120px}
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.2</p>
+    <p class="ver">MR-J · v6.3</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -823,6 +897,7 @@ main.inner{padding-bottom:120px}
   <button role="tab" data-view="pay" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg>الدفع</button>
   <button role="tab" data-view="groups" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M15 20a4.5 4.5 0 0 1 6.5-4"/></svg>المجاميع</button>
   <button role="tab" data-view="rep" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>التقارير</button>
+  <button role="tab" data-view="exams" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/><path d="M15 16l1.3 1.3L19 14.6"/></svg>الامتحانات<span class="dbadge" id="bEx" hidden></span></button>
   <button role="tab" data-view="set" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</button>
 </div></nav>
 
@@ -849,6 +924,8 @@ main.inner{padding-bottom:120px}
 </div>
 <div class="modal stum" id="reqModal" hidden><div class="sheet stusheet"><div class="ah"><div><b>طلبات التسجيل</b><span class="ghint">اختار المجموعة ودوس «ضيفه»</span></div><button class="iconbtn x" data-rq="close" type="button" aria-label="قفل">✕</button></div><div class="reqlist" id="reqList"></div></div></div>
 <div class="modal stum" id="stuModal" hidden><div class="sheet stusheet" id="stuSheet" role="dialog" aria-label="بطاقة الطالب"></div></div>
+<div class="modal stum" id="exModal" hidden><div class="sheet stusheet exsheet" id="exSheet" role="dialog" aria-label="تصحيح"></div></div>
+<input type="file" id="exFileIn" accept="application/pdf,.pdf,image/*" multiple hidden>
 <div class="toast" id="toast" hidden></div>
 <div class="snack" id="snack" hidden role="status"><span id="snackTxt"></span><span class="sa" id="snackActs"></span></div>
 <canvas id="cv" width="1080" height="1350" hidden></canvas>
@@ -872,7 +949,7 @@ const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 let month=curKey(), students=new Map(), pays=new Map(), grades=new Map(), att=new Map(), notes={}, openId=null, confirmDel=null, examSel=null, confirmEx=false, db=null, unsubs=[];
 let autoDone=false, editDays=[], moving=null, groups=new Map(), grp=lsGet("grp")||"all", grpMode=null, confirmGrp=false;
 let bkWarn=false, stuLoaded=false, popId=null, popAt=0, setFilled=false, payF="all", qStr="", APP={}, monthDoc=null, snackT=null, pinCb=null;
-let view=["home","pay","groups","rep","att","grades","set"].includes(lsGet("view"))?lsGet("view"):"home", session=todayStr(), repBlob=null, repName="";
+let view=["home","pay","groups","rep","att","grades","set","exams"].includes(lsGet("view"))?lsGet("view"):"home", session=todayStr(), repBlob=null, repName="";
 const queues={};
 const fmt=n=>Number(n||0).toLocaleString("ar-EG",{maximumFractionDigits:1});
 const monthLabel=k=>{const[y,m]=k.split("-").map(Number);return MONTHS[m-1]+" "+y.toLocaleString("ar-EG",{useGrouping:false})};
@@ -1131,7 +1208,7 @@ function sheetHTML(s){
   const i=studentInfo(s),g=groups.get(s.groupId);
   return `<div class="srow" data-id="${s.id}">
     ${s.leftMonth?`<div class="lockbar">ساب من شهر ${shortMonth(s.leftMonth)}<button class="btn soft" data-act="unleave" type="button">رجّعه</button></div>`:""}
-    <div class="sh-top">${avatar(s,1)}<div class="sh-n"><b id="shName">${esc(s.name)}</b><small>${g?esc(g.name)+" · ":""}${fmt(s.fee)} ج في الشهر</small></div><button class="iconbtn x" data-act="close" aria-label="قفل">✕</button></div>
+    <div class="sh-top">${avatar(s,1)}<div class="sh-n"><b id="shName">${esc(s.name)}</b><small>${s.code?`كود <span class="code">${esc(s.code)}</span> · `:""}${g?esc(g.name)+" · ":""}${fmt(s.fee)} ج في الشهر</small></div><button class="iconbtn x" data-act="close" aria-label="قفل">✕</button></div>
     <div id="shLive">${liveHTML(s)}</div>
     <div class="shpay" id="shPay" hidden></div>
     <label class="note">ملاحظة الشهر (بتظهر في التقرير)<textarea id="enote" placeholder="مثلاً: مركز جداً في الحصة">${esc(notes[s.id]||"")}</textarea></label>
@@ -1175,7 +1252,7 @@ function render(){
   renderLock();
   if(view==="set"){$("#hero").hidden=true;$("#meter").style.width="0";renderSettings();return}
   if(VX.includes(view)){$("#hero").hidden=true;if(!stuLoaded){setH($("#"+view+"View"),`<div class="vload"><i></i><i></i><i></i></div>`);return}
-    if(view==="home")renderHome();else if(view==="groups")renderGroupsView();else renderRep();return}
+    if(view==="home")renderHome();else if(view==="groups")renderGroupsView();else if(view==="exams")renderExams();else renderRep();return}
   if(view==="att"||view==="grades")renderGrpHead();
   const box=$("#list");
   if(!stuLoaded){box.innerHTML=Array.from({length:5},()=>`<div class="row skel"><span class="name"><span class="av"></span><span class="nt"><i></i></span></span><span></span><i class="sp"></i></div>`).join("");return}
@@ -1215,7 +1292,7 @@ function render(){
   refreshSheet();
 }
 
-const VX=["home","groups","rep"];/* dashboard-style screens: no list, no header totals */
+const VX=["home","groups","rep","exams"];/* dashboard-style screens: no list, no header totals */
 const tabOf=v=>v==="att"||v==="grades"?"groups":v;
 function moveGlow(){const b=document.querySelector(`.dock button[data-view="${tabOf(view)}"]`),g=$("#dglow"),n=document.querySelector(".dock .dk");if(!b||!g||!n)return;
   const r=b.getBoundingClientRect(),nr=n.getBoundingClientRect();if(!r.width)return;g.style.width=r.width+"px";g.style.right=(nr.right-r.right)+"px";g.style.opacity=1}
@@ -1226,7 +1303,7 @@ function setView(v){
   document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===tabOf(v)));moveGlow();
   const S=v==="set",X=VX.includes(v),G=v==="att"||v==="grades";
   document.documentElement.classList.toggle("vx",X||S);
-  $("#homeView").hidden=v!=="home";$("#groupsView").hidden=v!=="groups";$("#repView").hidden=v!=="rep";$("#grpHead").hidden=!G;
+  $("#homeView").hidden=v!=="home";$("#groupsView").hidden=v!=="groups";$("#repView").hidden=v!=="rep";$("#examsView").hidden=v!=="exams";if(v!=="exams"&&from==="exams"){exEd=null}$("#grpHead").hidden=!G;
   $("#backupBox").hidden=true;$("#examBox").hidden=v!=="grades";confirmEx=false;$("#attBox").hidden=v!=="att";
   $("#setBox").hidden=!S;$("#list").hidden=S||X;$("#grpBar").hidden=S||X||G;$("#tools").hidden=S||X;$("#addOpen").hidden=S||X;$("#payFilter").hidden=v!=="pay";
   if(S||X){$("#hero").hidden=true;$("#lockBar").hidden=true}
@@ -1810,7 +1887,7 @@ async function openSlip(kind,s){
   $("#modal").hidden=false;$("#toast").hidden=true;
 }
 /* ===== backups: one meta doc per backup + parts subcollection; restore rewrites everything ===== */
-const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent"];
+const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent","exams","examKeys","examAccess","subs","examGrades"];
 let bkBusy=false,bkConfirm=null;
 async function snapshotAll(){const out={};for(const c of BK_COLS){const sn=await db.collection(c).get();out[c]=sn.docs.filter(d=>!(c==="settings"&&d.id==="lock")).map(d=>({id:d.id,data:d.data()}))}return out}
 async function makeBackup(kind){
@@ -1917,11 +1994,256 @@ function startApp(){
   db.collection("groups").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{id:d.id,...d.data()}));groups=m;
     if(!autoDone){autoDone=true;autoOpen()}
     render()});
-  db.collection("students").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{id:d.id,...d.data()}));students=m;const first=!stuLoaded;stuLoaded=true;render();if(first)fadeOnce($("#list"))});
+  db.collection("students").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{id:d.id,...d.data()}));students=m;const first=!stuLoaded;stuLoaded=true;render();scheduleCodes();if(first)fadeOnce($("#list"))});
   db.collection("grades").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data()));grades=m;scheduleRender()});
   subMonth();
   requestAnimationFrame(moveGlow);if(document.fonts)document.fonts.ready.then(moveGlow);
 }
+
+/* ===================== v6.2: الامتحانات الأونلاين =====================
+   exams/{id}        public card of a live exam (no answers inside)
+   examKeys/{id}     owner only: right answers, parents' exam codes, who got the message
+   examPages/{id_i}  exam pages as pictures (readable only once the exam opens)
+   examAnsPages/…    the model-answer pages, owner only
+   examAccess/{id_studentCode_examCode}  the "key" a student opens the exam with
+   subs/{same}       the student's answers + timer · subPhotos/… his photos · examGrades/{same} your marks */
+const EX_LET={ar:["أ","ب","ج","د","هـ","و"],en:["a","b","c","d","e","f"],num:["1","2","3","4","5","6"]};
+const EX_T={mcq:"اختيار",tf:"صح وغلط",text:"كتابة",photo:"صورة"};
+let exams=new Map(),exSel=null,exEd=null,exTab="codes",exSubs=new Map(),exGrades=new Map(),exKey=null,exUnsubs=[],exGr=null,exPhotoCache={},exAnsImgs=null,exBusy=false,exConfirm=null,exClock=null;
+const exUrl=id=>appUrl()+"exam.html?e="+id;
+const tsMs=t=>t&&t.toMillis?t.toMillis():Number(t)||0;
+const exTotal=qs=>(qs||[]).reduce((a,q)=>a+(Number(q.m)||0),0);
+const exAuto=q=>q.t==="mcq"||q.t==="tf";
+function exStatus(e){if(!e.live)return"draft";const n=Date.now();if(n<tsMs(e.openAt))return"wait";if(n<=tsMs(e.closeAt))return"live";return e.published?"pub":"done"}
+const EX_ST={draft:["مسودة",""],wait:["مستني ميعاده","warn"],live:["شغال دلوقتي","ok"],done:["خلص · صحّح","bad"],pub:["النتيجة اتسجلت","ok"]};
+function exStudents(e){const G=e.groups||[],m=e.month||curKey();return[...students.values()].filter(s=>G.includes(s.groupId)&&!(s.leftMonth&&m>=s.leftMonth)).sort((a,b)=>(a.name||"").localeCompare(b.name||"","ar"))}
+const exWhen=e=>{const o=tsMs(e.openAt),c=tsMs(e.closeAt);if(!o)return"";const d=new Date(o),hm=t=>{const x=new Date(t);return timeTxt(pad(x.getHours())+":"+pad(x.getMinutes()))};return DAYS[d.getDay()]+" "+fmt(d.getDate())+"/"+fmt(d.getMonth()+1)+"، من "+hm(o)+" لـ "+hm(c)};
+function subState(s,e){if(!s)return"none";if(s.submitted)return"sub";const dl=Math.min(tsMs(s.startedAt)+e.dur*60000,tsMs(e.closeAt))+120000;return Date.now()>dl?"late":"on"}
+const SUB_ST={none:["مدخلش",""],on:["بيحل دلوقتي","warn"],sub:["سلّم","ok"],late:["الوقت خلص","ok"]};
+/* ---------- student codes 0001, 0002 … : given once, never reused ---------- */
+let codeBusy=false,codeT=null;
+function scheduleCodes(){if(ROLE!=="owner")return;clearTimeout(codeT);codeT=setTimeout(fixCodes,1500)}
+async function fixCodes(){if(codeBusy||ROLE!=="owner"||!db)return;const need=[...students.values()].filter(s=>!s.code).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));if(!need.length)return;codeBusy=true;
+  try{const maxNow=Math.max(0,...[...students.values()].map(s=>parseInt(s.code,10)||0));
+    for(const s of need){await fs.runTransaction(async tx=>{const cr=db.doc("settings/codes"),sr=db.doc("students/"+s.id);const c=await tx.get(cr),st=await tx.get(sr);if(!st.exists||st.data().code)return;
+      const next=Math.max(c.exists?Number(c.data().next)||1:1,maxNow+1);tx.set(cr,{next:next+1},{merge:true});tx.update(sr,{code:String(next).padStart(4,"0")})})}}
+  catch(e){}codeBusy=false}
+/* ---------- live data ---------- */
+function examSubs(){if(ROLE!=="owner")return;db.collection("exams").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{id:d.id,...d.data()}));exams=m;if(view==="exams")renderExams();renderExBadge()},()=>{})}
+function renderExBadge(){const b=$("#bEx");if(!b)return;const n=[...exams.values()].filter(e=>exStatus(e)==="live").length;b.hidden=!n;b.textContent=n?"•":""}
+function exOpen(id){exOpen.at=Date.now();exUnsubs.forEach(u=>u());exUnsubs=[];exSel=id;exSubs=new Map();exGrades=new Map();exKey=null;exAnsImgs=null;exConfirm=null;if(!id){renderExams(true);return}
+  exUnsubs.push(db.collection("subs").where("eid","==",id).onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{aid:d.id,...d.data()}));exSubs=m;renderExams()},()=>{}));
+  exUnsubs.push(db.collection("examGrades").where("eid","==",id).onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data()));exGrades=m;renderExams()},()=>{}));
+  exUnsubs.push(db.doc("examKeys/"+id).onSnapshot(d=>{exKey=d.exists?d.data():{};renderExams()},()=>{}));
+  renderExams(true);$("#scroller").scrollTop=0}
+/* ---------- screens ---------- */
+function renderExams(force){const box=$("#examsView");if(!box||view!=="exams")return;if(exEd&&!force)return;
+  clearInterval(exClock);exClock=setInterval(()=>{if(view==="exams"&&!exEd)renderExams();else clearInterval(exClock)},20000);
+  if(exEd){setH(box,exEditHTML());return}
+  if(exSel&&exams.has(exSel)){setH(box,exDetailHTML(exams.get(exSel)));return}
+  if(exSel&&Date.now()-(exOpen.at||0)<8000){setH(box,`<div class="vload"><i></i><i></i><i></i></div>`);return}
+  exSel=null;const L=[...exams.values()].sort((a,b)=>tsMs(b.openAt)-tsMs(a.openAt));
+  let h=`<div class="v-h"><h2>الامتحانات</h2><small>أونلاين بكود ولي الأمر</small></div>
+    <button class="hc-card ex-new" type="button" data-x="new"><span class="ex-ic">＋</span><span><b>امتحان جديد</b><small>ارفع ملف الامتحان PDF وملف الإجابات، وحدد الميعاد والمدة</small></span></button>`;
+  if(!L.length)h+=`<div class="card ex-how"><b>بيشتغل إزاي؟</b><ol><li>تعمل الامتحان وتختار المجموعات والميعاد والمدة.</li><li>البرنامج بيعمل لكل طالب «كود امتحان» وتبعته لولي أمره على واتساب بدوسة.</li><li>الطالب يدخل بكوده الثابت + كود الامتحان، ويحل في الوقت اللي إنت محدده.</li><li>الإجابات بتوصلك هنا، تصححها وتسجّل الدرجات في الشهر.</li></ol></div>`;
+  h+=L.map(e=>{const st=exStatus(e),[t,c]=EX_ST[st],n=exStudents(e).length;
+    return `<button class="hc-card ex-card" type="button" data-x="open" data-id="${esc(e.id)}"><span class="ex-ch"><b>${esc(e.title||"امتحان")}</b><span class="ex-st ${c}">${st==="live"?"<i></i>":""}${t}</span></span>
+      <small>${esc(exWhen(e))}</small><span class="ex-meta"><span>⏱ ${fmt(e.dur)} دقيقة</span><span>📝 ${fmt((e.qs||[]).length)} سؤال، ${fmt(e.total||exTotal(e.qs))} درجة</span><span>👥 ${fmt(n)} طالب</span></span></button>`}).join("");
+  setH(box,h)}
+function exDetailHTML(e){const st=exStatus(e),[t,c]=EX_ST[st],S=exStudents(e),pins=(exKey&&exKey.pins)||{},sent=(exKey&&exKey.sent)||{},noPin=e.live?S.filter(s=>!pins[s.id]||!s.code):[];
+  const subOf=s=>exSubs.get(e.id+"_"+s.code+"_"+pins[s.id]);
+  const started=S.filter(s=>subOf(s)).length,done=S.filter(s=>["sub","late"].includes(subState(subOf(s),e))).length,graded=S.filter(s=>{const x=subOf(s);return x&&exGrades.has(x.aid)}).length;
+  let h=`<div class="ex-hd"><button class="gh-back" type="button" data-x="back">› الامتحانات</button><span class="ex-st ${c}">${st==="live"?"<i></i>":""}${t}</span></div>
+  <div class="card ex-top"><b class="ex-title">${esc(e.title)}</b><small>${esc(exWhen(e))}<br>المدة ${fmt(e.dur)} دقيقة، والدرجة من ${fmt(e.total)}</small>
+    <div class="ex-stats"><span><b>${fmt(S.length)}</b><small>طالب</small></span><span><b>${fmt(started)}</b><small>دخلوا</small></span><span><b class="ok">${fmt(done)}</b><small>سلّموا</small></span><span><b class="holo">${fmt(graded)}</b><small>اتصححوا</small></span></div>
+    <div class="prow">${e.live?`<button class="btn soft sm" type="button" data-x="link">نسخ اللينك</button>`:`<button class="btn sm" type="button" data-x="edit">كمّل وانشر</button>`}${e.live?`<button class="btn soft sm" type="button" data-x="edit">تعديل</button>`:""}<button class="btn soft sm" type="button" data-x="preview">شوف الامتحان</button><button class="del${exConfirm==="del"?" confirm":""}" type="button" data-x="del">${exConfirm==="del"?"متأكد؟ هيتمسح كل حاجة":"مسح الامتحان"}</button></div></div>`;
+  if(!e.live)return h+`<p class="hint">الامتحان لسه مسودة. دوس «كمّل وانشر» عشان تتعمل أكواد أولياء الأمور.</p>`;
+  h+=`<div class="seg ex-tabs" role="group"><button type="button" data-x="tab" data-t="codes" aria-pressed="${exTab==="codes"}">أكواد أولياء الأمور</button><button type="button" data-x="tab" data-t="subs" aria-pressed="${exTab==="subs"}">التسليم والتصحيح${done-graded>0?`<small>${fmt(done-graded)}</small>`:""}</button></div>`;
+  if(exTab==="codes"){
+    if(noPin.length)h+=`<button class="reqbar" type="button" data-x="pins"><span class="rb-i">🔑</span><b>${fmt(noPin.length)} ${noPin.length===1?"طالب جديد":"طلبة جداد"} في المجموعات من غير كود</b><i>اعمل أكوادهم ‹</i></button>`;
+    const ns=S.filter(s=>pins[s.id]&&!sent[s.id]&&s.parentPhone).length;
+    h+=`<p class="hint">دوس «ابعت» جنب كل طالب، هيفتح واتساب ولي الأمر والرسالة جاهزة فيها اللينك والكودين. ${ns?`فاضل ${fmt(ns)} لسه ماتبعتلهمش.`:"كله اتبعت ✓"}</p><div class="bklist">`+S.map(s=>{const p=pins[s.id];if(!p||!s.code)return"";
+      return `<div class="bk ex-row"><div class="ex-rn"><b>${esc(s.name)}</b><small>طالب <span class="code">${esc(s.code)}</span> · امتحان <span class="code">${esc(p)}</span></small></div><div class="bka">${s.parentPhone?`<a class="btn ${sent[s.id]?"soft ":""}sm" href="${waLink(s.parentPhone,exMsg(e,s,p))}" target="_blank" rel="noopener" data-x="sent" data-sid="${esc(s.id)}">${sent[s.id]?"✓ اتبعت":"ابعت"}</a>`:`<button class="btn soft sm" type="button" data-x="copy" data-sid="${esc(s.id)}">نسخ الرسالة</button>`}</div></div>`}).join("")+`</div>`}
+  else{
+    const manual=(e.qs||[]).some(q=>!exAuto(q)),todo=S.filter(s=>{const x=subOf(s);return x&&["sub","late"].includes(subState(x,e))&&!exGrades.has(x.aid)});
+    if(todo.length&&!manual)h+=`<button class="btn" type="button" data-x="autoall">صحّح الـ ${fmt(todo.length)} أوتوماتيك</button>`;
+    h+=`<div class="bklist">`+S.map(s=>{const x=subOf(s),ss=subState(x,e),[lt,lc]=SUB_ST[ss],g=x&&exGrades.get(x.aid),lv=x&&(x.leaves||[]).filter(y=>!y.p).length;
+      return `<div class="bk ex-row${x&&ss!=="on"?" tap":""}"${x&&ss!=="on"?` data-x="grade" data-aid="${esc(x.aid)}"`:""}><div class="ex-rn"><b>${esc(s.name)}</b><small><span class="ex-st sm ${lc}">${lt}</span>${lv?` <span class="ex-lv">⚠ خرج ${fmt(lv)} ${lv===1?"مرة":"مرات"}</span>`:""}</small></div><div class="bka">${g?`<b class="ex-sc">${fmt(g.total)}<small>/${fmt(e.total)}</small></b>`:x&&ss!=="on"?`<span class="btn sm">صحّح</span>`:""}</div></div>`}).join("")+`</div>`;
+    const anyG=exGrades.size;
+    h+=`<div class="card ex-pub"><b>${e.published?"✓ الدرجات اتسجلت في درجات "+esc(shortMonth(e.month)):"تسجيل الدرجات"}</b><p class="hint">${e.published?"لو عدّلت درجة حد بعد كده دوس تاني عشان تتحدّث. الطالب يقدر يشوف درجته من لينك الامتحان.":"بعد ما تصحح، دوس هنا والدرجات تتسجل في «الدرجات» بتاعة شهر "+esc(shortMonth(e.month))+" وتدخل في تقارير أولياء الأمور."}</p>
+      <button class="btn${exConfirm==="pub"?" confirm":""}" type="button" data-x="pub"${anyG?"":" disabled"}>${exConfirm==="pub"?"فيه طلبة سلّموا وماتصححوش، دوس تاني":e.published?"حدّث الدرجات":"سجّل الدرجات"}</button></div>`}
+  return h}
+function exMsg(e,s,pin){const tch=APP.teacher||THEME.teacher;return `أهلاً ولي أمر الطالب ${s.name} 👋
+امتحان «${e.title}» مع ${tch}
+📅 ${exWhen(e)}
+⏱ مدته ${fmt(e.dur)} دقيقة من أول ما يبدأ
+
+🔗 لينك الامتحان:
+${exUrl(e.id)}
+
+👤 كود الطالب: ${s.code}
+🔑 كود الامتحان: ${pin}
+
+من فضلك اكتب كود الامتحان بنفسك وإنت جنبه، وخليك معاه لحد ما يسلّم 🙏`}
+/* ---------- editor ---------- */
+function exNew(){const d=new Date();d.setDate(d.getDate()+1);const ds=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  return{id:db.collection("exams").doc().id,isNew:true,title:"",groups:grp&&groups.has(grp)?[grp]:[],date:ds,from:"19:00",to:"21:00",dur:45,letters:"ar",maxLeaves:3,qs:[],key:{},qPages:null,aPages:null,nQ:0,nA:0,live:false,locked:false,add:{t:"mcq",n:5,m:1,o:4}}}
+async function exEditStart(e){if(!e){exEd=exNew();renderExams(true);return}
+  const o=new Date(tsMs(e.openAt)),c=new Date(tsMs(e.closeAt)),hm=x=>pad(x.getHours())+":"+pad(x.getMinutes());
+  let key={};try{const k=await db.doc("examKeys/"+e.id).get();key=(k.exists&&k.data().key)||{}}catch(x){}
+  const started=e.live&&[...(exSel===e.id?exSubs.values():[])].length>0;
+  exEd={id:e.id,isNew:false,title:e.title||"",groups:[...(e.groups||[])],date:o.getFullYear()+"-"+pad(o.getMonth()+1)+"-"+pad(o.getDate()),from:hm(o),to:hm(c),dur:e.dur||45,letters:e.letters||"ar",maxLeaves:Number.isFinite(+e.maxLeaves)?+e.maxLeaves:3,qs:JSON.parse(JSON.stringify(e.qs||[])),key:{...key},qPages:null,aPages:null,nQ:e.pages||0,nA:e.ansPages||0,live:!!e.live,locked:started,add:{t:"mcq",n:5,m:1,o:4}};
+  renderExams(true);$("#scroller").scrollTop=0}
+function exEditHTML(){const E=exEd,L=EX_LET[E.letters]||EX_LET.ar,lock=E.locked,tot=exTotal(E.qs),gl=grpList();
+  const qRow=(q,i)=>`<div class="exq" data-i="${i}"><input class="exq-l" data-qf="l" value="${esc(q.l||String(i+1))}" aria-label="رقم السؤال"${lock?" disabled":""}><span class="tag">${EX_T[q.t]}</span>
+    ${q.t==="mcq"?`<select data-qf="o"${lock?" disabled":""}>${[2,3,4,5,6].map(n=>`<option value="${n}"${(q.o||4)===n?" selected":""}>${fmt(n)} اختيارات</option>`).join("")}</select>`:""}
+    <label class="exq-m"><input type="number" inputmode="decimal" min="0" step="0.5" data-qf="m" value="${esc(q.m)}"${lock?" disabled":""}><small>درجة</small></label>${lock?"":`<button class="exq-x" type="button" data-x="qdel" aria-label="مسح السؤال">✕</button>`}
+    ${exAuto(q)?`<div class="exq-k">${(q.t==="tf"?["✓ صح","✗ غلط"]:L.slice(0,q.o||4)).map((x,k)=>`<button type="button" class="chip${E.key[i]===k?" on":""}" data-x="key" data-k="${k}"${lock?" disabled":""}>${x}</button>`).join("")}${E.key[i]==null?`<small class="exq-need">دوس الإجابة الصح</small>`:""}</div>`:`<small class="exq-man">${q.t==="text"?"الطالب بيكتب الإجابة، وإنت بتصححها":"الطالب بيحل على ورقة ويصوّرها"}</small>`}</div>`;
+  const file=(k,n,lbl,sub)=>`<button class="ex-file${n?" ok":""}" type="button" data-x="file" data-k="${k}"${lock&&k==="q"?" disabled":""}><span class="ex-fi">${n?"✓":k==="q"?"📄":"✅"}</span><span><b>${lbl}</b><small>${n?fmt(n)+" "+(n===1?"صفحة":"صفحات")+"، دوس لو عايز تغيّره":sub}</small></span></button>`;
+  return `<div class="ex-hd"><button class="gh-back" type="button" data-x="cancel">› رجوع</button><b>${E.isNew?"امتحان جديد":"تعديل الامتحان"}</b></div>
+  <section class="card"><label class="af">اسم الامتحان<input data-f="title" value="${esc(E.title)}" placeholder="مثلاً: امتحان الوحدة الأولى"></label>
+    <div class="af">المجموعات اللي هتمتحن<div class="dayChips">${gl.length?gl.map(g=>`<button type="button" class="chip" data-x="grp" data-g="${esc(g.id)}" aria-pressed="${E.groups.includes(g.id)}">${esc(g.name)}${multiYear()?" · "+YSHORT[yearOfG(g)]:""}</button>`).join(""):`<span class="hint">اعمل مجموعات الأول من «المجاميع»</span>`}</div></div>
+    <div class="fields"><label>اليوم<input type="date" data-f="date" value="${esc(E.date)}"></label><label>مدة الامتحان (دقيقة)<input type="number" inputmode="numeric" min="5" max="300" data-f="dur" value="${esc(E.dur)}"></label>
+      <label>يفتح الساعة<input type="time" data-f="from" value="${esc(E.from)}"></label><label>يقفل الساعة<input type="time" data-f="to" value="${esc(E.to)}"></label></div>
+    <p class="hint">الطالب يبدأ في أي وقت بين الساعتين وياخد المدة كاملة، بس لازم يخلّص قبل ما الامتحان يقفل.</p>
+    <div class="af">لو الطالب خرج من الامتحان<div class="seg" role="group">${[[3,"يتسلّم بعد ٣ مرات"],[5,"بعد ٥"],[0,"مايتسلّمش"]].map(([v,l])=>`<button type="button" data-x="maxl" data-v="${v}" aria-pressed="${+E.maxLeaves===v}">${l}</button>`).join("")}</div></div>
+    <p class="hint">كل مرة يخرج من الصفحة الامتحان بيتقفل، ومش بيفتح غير لما ولي الأمر يكتب كود الامتحان.${+E.maxLeaves?" ولو خرج "+fmt(E.maxLeaves)+" مرات بيتسلّم لوحده.":""}</p></section>
+  <section class="card"><b>ملفات الامتحان</b>${file("q",E.nQ,"ملف الامتحان","PDF أو صور · الطالب بيشوفه زي ما هو")}${file("a",E.nA,"الإجابات النموذجية","اختياري · محدش بيشوفه غيرك، بيظهرلك وإنت بتصحح")}<span class="hint" id="exProg"></span></section>
+  <section class="card"><div class="ex-qh"><b>ورقة الإجابة</b><span class="tag">${fmt(E.qs.length)} سؤال، ${fmt(tot)} درجة</span></div>
+    ${lock?`<p class="hint">⚠ فيه طلبة بدأوا الامتحان، فمش هينفع تغيّر الأسئلة أو ملف الامتحان. تقدر تعدّل الميعاد والمدة بس.</p>`:`<p class="hint">ضيف الأسئلة بنفس ترتيبها في الملف. مثلاً: ١٠ اختيار، بعدين ٥ صح وغلط، بعدين سؤالين كتابة.</p>
+    <div class="af">شكل الاختيارات<div class="seg" role="group">${[["ar","أ ب ج د"],["en","a b c d"],["num","1 2 3 4"]].map(([k,l])=>`<button type="button" data-x="let" data-l="${k}" aria-pressed="${E.letters===k}">${l}</button>`).join("")}</div></div>
+    <div class="ex-add"><select data-a="t">${Object.entries(EX_T).map(([k,v])=>`<option value="${k}"${E.add.t===k?" selected":""}>${v}</option>`).join("")}</select><label>عدد<input type="number" inputmode="numeric" min="1" max="60" data-a="n" value="${E.add.n}"></label><label>درجة كل سؤال<input type="number" inputmode="decimal" min="0" step="0.5" data-a="m" value="${E.add.m}"></label><button class="btn" type="button" data-x="qadd">ضيف</button></div>`}
+    <div class="exqs">${E.qs.map(qRow).join("")||`<p class="hint">مفيش أسئلة لسه.</p>`}</div></section>
+  <div class="prow ex-save"><button class="btn big" type="button" data-x="save" data-p="1">${E.live?"حفظ التعديل":"نشر الامتحان"}</button>${E.live?"":`<button class="btn soft" type="button" data-x="save" data-p="0">حفظ كمسودة</button>`}</div>`}
+/* PDF / pictures → page pictures */
+async function exPdfLib(){if(window.pdfjsLib)return window.pdfjsLib;await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";return window.pdfjsLib}
+function exJpeg(c){let q=.74,d=c.toDataURL("image/jpeg",q);while(d.length>760000&&q>.3){q-=.08;d=c.toDataURL("image/jpeg",q)}return d}
+async function exFilesToPages(files,onp){const out=[];
+  for(const f of files){
+    if(/pdf/i.test(f.type)||/\.pdf$/i.test(f.name)){const lib=await exPdfLib(),pdf=await lib.getDocument({data:await f.arrayBuffer()}).promise;
+      for(let i=1;i<=pdf.numPages&&out.length<30;i++){const pg=await pdf.getPage(i),v0=pg.getViewport({scale:1}),v=pg.getViewport({scale:Math.min(2.5,1240/v0.width)});
+        const c=document.createElement("canvas");c.width=Math.round(v.width);c.height=Math.round(v.height);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+        await pg.render({canvasContext:x,viewport:v}).promise;out.push(exJpeg(c));onp&&onp(out.length,pdf.numPages)}}
+    else if(/^image\//.test(f.type)){const img=await new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{URL.revokeObjectURL(u);res(im)};im.onerror=rej;im.src=u});
+      const r=Math.min(1,1400/img.width),c=document.createElement("canvas");c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);out.push(exJpeg(c));onp&&onp(out.length,files.length)}}
+  return out}
+function exPick(k){const inp=$("#exFileIn");inp.value="";inp.onchange=async()=>{const F=[...inp.files];if(!F.length)return;const pr=$("#exProg");if(pr)pr.textContent="بيجهّز الملف…";
+  try{const P=await exFilesToPages(F,(i,n)=>{const p=$("#exProg");if(p)p.textContent=`بيجهّز صفحة ${fmt(i)} من ${fmt(n)}…`});if(!P.length)throw 0;
+    if(k==="q"){exEd.qPages=P;exEd.nQ=P.length}else{exEd.aPages=P;exEd.nA=P.length}renderExams(true);toast("✓ "+fmt(P.length)+" "+(P.length===1?"صفحة":"صفحات"))}
+  catch(e){const p=$("#exProg");if(p)p.textContent="";toast("ماقدرتش أفتح الملف، اتأكد إنه PDF أو صور")}};inp.click()}
+async function exWritePages(col,id,P,oldN){for(let i=0;i<P.length;i++){const p=$("#exProg");if(p)p.textContent=`بيرفع صفحة ${fmt(i+1)} من ${fmt(P.length)}…`;await db.doc(col+"/"+id+"_"+i).set({eid:id,i,data:P[i]})}
+  for(let i=P.length;i<(oldN||0);i++)try{await db.doc(col+"/"+id+"_"+i).delete()}catch(e){}}
+const exPin=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return String(100000+a[0]%900000)};
+async function exMakePins(e){/* every student in the exam groups gets his own 6-digit exam code */
+  await fixCodes();const k=(await db.doc("examKeys/"+e.id).get()).data()||{},pins={...(k.pins||{})},S=exStudents(e).filter(s=>s.code);let n=0;
+  for(const s of S){if(pins[s.id])continue;const p=exPin();await db.doc("examAccess/"+e.id+"_"+s.code+"_"+p).set({eid:e.id,sid:s.id,name:s.name,code:s.code});pins[s.id]=p;n++}
+  await db.doc("examKeys/"+e.id).set({pins},{merge:true});return n}
+async function exSave(pub){if(exBusy)return;const E=exEd;
+  const err=m=>{toast(m);return false};
+  if(!E.title.trim())return err("اكتب اسم الامتحان");
+  if(pub||E.live){if(!E.groups.length)return err("اختار مجموعة واحدة على الأقل");
+    if(!E.nQ)return err("ارفع ملف الامتحان");if(!E.qs.length)return err("ضيف أسئلة ورقة الإجابة");
+    const miss=E.qs.findIndex((q,i)=>exAuto(q)&&E.key[i]==null);if(miss>=0)return err("حدد الإجابة الصح للسؤال "+(E.qs[miss].l||miss+1))}
+  const o=new Date(E.date+"T"+(E.from||"00:00")),c=new Date(E.date+"T"+(E.to||"23:59")),dur=Math.round(Number(E.dur)||0);
+  if(isNaN(o)||isNaN(c))return err("اكتب اليوم والساعة");if(c<=o)return err("ساعة القفل لازم تبقى بعد ساعة الفتح");if(dur<5)return err("المدة ٥ دقايق على الأقل");
+  if(pub&&!E.live&&c.getTime()<Date.now())return err("ميعاد القفل عدّى، غيّر اليوم أو الساعة");
+  exBusy=true;document.querySelectorAll("[data-x=save]").forEach(b=>b.disabled=true);
+  try{const old=exams.get(E.id)||{},TS=firebase.firestore.Timestamp;
+    if(E.qPages)await exWritePages("examPages",E.id,E.qPages,old.pages);
+    if(E.aPages)await exWritePages("examAnsPages",E.id,E.aPages,old.ansPages);
+    const qs=E.qs.map((q,i)=>{const x={t:q.t,m:Number(q.m)||0,l:String(q.l||i+1).slice(0,8)};if(q.t==="mcq")x.o=q.o||4;return x}),key={};qs.forEach((q,i)=>{if(exAuto(q)&&E.key[i]!=null)key[i]=E.key[i]});
+    const live=!!(pub||E.live),m=E.date.slice(0,7);
+    const doc={title:E.title.trim().slice(0,80),groups:E.groups,openAt:TS.fromMillis(o.getTime()),closeAt:TS.fromMillis(c.getTime()),dur,letters:E.letters,maxLeaves:+E.maxLeaves||0,qs,total:exTotal(qs),pages:E.nQ,ansPages:E.nA,month:m,live,teacher:APP.teacher||THEME.teacher,subject:APP.subject||THEME.subject,published:!!old.published,createdAt:old.createdAt||Date.now()};
+    if(E.locked){delete doc.qs;delete doc.total;delete doc.pages}
+    await db.doc("exams/"+E.id).set(doc,{merge:true});
+    if(!E.locked)await db.doc("examKeys/"+E.id).set({key},{merge:true});
+    let n=0;if(live){const p=$("#exProg");if(p)p.textContent="بيعمل أكواد أولياء الأمور…";n=await exMakePins({...old,...doc,id:E.id})}
+    exEd=null;exBusy=false;toast(live?(E.live?"✓ اتحفظ التعديل":"✓ الامتحان اتنشر"):"✓ اتحفظ كمسودة");exTab="codes";exOpen(E.id)}
+  catch(x){exBusy=false;document.querySelectorAll("[data-x=save]").forEach(b=>b.disabled=false);const p=$("#exProg");if(p)p.textContent="";toast("ماتحفظش، اتأكد من النت وجرّب تاني")}}
+async function exDelete(e){toast("بيمسح الامتحان…");
+  try{const del=async(col,field,val)=>{const sn=await db.collection(col).where(field,"==",val).get();for(let i=0;i<sn.docs.length;i+=20)await Promise.all(sn.docs.slice(i,i+20).map(d=>db.doc(col+"/"+d.id).delete()))};
+    await del("subPhotos","eid",e.id);await del("subs","eid",e.id);await del("examGrades","eid",e.id);await del("examAccess","eid",e.id);
+    for(let i=0;i<(e.pages||0);i++)await db.doc("examPages/"+e.id+"_"+i).delete();for(let i=0;i<(e.ansPages||0);i++)await db.doc("examAnsPages/"+e.id+"_"+i).delete();
+    await db.doc("examKeys/"+e.id).delete();await db.doc("exams/"+e.id).delete();exOpen(null);toast("اتمسح الامتحان")}
+  catch(x){toast("ماتمسحش كله، جرّب تاني")}}
+/* ---------- grading ---------- */
+function exAutoMarks(e,sub,key){const M={};(e.qs||[]).forEach((q,i)=>{const a=(sub.answers||{})[i];if(exAuto(q))M[i]=a!=null&&key[i]!=null&&Number(a)===Number(key[i])?Number(q.m)||0:0});return M}
+async function exGrade(aid){const e=exams.get(exSel),s=exSubs.get(aid);if(!e||!s)return;const key=(exKey&&exKey.key)||{},g=exGrades.get(aid);
+  exGr={aid,marks:{...exAutoMarks(e,s,key),...((g&&g.marks)||{})},note:(g&&g.note)||""};drawGrader();$("#exModal").hidden=false;$("#exSheet").scrollTop=0;
+  if(!exPhotoCache[aid]&&(e.qs||[]).some(q=>q.t==="photo")){try{const sn=await db.collection("subPhotos").where("acc","==",aid).get();const P={};sn.docs.forEach(d=>{const x=d.data();P[x.q+"_"+x.n]=x.data});exPhotoCache[aid]=P}catch(x){exPhotoCache[aid]={}}if(exGr&&exGr.aid===aid)drawGrader()}}
+function drawGrader(){const e=exams.get(exSel),s=exSubs.get(exGr.aid);if(!e||!s)return;const key=(exKey&&exKey.key)||{},L=EX_LET[e.letters]||EX_LET.ar,A=s.answers||{},P=exPhotoCache[exGr.aid];
+  const tot=(e.qs||[]).reduce((a,q,i)=>a+(Number(exGr.marks[i])||0),0),st=tsMs(s.startedAt),en=s.submitted?tsMs(s.submittedAt):Math.min(st+e.dur*60000,tsMs(e.closeAt)),mins=Math.round((en-st)/60000);
+  const ansTxt=(q,a)=>q.t==="tf"?(a===0?"✓ صح":a===1?"✗ غلط":""):q.t==="mcq"?(a!=null?L[a]:""):"";
+  const rows=(e.qs||[]).map((q,i)=>{const a=A[i],m=exGr.marks[i];let body="";
+    if(exAuto(q)){const ok=a!=null&&Number(a)===Number(key[i]);body=`<div class="gq-a"><span class="gq-ans ${a==null?"":ok?"ok":"bad"}">${a==null?"ماجاوبش":esc(ansTxt(q,a))}</span>${a!=null&&!ok?`<small>الصح: ${esc(ansTxt(q,key[i]))}</small>`:""}</div>`}
+    else if(q.t==="text")body=`<pre class="gq-txt" dir="auto">${a?esc(a):`<span class="muted">ماكتبش حاجة</span>`}</pre>`;
+    else{const p=(a&&a.p)||[];body=p.length?`<div class="gq-ph">${p.map(n=>P?P[i+"_"+n]?`<img src="${P[i+"_"+n]}" alt="صورة" data-x="zoomimg">`:"":`<span class="vload"><i></i><i></i><i></i></span>`).join("")}</div>`:`<span class="muted">مارفعش صور</span>`}
+    return `<div class="gq"><div class="gq-h"><span class="q-n">${esc(q.l||i+1)}</span><span class="tag">${EX_T[q.t]}</span><label class="gq-m"><input type="number" inputmode="decimal" min="0" max="${q.m}" step="0.5" data-gm="${i}" value="${m==null?"":m}" placeholder="—"><small>/ ${fmt(q.m)}</small></label></div>${body}</div>`}).join("");
+  const lv=(s.leaves||[]).filter(x=>!x.p),ids=exOrder(),pos=ids.indexOf(exGr.aid),forced=s.submitted&&+e.maxLeaves&&lv.length>=+e.maxLeaves;
+  $("#exSheet").innerHTML=`<div class="ah"><div><b>${esc(s.name)}</b><span class="ghint">${forced?`<b class="ex-lv">اتسلّم لوحده بسبب الخروج</b>`:s.submitted?"سلّم":"الوقت خلص"} بعد ${fmt(mins)} دقيقة${lv.length?` · <b class="ex-lv">⚠ خرج من الصفحة ${fmt(lv.length)} ${lv.length===1?"مرة":"مرات"} (${fmt(Math.round(lv.reduce((a,x)=>a+(x.s||0),0)/60*10)/10)} دقيقة)</b>`:""}</span></div><button class="iconbtn x" data-x="gclose" type="button" aria-label="قفل">✕</button></div>
+    ${e.ansPages?`<button class="btn soft sm" type="button" data-x="ans">${exAnsImgs&&exAnsImgs.show?"اخفي الإجابات النموذجية":"📖 الإجابات النموذجية"}</button>${exAnsImgs&&exAnsImgs.show?`<div class="gq-ans-pages">${exAnsImgs.list.map(d=>d?`<img src="${d}" alt="" data-x="zoomimg">`:`<span class="vload"><i></i><i></i><i></i></span>`).join("")}</div>`:""}`:""}
+    <div class="gqs">${rows}</div>
+    <label class="af">ملاحظة (اختياري)<input data-gn value="${esc(exGr.note)}" placeholder="مثلاً: ممتاز في الكود"></label>
+    <div class="g-foot"><b class="ex-sc big" id="gTot">${fmt(tot)}<small>/${fmt(e.total)}</small></b><button class="btn" type="button" data-x="gsave">حفظ${pos>=0&&pos<ids.length-1?" واللي بعده ‹":""}</button></div>`}
+function exOrder(){const e=exams.get(exSel);if(!e)return[];const pins=(exKey&&exKey.pins)||{};return exStudents(e).map(s=>e.id+"_"+s.code+"_"+pins[s.id]).filter(a=>{const x=exSubs.get(a);return x&&subState(x,e)!=="on"})}
+async function exSaveGrade(){const e=exams.get(exSel),s=exSubs.get(exGr.aid);if(!e||!s)return;const marks={};(e.qs||[]).forEach((q,i)=>{const v=exGr.marks[i];marks[i]=Math.max(0,Math.min(Number(q.m)||0,Number(v)||0))});
+  const total=Math.round(Object.values(marks).reduce((a,b)=>a+b,0)*10)/10;
+  try{await db.doc("examGrades/"+exGr.aid).set({eid:e.id,sid:s.sid,name:s.name,marks,total,outOf:e.total,note:exGr.note||"",at:Date.now()});toast("✓ "+s.name+": "+fmt(total)+" من "+fmt(e.total));
+    const ids=exOrder(),pos=ids.indexOf(exGr.aid),next=ids.slice(pos+1).find(a=>!exGrades.has(a))||ids[pos+1];if(next)exGrade(next);else{$("#exModal").hidden=true;exGr=null}}
+  catch(x){toast("ماتحفظش، جرّب تاني")}}
+async function exAutoAll(){const e=exams.get(exSel);if(!e)return;const key=(exKey&&exKey.key)||{};let n=0;
+  for(const a of exOrder()){if(exGrades.has(a))continue;const s=exSubs.get(a),marks=exAutoMarks(e,s,key),total=Object.values(marks).reduce((x,y)=>x+y,0);
+    try{await db.doc("examGrades/"+a).set({eid:e.id,sid:s.sid,name:s.name,marks,total,outOf:e.total,note:"",at:Date.now()});n++}catch(x){}}
+  toast("✓ اتصحح "+fmt(n)+" طالب")}
+async function exPublish(){const e=exams.get(exSel);if(!e)return;const S=exStudents(e),pins=(exKey&&exKey.pins)||{};
+  const pend=S.filter(s=>{const x=exSubs.get(e.id+"_"+s.code+"_"+pins[s.id]);return x&&subState(x,e)!=="none"&&!exGrades.has(x.aid)}).length;
+  if(pend&&exConfirm!=="pub"){exConfirm="pub";renderExams();setTimeout(()=>{if(exConfirm==="pub"){exConfirm=null;renderExams()}},3500);return}exConfirm=null;
+  const scores={};exGrades.forEach(g=>{if(g.sid)scores[g.sid]=g.total});
+  const m=e.month||curKey(),cur=grades.get(m),list=examsOf(cur).map(x=>({...x})),id="on-"+e.id,ex={id,name:e.title,outOf:e.total,scores},at=list.findIndex(x=>x.id===id);
+  if(at>=0)list[at]=ex;else list.push(ex);
+  try{saveDoc({month:m,exams:list});await db.doc("exams/"+e.id).update({published:true});toast("✓ الدرجات اتسجلت في درجات "+shortMonth(m))}catch(x){toast("ماتسجلتش، جرّب تاني")}}
+async function exLoadAns(){const e=exams.get(exSel);if(!e)return;if(exAnsImgs&&exAnsImgs.eid===e.id){exAnsImgs.show=!exAnsImgs.show;drawGrader();return}
+  exAnsImgs={eid:e.id,show:true,list:Array(e.ansPages).fill("")};drawGrader();
+  for(let i=0;i<e.ansPages;i++){try{const d=await db.doc("examAnsPages/"+e.id+"_"+i).get();exAnsImgs.list[i]=d.exists?d.data().data:""}catch(x){}if(exGr)drawGrader()}}
+async function exPreview(e){const n=e.pages||0;$("#exSheet").innerHTML=`<div class="ah"><div><b>${esc(e.title)}</b><span class="ghint">زي ما الطالب هيشوفه</span></div><button class="iconbtn x" data-x="gclose" type="button" aria-label="قفل">✕</button></div><div class="gq-ans-pages" id="exPv">${Array.from({length:n},()=>`<span class="vload"><i></i><i></i><i></i></span>`).join("")}</div>`;exGr=null;$("#exModal").hidden=false;
+  for(let i=0;i<n;i++){try{const d=await db.doc("examPages/"+e.id+"_"+i).get();const box=$("#exPv");if(!box)return;box.children[i].outerHTML=d.exists?`<img src="${d.data().data}" alt="" data-x="zoomimg">`:`<span class="hint">الصفحة مش موجودة</span>`}catch(x){}}}
+/* ---------- events ---------- */
+$("#examsView").addEventListener("click",async ev=>{const b=ev.target.closest("[data-x]");if(!b)return;const x=b.dataset.x,e=exSel&&exams.get(exSel);
+  if(x==="new"){exEditStart(null);return}
+  if(x==="open"){exTab="codes";exOpen(b.dataset.id);return}
+  if(x==="back"){exOpen(null);return}
+  if(x==="cancel"){const wasNew=exEd&&exEd.isNew&&!exams.has(exEd.id);exEd=null;if(wasNew)exOpen(null);else renderExams(true);return}
+  if(x==="tab"){exTab=b.dataset.t;renderExams();return}
+  if(x==="edit"&&e){exEditStart(e);return}
+  if(x==="preview"&&e){exPreview(e);return}
+  if(x==="link"&&e){try{await navigator.clipboard.writeText(exUrl(e.id));toast("اللينك اتنسخ")}catch(y){toast(exUrl(e.id))}return}
+  if(x==="del"&&e){if(exConfirm!=="del"){exConfirm="del";renderExams();setTimeout(()=>{if(exConfirm==="del"){exConfirm=null;renderExams()}},3500);return}exConfirm=null;exDelete(e);return}
+  if(x==="pins"&&e){b.disabled=true;try{const n=await exMakePins(e);toast("✓ اتعمل "+fmt(n)+" كود")}catch(y){toast("ماتعملتش، جرّب تاني")}return}
+  if(x==="sent"&&e){const sid=b.dataset.sid;setTimeout(()=>db.doc("examKeys/"+e.id).set({sent:{[sid]:true}},{merge:true}).catch(()=>{}),300);return}
+  if(x==="copy"&&e){const s=students.get(b.dataset.sid),p=((exKey&&exKey.pins)||{})[b.dataset.sid];if(!s)return;try{await navigator.clipboard.writeText(exMsg(e,s,p));toast("الرسالة اتنسخت · مفيش رقم ولي أمر للطالب ده")}catch(y){toast("مفيش رقم ولي أمر، ضيفه من بطاقة الطالب")}return}
+  if(x==="grade"){exGrade(b.dataset.aid);return}
+  if(x==="autoall"){b.disabled=true;await exAutoAll();return}
+  if(x==="pub"){exPublish();return}
+  if(!exEd)return;const E=exEd;
+  if(x==="grp"){const g=b.dataset.g;E.groups=E.groups.includes(g)?E.groups.filter(y=>y!==g):[...E.groups,g];b.setAttribute("aria-pressed",E.groups.includes(g));return}
+  if(x==="let"){E.letters=b.dataset.l;renderExams(true);return}
+  if(x==="maxl"){E.maxLeaves=+b.dataset.v;renderExams(true);return}
+  if(x==="file"){exPick(b.dataset.k);return}
+  if(x==="qadd"){const n=Math.max(1,Math.min(60,Math.round(E.add.n)||1)),m=Number(E.add.m);for(let i=0;i<n;i++){const q={t:E.add.t,m:isNaN(m)?1:m,l:String(E.qs.length+1)};if(q.t==="mcq")q.o=E.add.o||4;E.qs.push(q)}renderExams(true);return}
+  const row=b.closest(".exq"),i=row?+row.dataset.i:-1;
+  if(x==="qdel"&&i>=0){E.qs.splice(i,1);const k={};Object.keys(E.key).forEach(j=>{j=+j;if(j<i)k[j]=E.key[j];else if(j>i)k[j-1]=E.key[j]});E.key=k;renderExams(true);return}
+  if(x==="key"&&i>=0){const k=+b.dataset.k;E.key[i]=E.key[i]===k?null:k;if(E.key[i]==null)delete E.key[i];renderExams(true);return}
+  if(x==="save"){exSave(b.dataset.p==="1");return}
+});
+$("#examsView").addEventListener("input",ev=>{if(!exEd)return;const t=ev.target,E=exEd;
+  if(t.dataset.f){E[t.dataset.f]=t.value;return}
+  if(t.dataset.a){E.add[t.dataset.a]=t.dataset.a==="t"?t.value:Number(t.value);return}
+  const row=t.closest(".exq");if(row&&t.dataset.qf){const q=E.qs[+row.dataset.i];if(t.dataset.qf==="o"){q.o=+t.value;Object.keys(E.key).forEach(j=>{if(+j===+row.dataset.i&&E.key[j]>=q.o)delete E.key[j]});renderExams(true)}else if(t.dataset.qf==="m")q.m=Number(t.value);else q.l=t.value}});
+$("#examsView").addEventListener("change",ev=>{if(!exEd)return;const t=ev.target;if(t.dataset.a==="t"){exEd.add.t=t.value;exEd.add.m=t.value==="text"?2:t.value==="photo"?5:1;exEd.add.n=t.value==="mcq"||t.value==="tf"?5:1;renderExams(true)}});
+$("#exModal").addEventListener("click",ev=>{const b=ev.target.closest("[data-x]");if(ev.target.id==="exModal"||(b&&b.dataset.x==="gclose")){$("#exModal").hidden=true;exGr=null;return}if(!b)return;
+  if(b.dataset.x==="gsave")exSaveGrade();else if(b.dataset.x==="ans")exLoadAns();else if(b.dataset.x==="zoomimg")b.classList.toggle("zoomed")});
+$("#exModal").addEventListener("input",ev=>{if(!exGr)return;const t=ev.target;if(t.dataset.gm!=null){exGr.marks[t.dataset.gm]=t.value===""?null:Number(t.value);const e=exams.get(exSel);const tot=(e.qs||[]).reduce((a,q,i)=>a+(Number(exGr.marks[i])||0),0);$("#gTot").innerHTML=`${fmt(tot)}<small>/${fmt(e.total)}</small>`}else if(t.dataset.gn!=null)exGr.note=t.value});
+
 /* ================= CLOUD: Firebase connection, sign-in, assistant, sign-up link =================
    To copy this app for another teacher: change FIREBASE_CONFIG (his own Firebase project) and THEME above. */
 const FIREBASE_CONFIG={apiKey:"AIzaSyC_6SZm-yuApkiq5SBsGRgu5gJzkuJNZyE",authDomain:"mr-j-db42a.firebaseapp.com",projectId:"mr-j-db42a",storageBucket:"mr-j-db42a.firebasestorage.app",messagingSenderId:"82946343696",appId:"1:82946343696:web:c4c828357e43ea58cb5b95"};
@@ -2014,6 +2336,7 @@ $("#staffOut").onclick=()=>{if($("#staffOut").dataset.c){signOutAll();return}$("
 /* owner-only live data: sign-up requests and assistants */
 function ownerSubs(){
   if(ROLE!=="owner")return;
+  examSubs();
   db.collection("requests").onSnapshot(sn=>{reqs=sn.docs.map(d=>{const x=d.data()||{};let t=0;try{t=x.at&&x.at.toMillis?x.at.toMillis():0}catch(e){}return{id:d.id,t,...x}}).sort((a,b)=>b.t-a.t);renderReqBar();if(!$("#reqModal").hidden)renderReqs()},()=>{});
   fs.collection("staff").onSnapshot(sn=>{staffList=sn.docs.map(d=>({uid:d.id,...d.data()})).filter(x=>x.active!==false).sort((a,b)=>(a.at||0)-(b.at||0));renderStaff()},()=>{});
 }
@@ -2118,12 +2441,14 @@ async function joinBoot(){
   try{await loadFirebase(false)}catch(e){$("#jMsg").textContent="مفيش نت. افتح اللينك تاني لما النت يرجع.";return}
   let X={};try{const a=await fs.doc(ACC.base+"/settings/app").get();if(a.exists){X=a.data()||{};$("#jTeacher").textContent=(X.teacher||THEME.teacher)+" · "+(X.subject||THEME.subject)}}catch(e){}
   let G=[];try{const sn=await fs.collection(ACC.base+"/groups").get();G=sn.docs.map(d=>({id:d.id,...d.data()})).filter(g=>!g.hidden)}catch(e){}
+  const fill=()=>{const y=$("#jYear").value,L=G.filter(g=>yearOfG(g)===y);$("#jGrpWrap").hidden=!L.length;$("#jGrp").innerHTML=`<option value="">أي معاد يناسبني</option>`+L.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}${schedTxt(g)?" · "+esc(schedTxt(g)):""}</option>`).join("")};
+  $("#jYear").onchange=fill;fill();
   $("#jForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("#jName").value.trim().replace(/\s+/g," "),phone=$("#jPhone").value.replace(/\D/g,""),pp=$("#jParent").value.replace(/\D/g,"");
     if(name.split(" ").length<2){$("#jMsg").textContent="اكتب اسمك الثنائي على الأقل";$("#jName").focus();return}
     if(phone.length<10){$("#jMsg").textContent="اكتب رقم موبايلك صح";$("#jPhone").focus();return}
     if(pp.length<10){$("#jMsg").textContent="اكتب رقم ولي الأمر صح";$("#jParent").focus();return}
     const b=$("#jGo");b.disabled=true;$("#jMsg").textContent="";
-    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};
+    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};if($("#jGrp").value)d.groupId=$("#jGrp").value;
     try{await fs.collection(ACC.base+"/requests").add(d);$("#jForm").hidden=true;$("#jDone").hidden=false;$("#jDoneName").textContent=name.split(" ")[0];renderIntro(X,G.filter(g=>yearOfG(g)===d.year),d.year);$("#join").scrollTop=0}
     catch(x){$("#jMsg").textContent="ماتبعتش. اتأكد من النت وجرّب تاني.";b.disabled=false}});
 }
