@@ -689,6 +689,7 @@ nav.tabbar.dock button{font-size:10.5px;white-space:nowrap}
 .ex-sc{font-size:18px;font-weight:800;color:var(--ok);font-variant-numeric:tabular-nums}.ex-sc small{font-size:12px;color:var(--muted);font-weight:500}
 .ex-sc.big{font-size:28px}
 .ex-pub{margin-top:4px}
+.ex-warn{border-color:var(--bad);background:var(--bad-soft)}.ex-warn b{color:var(--bad)}
 .ex-file{display:flex;align-items:center;gap:10px;width:100%;text-align:right;font:inherit;color:var(--ink);background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;padding:10px 12px;cursor:pointer}
 .ex-file.ok{border-style:solid;border-color:var(--ok)}
 .ex-file b{display:block;font-size:14.5px}.ex-file small{color:var(--muted);font-size:12.5px}
@@ -773,7 +774,6 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <label class="g-lbl"><span>رقم موبايلك</span><input id="jPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>رقم ولي الأمر</span><input id="jParent" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label>
       <label class="g-lbl"><span>السنة</span><select id="jYear"><option value="1">أولى ثانوي</option><option value="2" selected>تانية ثانوي</option></select></label>
-      <label class="g-lbl" id="jGrpWrap" hidden><span>المعاد اللي يناسبك</span><select id="jGrp"></select></label>
       <button class="btn big" id="jGo" type="submit">ابعت</button>
       <p class="g-msg on" id="jMsg" role="alert"></p>
     </form>
@@ -887,7 +887,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.3</p>
+    <p class="ver">MR-J · v6.4</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -2034,6 +2034,7 @@ function renderExBadge(){const b=$("#bEx");if(!b)return;const n=[...exams.values
 function exOpen(id){exOpen.at=Date.now();exUnsubs.forEach(u=>u());exUnsubs=[];exSel=id;exSubs=new Map();exGrades=new Map();exKey=null;exAnsImgs=null;exConfirm=null;if(!id){renderExams(true);return}
   exUnsubs.push(db.collection("subs").where("eid","==",id).onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,{aid:d.id,...d.data()}));exSubs=m;renderExams()},()=>{}));
   exUnsubs.push(db.collection("examGrades").where("eid","==",id).onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data()));exGrades=m;renderExams()},()=>{}));
+  exProbe(id);
   exUnsubs.push(db.doc("examKeys/"+id).onSnapshot(d=>{exKey=d.exists?d.data():{};renderExams()},()=>{}));
   renderExams(true);$("#scroller").scrollTop=0}
 /* ---------- screens ---------- */
@@ -2050,6 +2051,12 @@ function renderExams(force){const box=$("#examsView");if(!box||view!=="exams")re
     return `<button class="hc-card ex-card" type="button" data-x="open" data-id="${esc(e.id)}"><span class="ex-ch"><b>${esc(e.title||"امتحان")}</b><span class="ex-st ${c}">${st==="live"?"<i></i>":""}${t}</span></span>
       <small>${esc(exWhen(e))}</small><span class="ex-meta"><span>⏱ ${fmt(e.dur)} دقيقة</span><span>📝 ${fmt((e.qs||[]).length)} سؤال، ${fmt(e.total||exTotal(e.qs))} درجة</span><span>👥 ${fmt(n)} طالب</span></span></button>`}).join("");
   setH(box,h)}
+let exPub={};
+async function exProbe(id){const e=exams.get(id);if(!e||!e.live){exPub[id]=null;return}
+  try{let a=firebase.apps.find(x=>x.name==="probe");if(!a)a=firebase.initializeApp(FIREBASE_CONFIG,"probe");
+    await a.firestore().doc(ACC.base+"/exams/"+id).get({source:"server"});exPub[id]="ok"}
+  catch(x){exPub[id]=x&&x.code==="permission-denied"?"rules":"net"}
+  if(exSel===id)renderExams()}
 function exDetailHTML(e){const st=exStatus(e),[t,c]=EX_ST[st],S=exStudents(e),pins=(exKey&&exKey.pins)||{},sent=(exKey&&exKey.sent)||{},noPin=e.live?S.filter(s=>!pins[s.id]||!s.code):[];
   const subOf=s=>exSubs.get(e.id+"_"+s.code+"_"+pins[s.id]);
   const started=S.filter(s=>subOf(s)).length,done=S.filter(s=>["sub","late"].includes(subState(subOf(s),e))).length,graded=S.filter(s=>{const x=subOf(s);return x&&exGrades.has(x.aid)}).length;
@@ -2058,6 +2065,7 @@ function exDetailHTML(e){const st=exStatus(e),[t,c]=EX_ST[st],S=exStudents(e),pi
     <div class="ex-stats"><span><b>${fmt(S.length)}</b><small>طالب</small></span><span><b>${fmt(started)}</b><small>دخلوا</small></span><span><b class="ok">${fmt(done)}</b><small>سلّموا</small></span><span><b class="holo">${fmt(graded)}</b><small>اتصححوا</small></span></div>
     <div class="prow">${e.live?`<button class="btn soft sm" type="button" data-x="link">نسخ اللينك</button>`:`<button class="btn sm" type="button" data-x="edit">كمّل وانشر</button>`}${e.live?`<button class="btn soft sm" type="button" data-x="edit">تعديل</button>`:""}<button class="btn soft sm" type="button" data-x="preview">شوف الامتحان</button><button class="del${exConfirm==="del"?" confirm":""}" type="button" data-x="del">${exConfirm==="del"?"متأكد؟ هيتمسح كل حاجة":"مسح الامتحان"}</button></div></div>`;
   if(!e.live)return h+`<p class="hint">الامتحان لسه مسودة. دوس «كمّل وانشر» عشان تتعمل أكواد أولياء الأمور.</p>`;
+  if(exPub[e.id]==="rules")h+=`<div class="card ex-warn"><b>⚠ الطلبة مش هيقدروا يفتحوا الامتحان</b><p class="hint">قواعد الامتحانات مش منشورة في Firebase. افتح Firebase ← Firestore ← Rules، والصق ملف القواعد تحت سطر <span class="code" dir="ltr">match /databases/{database}/documents {</span> ودوس Publish، وبعدين ارجع هنا.</p><button class="btn soft sm" type="button" data-x="reprobe">اتأكد تاني</button></div>`;
   h+=`<div class="seg ex-tabs" role="group"><button type="button" data-x="tab" data-t="codes" aria-pressed="${exTab==="codes"}">أكواد أولياء الأمور</button><button type="button" data-x="tab" data-t="subs" aria-pressed="${exTab==="subs"}">التسليم والتصحيح${done-graded>0?`<small>${fmt(done-graded)}</small>`:""}</button></div>`;
   if(exTab==="codes"){
     if(noPin.length)h+=`<button class="reqbar" type="button" data-x="pins"><span class="rb-i">🔑</span><b>${fmt(noPin.length)} ${noPin.length===1?"طالب جديد":"طلبة جداد"} في المجموعات من غير كود</b><i>اعمل أكوادهم ‹</i></button>`;
@@ -2216,6 +2224,7 @@ $("#examsView").addEventListener("click",async ev=>{const b=ev.target.closest("[
   if(x==="tab"){exTab=b.dataset.t;renderExams();return}
   if(x==="edit"&&e){exEditStart(e);return}
   if(x==="preview"&&e){exPreview(e);return}
+  if(x==="reprobe"&&e){exPub[e.id]=null;renderExams();await exProbe(e.id);toast(exPub[e.id]==="ok"?"✓ الامتحان مفتوح للطلبة":"لسه مش مفتوح");return}
   if(x==="link"&&e){try{await navigator.clipboard.writeText(exUrl(e.id));toast("اللينك اتنسخ")}catch(y){toast(exUrl(e.id))}return}
   if(x==="del"&&e){if(exConfirm!=="del"){exConfirm="del";renderExams();setTimeout(()=>{if(exConfirm==="del"){exConfirm=null;renderExams()}},3500);return}exConfirm=null;exDelete(e);return}
   if(x==="pins"&&e){b.disabled=true;try{const n=await exMakePins(e);toast("✓ اتعمل "+fmt(n)+" كود")}catch(y){toast("ماتعملتش، جرّب تاني")}return}
@@ -2441,14 +2450,12 @@ async function joinBoot(){
   try{await loadFirebase(false)}catch(e){$("#jMsg").textContent="مفيش نت. افتح اللينك تاني لما النت يرجع.";return}
   let X={};try{const a=await fs.doc(ACC.base+"/settings/app").get();if(a.exists){X=a.data()||{};$("#jTeacher").textContent=(X.teacher||THEME.teacher)+" · "+(X.subject||THEME.subject)}}catch(e){}
   let G=[];try{const sn=await fs.collection(ACC.base+"/groups").get();G=sn.docs.map(d=>({id:d.id,...d.data()})).filter(g=>!g.hidden)}catch(e){}
-  const fill=()=>{const y=$("#jYear").value,L=G.filter(g=>yearOfG(g)===y);$("#jGrpWrap").hidden=!L.length;$("#jGrp").innerHTML=`<option value="">أي معاد يناسبني</option>`+L.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}${schedTxt(g)?" · "+esc(schedTxt(g)):""}</option>`).join("")};
-  $("#jYear").onchange=fill;fill();
   $("#jForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("#jName").value.trim().replace(/\s+/g," "),phone=$("#jPhone").value.replace(/\D/g,""),pp=$("#jParent").value.replace(/\D/g,"");
     if(name.split(" ").length<2){$("#jMsg").textContent="اكتب اسمك الثنائي على الأقل";$("#jName").focus();return}
     if(phone.length<10){$("#jMsg").textContent="اكتب رقم موبايلك صح";$("#jPhone").focus();return}
     if(pp.length<10){$("#jMsg").textContent="اكتب رقم ولي الأمر صح";$("#jParent").focus();return}
     const b=$("#jGo");b.disabled=true;$("#jMsg").textContent="";
-    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};if($("#jGrp").value)d.groupId=$("#jGrp").value;
+    const d={name:name.slice(0,58),phone:phone.slice(0,18),parentPhone:pp.slice(0,18),year:$("#jYear").value,at:firebase.firestore.FieldValue.serverTimestamp()};
     try{await fs.collection(ACC.base+"/requests").add(d);$("#jForm").hidden=true;$("#jDone").hidden=false;$("#jDoneName").textContent=name.split(" ")[0];renderIntro(X,G.filter(g=>yearOfG(g)===d.year),d.year);$("#join").scrollTop=0}
     catch(x){$("#jMsg").textContent="ماتبعتش. اتأكد من النت وجرّب تاني.";b.disabled=false}});
 }

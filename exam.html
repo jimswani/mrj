@@ -154,7 +154,7 @@ const now=()=>Date.now()+offset;
 async function boot(){
   if(!EID){show(head()+`<div class="card"><h1>اللينك ناقص</h1><p class="hint">افتح لينك الامتحان اللي اتبعت لولي الأمر زي ما هو.</p></div>`+foot());return}
   try{const d=await D("exams/"+EID).get();if(!d.exists)throw{code:"nf"};EX=d.data()}
-  catch(e){show(head()+`<div class="card"><h1>الامتحان مش متاح</h1><p class="hint">${e&&e.code==="unavailable"?"مفيش نت. اتأكد إن النت شغال وافتح اللينك تاني.":"اللينك ده مش شغال، أو الامتحان لسه ماتنشرش. اتأكد من اللينك أو كلّم المستر."}</p></div>`+foot());return}
+  catch(e){const c=(e&&e.code)||"";show(head()+`<div class="card"><h1>الامتحان مش متاح</h1><p class="hint">${c==="unavailable"?"مفيش نت. اتأكد إن النت شغال وافتح اللينك تاني.":c==="permission-denied"?"الامتحان مقفول دلوقتي. كلّم المستر.":"اللينك ده مش شغال، أو الامتحان لسه ماتنشرش. اتأكد من اللينك أو كلّم المستر."}</p><p class="code-line"><span class="c">// ${esc(c||"not-found")}</span></p></div>`+foot());return}
   document.title=EX.title+" · امتحان";
   loginScreen();
 }
