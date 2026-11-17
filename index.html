@@ -733,6 +733,77 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .gq-ans-pages,.gq-ph{overflow-x:auto}
 .g-foot{position:sticky;bottom:-18px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 4px;background:linear-gradient(180deg,transparent,var(--surface) 30%)}
 .muted{color:var(--muted)}
+
+/* ===== v6.5 تصميم متجاوب: موبايل · تابلت · لاب ===== */
+@media (min-width:700px){
+  .inner{max-width:880px}
+  .dock .dk{max-width:680px}
+  nav.tabbar.dock button{font-size:12px}
+  #homeView,#repView{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #homeView>*,#repView>*{grid-column:1/-1}
+  #homeView>.h-next,#homeView>.h-money{grid-column:auto}
+  .g-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #list.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #list.list>:not(.row){grid-column:1/-1}
+  #setBox{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+  #setBox>.signout,#setBox>.ver{grid-column:1/-1}
+  #examsView[data-mode=list]{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #examsView[data-mode=list]>:not(.ex-card){grid-column:1/-1}
+  #examsView .bklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .ex-add{grid-template-columns:1fr 90px 120px auto}
+  /* bottom sheets become centered windows */
+  .modal.stum{align-items:center;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .stusheet{border-radius:24px;border-bottom:1px solid var(--line);max-width:640px;max-height:88vh;padding-bottom:20px}
+  .stusheet::before{display:none}
+  .modal.stum.closing .stusheet{transform:scale(.96);opacity:0;transition:transform .18s,opacity .18s}
+  .exsheet{max-width:760px}
+  .modal .sheet:not(.stusheet){max-width:480px}
+  .fab{inset-inline-end:max(16px,calc((100vw - 880px)/2 + 16px))}
+}
+@media (min-width:1024px){
+  html:not(.joinmode) body{padding-right:236px}
+  .inner{max-width:1180px}
+  main.inner{padding-bottom:40px}
+  header .inner{max-width:1180px}
+  /* the bottom dock becomes a sidebar on the right */
+  nav.tabbar.dock{inset:0 0 0 auto;width:236px;padding:0;pointer-events:auto}
+  .dock .dk{height:100%;max-width:none;margin:0;border-radius:0;border-width:0 0 0 1px;display:flex;flex-direction:column;gap:4px;padding:calc(22px + env(safe-area-inset-top,0px)) 14px 22px}
+  .dock .dk::before{content:"MR-J";font-family:"Jersey 10",var(--body);font-size:34px;line-height:1;letter-spacing:.04em;padding:4px 14px 18px;background:linear-gradient(90deg,var(--accent-2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .dglow{display:none!important}
+  nav.tabbar.dock button{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;padding:12px 14px;font-size:15px;border-radius:14px;text-align:right;transition:background .2s,color .2s}
+  nav.tabbar.dock button:hover{background:color-mix(in srgb,var(--accent) 8%,transparent);color:var(--ink)}
+  nav.tabbar.dock button[aria-selected="true"]{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 22%,transparent),color-mix(in srgb,var(--accent) 6%,transparent));color:var(--ink);box-shadow:inset -3px 0 0 var(--accent)}
+  nav.tabbar.dock button[aria-selected="true"] svg{transform:none}
+  nav.tabbar.dock svg{width:22px;height:22px;flex:none}
+  nav.tabbar.dock .dbadge{position:static;margin-inline-start:auto}
+  .fab{bottom:28px!important;inset-inline-end:28px!important}
+  #homeView{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #homeView>.tiles{grid-column:auto / span 1}
+  #homeView>.h-next{grid-column:span 1}#homeView>.h-money{grid-column:span 2}
+  .tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .quick{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #homeView>.tiles,#homeView>.quick{grid-column:auto / span 3}
+  .g-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #list.list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #setBox{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #examsView[data-mode=list]{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #examsView .bklist{grid-template-columns:repeat(3,minmax(0,1fr))}
+  /* exam editor: details on one side, the answer sheet on the other */
+  #examsView[data-mode=edit]{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:start}
+  #examsView[data-mode=edit]>.ex-hd,#examsView[data-mode=edit]>.ex-save{grid-column:1/-1}
+  #examsView[data-mode=edit]>section:nth-of-type(1){grid-column:1;grid-row:2}
+  #examsView[data-mode=edit]>section:nth-of-type(2){grid-column:1;grid-row:3}
+  #examsView[data-mode=edit]>section:nth-of-type(3){grid-column:2;grid-row:2 / span 2}
+  .ex-save{bottom:16px}
+  /* grading: model answers beside the student's paper */
+  .exsheet{max-width:1180px;width:100%}
+  .exsheet:has(.gq-ans-pages){grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+  .exsheet:has(.gq-ans-pages)>*{grid-column:1/-1}
+  .exsheet:has(.gq-ans-pages)>.gq-ans-pages{grid-column:1;grid-row:3;position:sticky;top:0;max-height:72vh;overflow:auto}
+  .exsheet:has(.gq-ans-pages)>.gqs{grid-column:2;grid-row:3}
+  .exsheet:not(:has(.gq-ans-pages)) .gqs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stusheet:not(.exsheet){max-width:720px}
+}
 </style>
 </head>
 <body>
@@ -887,7 +958,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.4</p>
+    <p class="ver">MR-J · v6.5</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -2038,7 +2109,7 @@ function exOpen(id){exOpen.at=Date.now();exUnsubs.forEach(u=>u());exUnsubs=[];ex
   exUnsubs.push(db.doc("examKeys/"+id).onSnapshot(d=>{exKey=d.exists?d.data():{};renderExams()},()=>{}));
   renderExams(true);$("#scroller").scrollTop=0}
 /* ---------- screens ---------- */
-function renderExams(force){const box=$("#examsView");if(!box||view!=="exams")return;if(exEd&&!force)return;
+function renderExams(force){const box=$("#examsView");if(!box||view!=="exams")return;if(exEd&&!force)return;box.dataset.mode=exEd?"edit":exSel&&exams.has(exSel)?"detail":"list";
   clearInterval(exClock);exClock=setInterval(()=>{if(view==="exams"&&!exEd)renderExams();else clearInterval(exClock)},20000);
   if(exEd){setH(box,exEditHTML());return}
   if(exSel&&exams.has(exSel)){setH(box,exDetailHTML(exams.get(exSel)));return}

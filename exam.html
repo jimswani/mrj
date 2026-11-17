@@ -108,6 +108,22 @@ h1{font-size:22px;margin:0;line-height:1.35}
 .lockov .card{max-width:400px;width:100%;text-align:center}
 .lock-ic{width:70px;height:70px;border-radius:22px;margin:0 auto;display:grid;place-items:center;font-size:34px;background:var(--bad-s);border:1px solid rgba(255,122,122,.45)}
 .dots3{display:flex;justify-content:center;gap:8px}.dots3 i{width:14px;height:14px;border-radius:50%;background:var(--line)}.dots3 i.on{background:var(--bad)}
+
+/* tablet sideways / laptop: the exam pages and the answer sheet side by side */
+@media (min-width:700px){.wrap{max-width:680px}.card{padding:22px}}
+@media (min-width:900px){
+  .wrap.examing{max-width:1340px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr);column-gap:24px;align-items:start}
+  .examing>.bar{grid-column:1/-1}
+  .examing .tabs{display:none}
+  .examing #pq,.examing #pa{display:block!important}
+  .examing #pq{grid-column:1;min-width:0}
+  .examing #pq .submit-box{display:none}
+  .examing #pa{grid-column:2;position:sticky;top:calc(var(--barH,92px) + 8px);max-height:calc(100vh - var(--barH,92px) - 16px);overflow:auto;padding:0 4px 12px;scrollbar-width:thin}
+  .examing #pa .sheet{margin-top:14px}
+  .examing>.foot{grid-column:1/-1}
+  .bar{margin:0;border-radius:0 0 18px 18px}
+  .bar-top .who b{font-size:16px}
+}
 .spin{width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--mint);animation:sp 0.9s linear infinite;margin:30px auto}
 @keyframes sp{to{transform:rotate(360deg)}}
 </style>
@@ -138,7 +154,7 @@ const dayTxt=t=>{const d=new Date(t);return DAYS[d.getDay()]+" "+ar(d.getDate())
 function toast(t,warn){const el=$("#toast");el.textContent=t;el.className="toast"+(warn?" warn":"");el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3200)}
 const head=()=>`<div class="hd"><div class="logo" dir="ltr"><span>&lt;<i>J</i>/&gt;</span></div><div><b>${esc(TEACHER)}</b><small>امتحان أونلاين · MR-J</small></div></div>`;
 const foot=()=>`<div class="foot">${esc(TEACHER)} · <a href="tel:${PHONE}">${PHONE}</a></div>`;
-function show(h){$("#app").innerHTML=h;window.scrollTo(0,0)}
+function show(h){const a=$("#app");a.className="wrap";a.innerHTML=h;window.scrollTo(0,0)}
 
 firebase.initializeApp(FIREBASE_CONFIG);
 const fs=firebase.firestore();
@@ -262,6 +278,7 @@ function startExam(){
     <div class="tabs"><button data-t="q" aria-pressed="${tab==="q"}">📄 الامتحان</button><button data-t="a" aria-pressed="${tab==="a"}">✍ الإجابة<small id="cnt"></small></button></div></div>
     <div id="pq"${tab==="q"?"":" hidden"}><div class="pages" id="pages"></div><div class="zoom"><button data-z="-">－ صغّر</button><button data-z="+">＋ كبّر</button></div><div class="submit-box"><button class="btn soft" style="width:100%" data-t="a">روح لورقة الإجابة ‹</button></div></div>
     <div id="pa"${tab==="a"?"":" hidden"}><div class="sheet" id="sheet"></div><div class="submit-box"><button class="btn" style="width:100%" id="subBtn">سلّم الامتحان</button></div></div>`+foot());
+  $("#app").classList.add("examing");const fitBar=()=>{const b=document.querySelector(".bar");if(b)document.documentElement.style.setProperty("--barH",b.offsetHeight+"px")};fitBar();addEventListener("resize",fitBar);
   document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>setTab(b.dataset.t));
   document.querySelectorAll("[data-z]").forEach(b=>b.onclick=()=>{zoom=Math.max(1,Math.min(2.4,zoom+(b.dataset.z==="+"?.35:-.35)));$("#pages").style.width=(zoom*100)+"%";$("#pq").style.overflowX=zoom>1?"auto":""});
   $("#subBtn").onclick=askSubmit;
