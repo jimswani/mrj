@@ -958,7 +958,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.5</p>
+    <p class="ver">MR-J · v6.6</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -2185,8 +2185,8 @@ function exEditHTML(){const E=exEd,L=EX_LET[E.letters]||EX_LET.ar,lock=E.locked,
     <div class="fields"><label>اليوم<input type="date" data-f="date" value="${esc(E.date)}"></label><label>مدة الامتحان (دقيقة)<input type="number" inputmode="numeric" min="5" max="300" data-f="dur" value="${esc(E.dur)}"></label>
       <label>يفتح الساعة<input type="time" data-f="from" value="${esc(E.from)}"></label><label>يقفل الساعة<input type="time" data-f="to" value="${esc(E.to)}"></label></div>
     <p class="hint">الطالب يبدأ في أي وقت بين الساعتين وياخد المدة كاملة، بس لازم يخلّص قبل ما الامتحان يقفل.</p>
-    <div class="af">لو الطالب خرج من الامتحان<div class="seg" role="group">${[[3,"يتسلّم بعد ٣ مرات"],[5,"بعد ٥"],[0,"مايتسلّمش"]].map(([v,l])=>`<button type="button" data-x="maxl" data-v="${v}" aria-pressed="${+E.maxLeaves===v}">${l}</button>`).join("")}</div></div>
-    <p class="hint">كل مرة يخرج من الصفحة الامتحان بيتقفل، ومش بيفتح غير لما ولي الأمر يكتب كود الامتحان.${+E.maxLeaves?" ولو خرج "+fmt(E.maxLeaves)+" مرات بيتسلّم لوحده.":""}</p></section>
+    <div class="af">لو الطالب خرج من الامتحان<div class="seg" role="group">${[[1,"يتسلّم من أول مرة"],[2,"بعد مرتين"],[3,"بعد ٣ مرات"]].map(([v,l])=>`<button type="button" data-x="maxl" data-v="${v}" aria-pressed="${+E.maxLeaves===v}">${l}</button>`).join("")}</div></div>
+    <p class="hint">${+E.maxLeaves===1?"أول ما الطالب يخرج من صفحة الامتحان، الامتحان بيتسلّم لوحده على طول.":"كل مرة يخرج من الصفحة الامتحان بيتقفل، ومش بيفتح غير لما ولي الأمر يكتب كود الامتحان."+(+E.maxLeaves?" ولو خرج "+(+E.maxLeaves===2?"مرتين":fmt(E.maxLeaves)+" مرات")+" بيتسلّم لوحده.":"")}</p></section>
   <section class="card"><b>ملفات الامتحان</b>${file("q",E.nQ,"ملف الامتحان","PDF أو صور · الطالب بيشوفه زي ما هو")}${file("a",E.nA,"الإجابات النموذجية","اختياري · محدش بيشوفه غيرك، بيظهرلك وإنت بتصحح")}<span class="hint" id="exProg"></span></section>
   <section class="card"><div class="ex-qh"><b>ورقة الإجابة</b><span class="tag">${fmt(E.qs.length)} سؤال، ${fmt(tot)} درجة</span></div>
     ${lock?`<p class="hint">⚠ فيه طلبة بدأوا الامتحان، فمش هينفع تغيّر الأسئلة أو ملف الامتحان. تقدر تعدّل الميعاد والمدة بس.</p>`:`<p class="hint">ضيف الأسئلة بنفس ترتيبها في الملف. مثلاً: ١٠ اختيار، بعدين ٥ صح وغلط، بعدين سؤالين كتابة.</p>

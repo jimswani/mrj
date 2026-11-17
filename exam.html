@@ -163,6 +163,7 @@ const EID=(new URLSearchParams(location.search).get("e")||"").replace(/[^A-Za-z0
 let EX=null,ACC=null,AID="",SUB=null,offset=0,deadline=0,answers={},leaves=[],tab=lsGet("exTab")||"q",tick=null,saveT=null,saving=false,dirty=false,finished=false,away=null,zoom=1,pageImgs=[],picking=0,locked=false;
 const PIN=()=>AID.split("_")[2]||"";
 const MAXL=()=>Number.isFinite(+EX.maxLeaves)?+EX.maxLeaves:3;
+const TX=n=>n==1?"مرة واحدة":n==2?"مرتين":ar(n)+" مرات";
 const counted=()=>leaves.filter(x=>!x.p).length;
 const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const now=()=>Date.now()+offset;
@@ -174,14 +175,14 @@ async function boot(){
   document.title=EX.title+" · امتحان";
   loginScreen();
 }
-function infoPills(){return `<div class="meta"><span class="pill">📅 <b>${esc(dayTxt(ms(EX.openAt)))}</b></span><span class="pill">🕒 من <b>${clock(ms(EX.openAt))}</b> لـ <b>${clock(ms(EX.closeAt))}</b></span><span class="pill">⏱ <b>${ar(EX.dur)}</b> دقيقة</span>${MAXL()?`<span class="pill">🔒 الخروج <b>${ar(MAXL())}</b> مرات = تسليم</span>`:""}<span class="pill">📝 <b>${ar((EX.qs||[]).length)}</b> سؤال، <b>${ar(EX.total)}</b> درجة</span></div>`}
+function infoPills(){return `<div class="meta"><span class="pill">📅 <b>${esc(dayTxt(ms(EX.openAt)))}</b></span><span class="pill">🕒 من <b>${clock(ms(EX.openAt))}</b> لـ <b>${clock(ms(EX.closeAt))}</b></span><span class="pill">⏱ <b>${ar(EX.dur)}</b> دقيقة</span>${MAXL()?`<span class="pill">🔒 الخروج <b>${TX(MAXL())}</b> = تسليم</span>`:""}<span class="pill">📝 <b>${ar((EX.qs||[]).length)}</b> سؤال، <b>${ar(EX.total)}</b> درجة</span></div>`}
 function rulesHTML(){const M=MAXL(),o=ms(EX.openAt),c=ms(EX.closeAt);
   return `<div class="card" style="margin-top:14px"><h2 style="font-size:17px;margin:0">📋 إرشادات الامتحان</h2><ul class="rules">
     <li><span>📅</span><div>الامتحان بيفتح ${esc(dayTxt(o))} الساعة <b>${clock(o)}</b>، وبيقفل الساعة <b>${clock(c)}</b>. ابدأ في أي وقت بينهم.</div></li>
     <li><span>⏱</span><div>مدة الامتحان <b>${ar(EX.dur)} دقيقة</b> من أول ما تدوس «ابدأ»، والعداد مش بيقف حتى لو قفلت الصفحة. لو بدأت متأخر، لازم تخلّص قبل ${clock(c)}.</div></li>
     <li><span>📝</span><div>الامتحان ${ar((EX.qs||[]).length)} سؤال من ${ar(EX.total)} درجة. بتشوف الأسئلة في «الامتحان»، وتجاوب في «الإجابة».${(EX.qs||[]).some(q=>q.t==="photo")?" فيه أسئلة بتحلها على ورقة وتصوّرها، فجهّز ورقة وقلم.":""}</div></li>
     <li><span>🔑</span><div>بتدخل بـ <b>كود الطالب</b> بتاعك + <b>كود الامتحان</b> اللي اتبعت لولي الأمر. ولي الأمر هو اللي يكتبه وهو جنبك.</div></li>
-    <li><span>🚫</span><div>لو خرجت من صفحة الامتحان لأي برنامج، <b>الامتحان بيتقفل</b> ومش بيفتح غير بكود ولي الأمر.${M?` ولو خرجت <b style="color:var(--bad)">${ar(M)} مرات، الامتحان بيتسلّم لوحده</b> بالإجابات اللي اتحفظت.`:""}</div></li>
+    <li><span>🚫</span><div>${M===1?`لو خرجت من صفحة الامتحان لأي برنامج ولو مرة واحدة، <b style="color:var(--bad)">الامتحان بيتسلّم لوحده على طول</b> بالإجابات اللي اتحفظت.`:`لو خرجت من صفحة الامتحان لأي برنامج، <b>الامتحان بيتقفل</b> ومش بيفتح غير بكود ولي الأمر.${M?` ولو خرجت <b style="color:var(--bad)">${TX(M)}، الامتحان بيتسلّم لوحده</b> بالإجابات اللي اتحفظت.`:""}`}</div></li>
     <li><span>💾</span><div>إجاباتك بتتحفظ لوحدها. لو النت فصل، كمّل عادي، ولو الصفحة اتقفلت افتح اللينك تاني بنفس الأكواد.</div></li>
     <li><span>✅</span><div>لما تخلّص دوس «سلّم الامتحان». بعد التسليم مش هتقدر تغيّر حاجة، ولو الوقت خلص بيتسلّم لوحده.</div></li>
   </ul></div>`}
@@ -238,7 +239,7 @@ function startScreen(){
     <ul class="rules">
       <li><span>⏱</span><div>أول ما تدوس «ابدأ» العداد بيشتغل ومش بيقف، حتى لو قفلت الصفحة. ${mins<EX.dur?`<b style="color:var(--amber)">الامتحان بيقفل الساعة ${clock(c)}، فهيبقى معاك ${ar(Math.max(mins,0))} دقيقة بس.</b>`:""}</div></li>
       <li><span>💾</span><div>إجاباتك بتتحفظ لوحدها. لو النت فصل أو الموبايل قفل، افتح اللينك تاني بنفس الكود وكمّل.</div></li>
-      <li><span>👁</span><div>لو خرجت من صفحة الامتحان، الامتحان بيتقفل ومش هيفتح غير بكود ولي الأمر${MAXL()?`، و<b style="color:var(--bad)">لو خرجت ${ar(MAXL())} مرات الامتحان بيتسلّم لوحده</b>`:""}.</div></li>
+      <li><span>👁</span><div>${MAXL()===1?`<b style="color:var(--bad)">لو خرجت من صفحة الامتحان ولو مرة واحدة، الامتحان بيتسلّم لوحده على طول</b>`:`لو خرجت من صفحة الامتحان، الامتحان بيتقفل ومش هيفتح غير بكود ولي الأمر${MAXL()?`، و<b style="color:var(--bad)">لو خرجت ${TX(MAXL())} الامتحان بيتسلّم لوحده</b>`:""}`}.</div></li>
       <li><span>👨‍👩‍👦</span><div>ولي الأمر يفضل جنبك لحد ما تسلّم.</div></li>
     </ul>
     <button class="btn" id="sGo">ابدأ الامتحان</button><p class="msg" id="sMsg"></p></div>`+foot());
@@ -257,12 +258,12 @@ const isFull=()=>!!(document.fullscreenElement||document.webkitFullscreenElement
 let wasFull=false;
 function onFs(){if(finished)return;if(isFull()){wasFull=true;return}if(!wasFull||locked)return;wasFull=false;addLeave({at:now(),s:0,fs:1})}
 function addLeave(x){if(finished)return;leaves.push(x);changed();
-  if(MAXL()&&counted()>=MAXL()){showLock(true);toast("خرجت "+ar(counted())+" مرات، الامتحان بيتسلّم…",1);submit(true,true);return}
+  if(MAXL()&&counted()>=MAXL()){showLock(true);toast("خرجت "+TX(counted())+"، الامتحان بيتسلّم…",1);submit(true,true);return}
   showLock()}
 function showLock(final){locked=true;const n=counted(),M=MAXL();
   $("#lockBox").innerHTML=`<div class="lock-ic">🔒</div><h1 style="font-size:20px">${final?"الامتحان اتسلّم":"الامتحان اتقفل"}</h1>
-    <p class="hint">${final?`خرجت من الامتحان ${ar(n)} مرات، فاتسلّم لوحده بالإجابات اللي اتحفظت.`:`خرجت من صفحة الامتحان. خلّي ولي الأمر يكتب <b>كود الامتحان</b> عشان تكمّل.`}</p>
-    ${M?`<div class="dots3">${Array.from({length:M},(_,i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div>${!final?`<p class="hint" style="color:var(--bad)">${M-n===1?"المرة الجاية الامتحان هيتسلّم لوحده":"فاضل "+ar(M-n)+" مرات والامتحان يتسلّم لوحده"}</p>`:""}`:""}
+    <p class="hint">${final?`خرجت من الامتحان ${TX(n)}، فاتسلّم لوحده بالإجابات اللي اتحفظت.`:`خرجت من صفحة الامتحان. خلّي ولي الأمر يكتب <b>كود الامتحان</b> عشان تكمّل.`}</p>
+    ${M?`<div class="dots3">${Array.from({length:M},(_,i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div>${!final?`<p class="hint" style="color:var(--bad)">${M-n===1?"المرة الجاية الامتحان هيتسلّم لوحده":"فاضل "+TX(M-n)+" والامتحان يتسلّم لوحده"}</p>`:""}`:""}
     ${final?"":`<input id="ulPin" class="codein" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"><button class="btn" id="ulGo">كمّل الامتحان</button><p class="msg" id="ulMsg"></p><p class="hint">العداد شغال ومش واقف.</p>`}`;
   $("#lockOv").hidden=false;
   const go=$("#ulGo");if(go)go.onclick=()=>{if($("#ulPin").value.replace(/\D/g,"")!==PIN()){$("#ulMsg").textContent="الكود غلط";return}
@@ -359,7 +360,7 @@ async function submit(auto,force){if(finished)return;
 let tu=false;function timeUp(){if(tu||finished)return;tu=true;clearTimeout(saveT);toast("⏰ الوقت خلص، بيتسلّم…",1);submit(true)}
 function finish(byTime,byLeave){finished=true;clearInterval(tick);closeOv();$("#lockOv").hidden=true;try{if(isFull())(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}doneScreen(byTime,byLeave)}
 async function doneScreen(byTime,byLeave){finished=true;clearInterval(tick);if(!byLeave&&SUB&&MAXL()&&(SUB.leaves||leaves||[]).filter(x=>!x.p).length>=MAXL())byLeave=true;
-  show(head()+`<div class="card center"><div class="ok-ic">✓</div><h1>${byLeave?"الامتحان اتسلّم لوحده":byTime?"الوقت خلص":"اتسلّم الامتحان"}</h1>${byLeave?`<p class="hint" style="color:var(--amber)">عشان خرجت من صفحة الامتحان ${ar(MAXL())} مرات.</p>`:""}
+  show(head()+`<div class="card center"><div class="ok-ic">✓</div><h1>${byLeave?"الامتحان اتسلّم لوحده":byTime?"الوقت خلص":"اتسلّم الامتحان"}</h1>${byLeave?`<p class="hint" style="color:var(--amber)">عشان خرجت من صفحة الامتحان ${TX(MAXL())}.</p>`:""}
     <p class="hint">${byTime?"إجاباتك اللي اتحفظت وصلت للمستر.":"إجاباتك وصلت للمستر، وهو اللي هيصححها."}</p><div id="res"></div></div>`+foot());
   if(EX.published){try{const g=await D("examGrades/"+AID).get();if(g.exists){const x=g.data();$("#res").innerHTML=`<p class="hint" style="margin-top:8px">درجتك</p><div class="score">${ar(x.total)} / ${ar(EX.total)}</div>`}}catch(e){}}
 }
