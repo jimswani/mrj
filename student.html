@@ -102,6 +102,40 @@ label{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:700}
 @keyframes ld{50%{transform:translateY(-8px);opacity:.5}}
 .fade{animation:fd .45s both cubic-bezier(.2,.9,.25,1)}@keyframes fd{from{opacity:0;transform:translateY(10px)}}
 @media (min-width:900px){.wrap{max-width:900px;grid-template-columns:1fr 1fr;align-items:start}.wrap>.full{grid-column:1/-1}}
+/* ===== login, v2 ===== */
+.lg{display:grid;gap:16px;justify-items:center;max-width:420px;width:100%;margin:0 auto;padding-top:8px}
+.lg-hero{display:grid;justify-items:center;gap:4px;text-align:center}
+.lg-bot{position:relative;width:118px;height:118px;animation:fl 4.5s ease-in-out infinite}
+.lg-bot svg{width:100%;height:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(255,138,31,.28))}
+.lg-bot .scan{position:absolute;left:27%;right:27%;top:30%;height:3px;border-radius:3px;background:var(--holo);box-shadow:0 0 12px var(--holo);opacity:.8;animation:scan 2.6s ease-in-out infinite}
+@keyframes scan{0%,100%{top:30%;opacity:0}15%,85%{opacity:.85}50%{top:62%}}
+.lg-hero .word{font-size:72px}
+.lg-sub{color:var(--muted);font-size:15px;font-weight:700}
+.lg-card{position:relative;width:100%;display:grid;gap:16px;padding:18px;border-radius:26px;background:linear-gradient(180deg,rgba(28,54,66,.72),rgba(10,24,32,.78));border:1px solid var(--edge2);box-shadow:0 26px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.lg-card::before{content:"";position:absolute;inset:-1px;border-radius:26px;padding:1px;background:linear-gradient(140deg,rgba(255,170,80,.55),transparent 35%,transparent 65%,rgba(62,230,210,.45));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.pin{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pin input{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px!important;border:0;caret-color:transparent;z-index:1}
+.pin span{height:64px;border-radius:16px;display:grid;place-items:center;background:#04101a;border:1px solid var(--edge2);font-family:var(--px);font-size:40px;color:var(--holo);text-shadow:0 0 12px rgba(62,230,210,.55);transition:border-color .2s,box-shadow .2s,transform .2s}
+.pin span.fill{border-color:rgba(62,230,210,.35)}
+.pin span.on{border-color:var(--acc);box-shadow:0 0 0 3px rgba(255,138,31,.2)}
+.pin span.on:empty::after{content:"";width:2px;height:28px;background:var(--acc);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.lockcode{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#04101a;border:1px solid rgba(62,230,210,.3)}
+.lc-l{font-size:13px;color:var(--muted);font-weight:700}
+.lc-v{font-family:var(--px);font-size:34px;line-height:1;letter-spacing:.3em;color:var(--holo);text-shadow:0 0 12px rgba(62,230,210,.55);margin-inline-start:auto}
+.lc-e{width:40px;height:40px;border-radius:12px;border:1px solid var(--edge2);background:rgba(255,255,255,.05);display:grid;place-items:center;cursor:pointer;flex:none}
+.lc-e svg,.eye svg{width:19px;height:19px;stroke:var(--acc2);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.pwf{position:relative}.pwf .in{width:100%;padding-inline-start:52px}
+.eye{position:absolute;inset-inline-start:6px;top:6px;width:40px;height:40px;border:0;border-radius:12px;background:none;display:grid;place-items:center;cursor:pointer;opacity:.75}
+.eye.on{opacity:1;background:rgba(255,192,64,.12)}
+.btn.ld span{opacity:0}.btn.ld{position:relative}.btn.ld::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;border:3px solid rgba(26,16,7,.25);border-top-color:#1a1007;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.okline{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--ink);background:rgba(74,214,164,.1);border:1px solid rgba(74,214,164,.3);border-radius:14px;padding:10px 12px}
+.okline span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--ok);color:#062118;font-weight:800}
+.lg-feat{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.lg-feat span{font-size:12px;color:var(--muted);border:1px solid var(--edge);background:rgba(255,255,255,.03);border-radius:999px;padding:6px 12px}
+.lg .foot{margin:0}
+@media (min-width:900px){.lg{grid-column:1/-1}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -140,26 +174,50 @@ async function genOf(code){try{const d=await D("portalGen/"+code).get();return d
 let PUB=null,unsub=null,tab=lsGet("tab")||"grades",tick=0,mode="login",actStep=1,actData=null;
 function show(h){const a=$("#app");a.innerHTML=h}
 /* ---------- login / activation ---------- */
-function loginView(msg){mode="login";
-  show(`<div class="hero full fade">${ROBOT}<span class="word">MR-J</span><small>منصة الطالب</small></div>
-  <div class="card full fade" style="max-width:420px;width:100%;justify-self:center">
-    <div class="seg" id="lTab"><button type="button" data-t="in" aria-pressed="${actStep===0}">دخول</button><button type="button" data-t="act" aria-pressed="${actStep!==0}">أول مرة؟ فعّل حسابك</button></div>
-    <div style="height:14px"></div><div id="lBody"></div>
-    <p class="msg" id="lMsg" role="alert">${esc(msg||"")}</p></div>
-  <p class="foot full">نسيت الباسورد؟ كلّم Mr J يمسحه وتفعّل حسابك تاني.</p>`);
+const EYE='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const PEN='<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>';
+let editCode=false;
+if(lsGet("code"))actStep=0;
+/* a 4-cell code display driven by one hidden-in-plain-sight input */
+const pinBox=(id,val)=>`<div class="pin" dir="ltr"><input id="${id}" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="username" aria-label="كودك" value="${esc(val||"")}"><span></span><span></span><span></span><span></span></div>`;
+function wirePin(id){const inp=$("#"+id),cells=[...inp.parentNode.querySelectorAll("span")];
+  const up=()=>{inp.value=inp.value.replace(/\D/g,"").slice(0,4);const v=inp.value,f=document.activeElement===inp;cells.forEach((c,k)=>{c.textContent=v[k]||"";c.classList.toggle("on",f&&k===Math.min(v.length,3));c.classList.toggle("fill",!!v[k])})};
+  ["input","focus","blur"].forEach(ev=>inp.addEventListener(ev,up));up()}
+const pwBox=(id,ac,ph)=>`<div class="pwf"><input class="in ltr" id="${id}" type="password" autocomplete="${ac}" placeholder="${ph||"••••••"}"><button type="button" class="eye" data-eye="${id}" aria-label="اظهر الباسورد">${EYE}</button></div>`;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=$("#"+b.dataset.eye);i.type=i.type==="password"?"text":"password";b.classList.toggle("on",i.type==="text");i.focus()});
+function loginView(msg){mode="login";const sc=lsGet("code"),nm=lsGet("name");
+  show(`<div class="lg full">
+    <div class="lg-hero fade"><div class="lg-bot">${ROBOT}<i class="scan"></i></div><span class="word">MR-J</span><span class="lg-sub">${sc&&actStep===0&&!editCode?`أهلاً تاني${nm?" يا "+esc(nm):""} 👋`:"منصة الطالب"}</span></div>
+    <div class="lg-card fade">
+      <div class="seg" id="lTab"><button type="button" data-t="in" aria-pressed="${actStep===0}">دخول</button><button type="button" data-t="act" aria-pressed="${actStep!==0}">أول مرة؟ فعّل حسابك</button></div>
+      <div id="lBody"></div>
+      <p class="msg" id="lMsg" role="alert">${esc(msg||"")}</p>
+    </div>
+    <div class="lg-feat fade"><span>📝 امتحاناتك</span><span>📊 درجاتك وترتيبك</span><span>🗓️ حضورك وتقاريرك</span></div>
+    <p class="foot">نسيت الباسورد؟ كلّم Mr J يمسحه وتفعّل حسابك من جديد.</p></div>`);
   $("#lTab").onclick=e=>{const b=e.target.closest("button");if(!b)return;actStep=b.dataset.t==="in"?0:1;actData=null;loginView()};
   drawLogin()}
-function drawLogin(){const B=$("#lBody");
-  if(actStep===0){B.innerHTML=`<form id="fIn" autocomplete="on"><label>كودك<input class="in code" id="iCode" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="username" value="${esc(lsGet("code")||"")}"></label>
-    <label>الباسورد<input class="in ltr" id="iPw" type="password" autocomplete="current-password"></label><button class="btn" id="bIn">ادخل</button></form>`;
-    $("#fIn").onsubmit=async e=>{e.preventDefault();const code=normCode($("#iCode").value),pw=$("#iPw").value;if(!/^\d{4}$/.test(code)||!$("#iCode").value.trim()){err("اكتب كودك");return}if(!pw){err("اكتب الباسورد");return}
-      busy("#bIn",1);try{const g=await genOf(code);await auth.signInWithEmailAndPassword(emailOf(code,g),pw);lsSet("code",code)}catch(x){err(aErr(x,"الكود أو الباسورد غلط"));busy("#bIn",0)}};return}
-  if(actStep===1){B.innerHTML=`<p class="hint">اكتب كودك اللي Mr J بعتهولك، ورقم ولي أمرك المتسجّل عنده.</p><form id="fA"><label>كودك<input class="in code" id="aCode" inputmode="numeric" maxlength="4" placeholder="0000"></label>
-    <label>رقم ولي الأمر<input class="in ltr" id="aPh" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label><button class="btn" id="bA">كمّل</button></form>`;
+function drawLogin(){const B=$("#lBody"),sc=lsGet("code");
+  if(actStep===0){const fixed=sc&&!editCode;
+    B.innerHTML=`<form id="fIn" autocomplete="on">
+      ${fixed?`<div class="lockcode"><span class="lc-l">كودك</span><span class="lc-v" dir="ltr">${esc(sc)}</span><button type="button" class="lc-e" id="editCode" aria-label="غيّر الكود">${PEN}</button><input type="hidden" id="iCode" value="${esc(sc)}" autocomplete="username"></div>`
+        :`<label>كودك${pinBox("iCode",sc||"")}</label>`}
+      <label>الباسورد${pwBox("iPw","current-password")}</label>
+      <button class="btn" id="bIn"><span>ادخل</span></button></form>`;
+    if(fixed){$("#editCode").onclick=()=>{editCode=true;drawLogin();$("#iCode").focus();$("#iCode").select()};setTimeout(()=>$("#iPw").focus(),350)}else wirePin("iCode");
+    $("#fIn").onsubmit=async e=>{e.preventDefault();const raw=$("#iCode").value.trim(),code=normCode(raw),pw=$("#iPw").value;if(raw.length<1){err("اكتب كودك");return}if(!pw){err("اكتب الباسورد");$("#iPw").focus();return}
+      busy("#bIn",1);try{const g=await genOf(code);await auth.signInWithEmailAndPassword(emailOf(code,g),pw);lsSet("code",code);editCode=false}catch(x){err(aErr(x,"الكود أو الباسورد غلط"));busy("#bIn",0)}};return}
+  if(actStep===1){B.innerHTML=`<p class="hint">اكتب كودك اللي Mr J بعتهولك، ورقم ولي أمرك المتسجّل عنده. ده مرة واحدة بس.</p>
+    <form id="fA"><label>كودك${pinBox("aCode",sc||"")}</label>
+    <label>رقم ولي الأمر<input class="in ltr" id="aPh" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label><button class="btn" id="bA"><span>كمّل</span></button></form>`;
+    wirePin("aCode");
     $("#fA").onsubmit=async e=>{e.preventDefault();const raw=$("#aCode").value.trim(),code=normCode(raw),ph=phone10($("#aPh").value);if(!raw){err("اكتب كودك");return}if(ph.length<10){err("اكتب رقم ولي الأمر كامل");return}
       busy("#bA",1);try{const h=await sha("mrj-portal|"+code+"|"+ph),k=await D("portalKeys/"+h).get();if(!k.exists){err("الكود أو رقم ولي الأمر مش مظبوطين. اتأكد منهم أو كلّم Mr J");busy("#bA",0);return}
         actData={code,h,sid:k.data().sid};actStep=2;drawLogin();err("")}catch(x){err(aErr(x,"حصلت مشكلة، جرّب تاني"));busy("#bA",0)}};return}
-  B.innerHTML=`<p class="hint">تمام ✓ اختار باسورد ليك، ٦ حروف أو أرقام على الأقل. هتدخل بيه بعد كده مع كودك <b>${esc(actData.code)}</b>.</p><form id="fP"><label>الباسورد<input class="in ltr" id="p1" type="password" autocomplete="new-password"></label><label>اكتبه تاني<input class="in ltr" id="p2" type="password" autocomplete="new-password"></label><button class="btn" id="bP">فعّل حسابي</button></form>`;
+  B.innerHTML=`<div class="okline"><span>✓</span>اتأكدنا منك. اختار باسورد ليك، ٦ حروف أو أرقام على الأقل.</div>
+    <form id="fP"><div class="lockcode"><span class="lc-l">كودك</span><span class="lc-v" dir="ltr">${esc(actData.code)}</span></div>
+    <label>الباسورد${pwBox("p1","new-password")}</label><label>اكتبه تاني${pwBox("p2","new-password")}</label><button class="btn" id="bP"><span>فعّل حسابي</span></button></form>`;
+  setTimeout(()=>$("#p1").focus(),300);
   $("#fP").onsubmit=async e=>{e.preventDefault();const p1=$("#p1").value,p2=$("#p2").value;if(p1.length<6){err("الباسورد لازم ٦ حروف أو أرقام على الأقل");return}if(p1!==p2){err("الباسوردين مش زي بعض");return}
     busy("#bP",1);
     try{const g=await genOf(actData.code);let cred;
@@ -173,12 +231,12 @@ function drawLogin(){const B=$("#lBody");
     catch(x){err(aErr(x,"ماتفعّلش، جرّب تاني"));busy("#bP",0)}}}
 function aErr(x,d){const c=x&&x.code||"";console.warn(x);if(c.includes("permission-denied"))return"المنصة لسه مقفولة من Firebase. قول لـ Mr J (كود P1)";if(c.includes("unavailable"))return"مش قادر أوصل للسيرفر. جرّب تاني بعد شوية (كود U1)";if(c.includes("network"))return"مفيش نت. اتأكد من النت وجرّب تاني";if(c.includes("too-many"))return"جربت كتير. استنى دقيقة وجرّب تاني";if(c.includes("weak-password"))return"الباسورد ضعيف، خليه ٦ على الأقل";return d+(c&&!/invalid|wrong-password|user-not-found/.test(c)?" ("+c.replace(/^(auth|firestore)\//,"")+")":"")}
 function err(m){const e=$("#lMsg");if(e)e.textContent=m}
-function busy(s,on){const b=$(s);if(b)b.disabled=!!on}
+function busy(s,on){const b=$(s);if(b){b.disabled=!!on;b.classList.toggle("ld",!!on)}}
 /* ---------- signed in ---------- */
 let started=false;
 async function start(u){if(started)return;started=true;show(`<div class="load full"><i></i><i></i><i></i></div>`);
   try{const l=await D("portal/"+u.uid).get();if(!l.exists){await auth.signOut();started=false;actStep=1;loginView("الباسورد ده اتمسح. فعّل حسابك تاني بكودك ورقم ولي الأمر");return}
-    const sid=l.data().sid;unsub=D("pub/"+sid).onSnapshot(d=>{PUB=d.exists?d.data():null;draw()},()=>{show(`<div class="card full empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)})}
+    const sid=l.data().sid;unsub=D("pub/"+sid).onSnapshot(d=>{PUB=d.exists?d.data():null;if(PUB&&PUB.name)lsSet("name",String(PUB.name).split(" ")[0]);draw()},()=>{show(`<div class="card full empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)})}
   catch(x){started=false;loginView("مفيش نت. جرّب تاني")}}
 auth.onAuthStateChanged(u=>{if(u)start(u);else if(!started)loginView()});
 function signOut(){if(unsub)unsub();unsub=null;started=false;PUB=null;auth.signOut()}
