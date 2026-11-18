@@ -236,7 +236,7 @@ function busy(s,on){const b=$(s);if(b){b.disabled=!!on;b.classList.toggle("ld",!
 let started=false;
 async function start(u){if(started)return;started=true;show(`<div class="load full"><i></i><i></i><i></i></div>`);
   try{const l=await D("portal/"+u.uid).get();if(!l.exists){await auth.signOut();started=false;actStep=1;loginView("الباسورد ده اتمسح. فعّل حسابك تاني بكودك ورقم ولي الأمر");return}
-    const sid=l.data().sid;unsub=D("pub/"+sid).onSnapshot(d=>{PUB=d.exists?d.data():null;if(PUB&&PUB.name)lsSet("name",String(PUB.name).split(" ")[0]);draw()},()=>{show(`<div class="card full empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)})}
+    const sid=l.data().sid;unsub=D("pub/"+sid).onSnapshot(d=>{PUB=d.exists?d.data():null;if(PUB&&PUB.months)Object.values(PUB.months).forEach(M=>{M.ss=(M.ss||[]).map(x=>Array.isArray(x)?{d:x[0],k:x[1]}:x);M.ex=M.ex||[]});if(PUB&&PUB.name)lsSet("name",String(PUB.name).split(" ")[0]);draw()},()=>{show(`<div class="card full empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)})}
   catch(x){started=false;loginView("مفيش نت. جرّب تاني")}}
 auth.onAuthStateChanged(u=>{if(u)start(u);else if(!started)loginView()});
 function signOut(){if(unsub)unsub();unsub=null;started=false;PUB=null;auth.signOut()}
@@ -247,7 +247,7 @@ function draw(){if(mode!=="dash"){mode="dash"}
   let h=`<div class="top full">${LOGO}<button class="out" id="bOut">خروج</button></div>`;
   const g=P.g;h+=`<div class="card badge full fade"><span class="av">${esc((P.name||"؟")[0])}</span><div class="bn"><b>${esc(P.name)}</b><small>${g?esc(g.n)+" · "+(g.y==="1"?"أولى":"تانية")+" ثانوي"+(g.d&&g.d.length?" · "+WEEK.filter(d=>g.d.includes(d)).map(d=>DAYS[d]).join(" و")+(g.t?" "+timeTxt(g.t):""):""):""}</small><span class="idc">${esc(P.code)}</span></div></div>`;
   h+=nextExamHTML(P);
-  if(M){const n=M.ss.length,pp=M.ss.filter(x=>x[1]==="p").length,ap=n?Math.round(pp/n*100):null,gs=M.ex,gp=gs.length?Math.round(gs.reduce((a,e)=>a+e.sc,0)/gs.reduce((a,e)=>a+e.of,0)*100):null,rem=Math.max(M.fee-M.amt,0);
+  if(M){const n=M.ss.length,pp=M.ss.filter(x=>x.k==="p").length,ap=n?Math.round(pp/n*100):null,gs=M.ex,gp=gs.length?Math.round(gs.reduce((a,e)=>a+e.sc,0)/gs.reduce((a,e)=>a+e.of,0)*100):null,rem=Math.max(M.fee-M.amt,0);
     h+=`<div class="sec full">${esc(mName(mk))}</div><div class="stats full">
       <div class="card st"><b class="holo">${ap==null?"—":ar(ap)+"٪"}</b><small>الحضور${n?` · ${ar(pp)} من ${ar(n)}`:""}</small><span class="bar"><i style="width:${ap||0}%;background:var(--holo)"></i></span></div>
       <div class="card st"><b style="color:var(--acc2)">${gp==null?"—":ar(gp)+"٪"}</b><small>الدرجات</small><span class="bar"><i style="width:${gp||0}%;background:var(--acc2)"></i></span></div>
@@ -273,7 +273,7 @@ function tabHTML(P,ms){
       <span class="bar"><i style="width:${p}%;background:var(--${c==="ok"?"ok":c==="warn"?"acc2":"bad"})"></i></span>${e.cnt>1?`<span class="rk">${e.rk===1?"🥇 الأول":"ترتيبك "+ar(e.rk)} من ${ar(e.cnt)}${e.top&&e.rk!==1?" · أعلى درجة "+ar(e.top):""}</span>`:""}</div>`}).join("")
       +(done.length?`<div class="sec">امتحانات أونلاين اتصححت</div>`+done.map(e=>`<a class="card ex" style="text-decoration:none;color:inherit" href="exam.html?e=${encodeURIComponent(e.id)}&c=${encodeURIComponent(P.code)}"><div class="ex-h"><b>${esc(e.t)}</b><small style="margin-inline-start:auto">شوف ورقتك ‹</small></div></a>`).join(""):"")}
   if(tab==="reps"){if(!ms.length)return`<div class="card empty">لسه مفيش تقارير.</div>`;
-    return ms.map(m=>{const M=P.months[m],n=M.ss.length,pp=M.ss.filter(x=>x[1]==="p").length,ap=n?Math.round(pp/n*100):null,gp=M.ex.length?Math.round(M.ex.reduce((a,e)=>a+e.sc,0)/M.ex.reduce((a,e)=>a+e.of,0)*100):null,rem=Math.max(M.fee-M.amt,0),paid=M.paid||(!rem&&M.fee);
+    return ms.map(m=>{const M=P.months[m],n=M.ss.length,pp=M.ss.filter(x=>x.k==="p").length,ap=n?Math.round(pp/n*100):null,gp=M.ex.length?Math.round(M.ex.reduce((a,e)=>a+e.sc,0)/M.ex.reduce((a,e)=>a+e.of,0)*100):null,rem=Math.max(M.fee-M.amt,0),paid=M.paid||(!rem&&M.fee);
       const verdict=gp==null&&ap==null?"":gp!=null&&gp>=85&&(ap==null||ap>=85)?"شهر ممتاز، كمّل كده 👏":gp!=null&&gp<60?"محتاج تذاكر أكتر الشهر الجاي، وانت قدها 💪":ap!=null&&ap<75?"الغياب أثّر عليك، حاول متغيبش الشهر الجاي":"شغل كويس، وتقدر توصل للأحسن ⭐";
       return `<div class="card mo"><div class="mo-h"><b>${esc(mName(m))}</b><span class="pill ${paid?"ok":M.amt?"warn":"bad"}">${paid?"دفع ✓":M.amt?"باقي "+ar(rem)+" ج":"لسه مدفعش"}</span></div>
         <div class="kv"><span><b class="holo">${ap==null?"—":ar(ap)+"٪"}</b><small>حضور</small></span><span><b style="color:var(--acc2)">${gp==null?"—":ar(gp)+"٪"}</b><small>درجات</small></span><span><b>${ar(M.ex.length)}</b><small>امتحانات</small></span></div>
@@ -281,7 +281,7 @@ function tabHTML(P,ms){
   if(!ms.length)return`<div class="card empty">لسه مفيش حصص متسجلة.</div>`;
   return ms.map(m=>{const M=P.months[m],rem=Math.max(M.fee-M.amt,0),paid=M.paid||(!rem&&M.fee);
     return `<div class="card mo"><div class="mo-h"><b>${esc(mName(m))}</b><span class="pill ${paid?"ok":M.amt?"warn":"bad"}">${paid?"دفعت "+ar(M.amt||M.fee)+" ج":M.amt?"دفعت "+ar(M.amt)+" · باقي "+ar(rem):"لسه · "+ar(M.fee)+" ج"}</span></div>
-      ${M.ss.length?`<div class="days">${M.ss.map(([d,k])=>{const x=new Date(d+"T12:00");return `<span class="dy ${k}"><b>${k==="p"?"✓":"✗"}</b>${DAYS[x.getDay()]} ${ar(x.getDate())}</span>`}).join("")}</div>`:`<p class="hint">مفيش حصص متسجلة الشهر ده.</p>`}</div>`}).join("")}
+      ${M.ss.length?`<div class="days">${M.ss.map(({d,k})=>{const x=new Date(d+"T12:00");return `<span class="dy ${k}"><b>${k==="p"?"✓":"✗"}</b>${DAYS[x.getDay()]} ${ar(x.getDate())}</span>`}).join("")}</div>`:`<p class="hint">مفيش حصص متسجلة الشهر ده.</p>`}</div>`}).join("")}
 </script>
 </body>
 </html>

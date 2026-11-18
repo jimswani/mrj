@@ -810,6 +810,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .ptl-i{font-size:22px}.ptl-t{display:grid;flex:1;min-width:150px}.ptl-t b{font-size:14px}.ptl-t small{font-size:12px;color:var(--muted)}
 .ptl-a{display:flex;gap:6px;flex-wrap:wrap}.ptl .pw{color:var(--holo)}
 .del.sm{padding:6px 12px;font-size:13px}
+.ptstat{margin:0;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.7;background:var(--surface-2);color:var(--muted)}.ptstat.ok{color:var(--ok);background:var(--ok-soft)}.ptstat.bad{color:var(--bad);background:var(--bad-soft);font-weight:700}.ptstat small{font-weight:400}
 .warnbox{margin:0;padding:10px 12px;border-radius:12px;background:var(--bad-soft);color:var(--bad);font-size:13px;line-height:1.7;font-weight:700}
 </style>
 </head>
@@ -954,6 +955,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="hint" id="leftInfo"></p><div class="bklist" id="leftList"></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg></span><span class="act"><b>منصة الطلبة</b><small>لينك ثابت فيه امتحاناته ودرجاته وتقاريره</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">كل طالب بيدخل بكوده والباسورد بتاعه، ويلاقي امتحاناته الجاية ودرجاته وتقاريره وحضوره وفلوسه. أول مرة بيفعّل حسابه بكوده ورقم ولي الأمر المتسجّل عندك، وبعدين يختار باسورد. الباسورد بيظهرلك في بطاقة الطالب، ومنها تقدر تمسحه لو نسيه.</p>
+      <p class="ptstat" id="ptStat"></p>
       <p class="warnbox" id="ptWarn" hidden>⚠ الطلبة مش هيقدروا يدخلوا المنصة: قواعد Firebase الجديدة مش منشورة. افتح Firestore ← Rules والزق ملف القواعد كله ودوس Publish.</p>
       <p class="hint">بيانات المنصة بتتحدّث لوحدها وانت فاتح البرنامج. اللي المساعد بيسجّله بيظهر للطالب أول ما تفتح البرنامج.</p>
       <div class="prow"><button class="btn" id="ptCopy" type="button">نسخ اللينك</button><button class="btn soft" id="ptWa" type="button">ابعته في جروب</button><button class="btn soft" id="ptSync" type="button">حدّث المنصة دلوقتي</button></div></div></details>
@@ -970,7 +972,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.7</p>
+    <p class="ver">MR-J · v6.8</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1432,6 +1434,7 @@ function renderHome(){
   if(st.due)al.push(`<button class="al" type="button" data-h="due"><span class="ic bad">${BIC.cash}</span><span class="al-t"><b>${fmt(st.due)} ${st.due===1?"طالب لسه مادفعش":"طلبة لسه مادفعوش"}</b><small>باقي ${fmt(all.reduce((a,s)=>a+remOf(s),0))} ج · دوس عشان تبعتلهم تذكير</small></span><span class="go">‹</span></button>`);
   const po=prevOwe[month];if(cur&&po&&po.length)al.push(`<button class="al" type="button" data-h="prev"><span class="ic warn">${BIC.cal}</span><span class="al-t"><b>${fmt(po.length)} عليهم ${esc(shortMonth(shiftMonth(month,-1)))}</b><small>${esc(po.slice(0,3).map(s=>s.name.split(" ")[0]).join("، "))}${po.length>3?" …":""}</small></span><span class="go">‹</span></button>`);
   absentStreak(all).slice(0,3).forEach(s=>al.push(`<button class="al" type="button" data-h="stu" data-id="${s.id}"><span class="ic warn">${BIC.clock}</span><span class="al-t"><b>${esc(s.name)} غاب حصتين ورا بعض</b><small>${s.parentPhone?"دوس وابعت لولي الأمر":"ضيف رقم ولي الأمر في بطاقته"}</small></span><span class="go">‹</span></button>`));
+  if(pubStat&&!pubStat.ok)al.push(`<button class="al" type="button" data-h="portal"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>منصة الطلبة ماتحدّثتش</b><small>دوس عشان تشوف السبب</small></span><span class="go">‹</span></button>`);
   if(reqs.length)al.push(`<button class="al" type="button" data-h="req"><span class="ic holo">${BIC.inbox}</span><span class="al-t"><b>${reqs.length===1?"طلب تسجيل جديد":fmt(reqs.length)+" طلبات تسجيل جديدة"}</b><small>من لينك التسجيل · حطهم في مجموعاتهم</small></span><span class="go">‹</span></button>`);
   h+=`<div class="sec">محتاجين متابعة</div><div class="hc-card alerts">${al.length?al.join(""):`<div class="al calm"><span class="ic ok">${BIC.ok}</span><span class="al-t"><b>كله تمام</b><small>مفيش حاجة محتاجة متابعة دلوقتي</small></span></div>`}</div>`;
   const box=$("#homeView");setH(box,h);
@@ -1445,6 +1448,7 @@ $("#homeView").addEventListener("click",e=>{const b=e.target.closest("[data-h]")
   else if(a==="groups")setView("groups");
   else if(a==="rep")setView("rep");
   else if(a==="req"){renderReqs();$("#reqModal").hidden=false}
+  else if(a==="portal"){setView("set");setTimeout(()=>{const d=$("#ptStat")&&$("#ptStat").closest("details");if(d){d.open=true;d.scrollIntoView({block:"center"})}},80)}
   else if(a==="add")openAdd();
   else if(a==="img")$("#backupBtn").click();
   else if(a==="stu")openSheet(b.dataset.id);
@@ -1911,7 +1915,7 @@ function applySettings(){
   if(APP.theme==="day"||APP.theme==="night"){document.documentElement.classList.toggle("day",APP.theme==="day");lsSet("theme",APP.theme)}THEME.teacher=APP.teacher||THEME0.teacher;THEME.phone=APP.phone||THEME0.phone;THEME.subject=APP.subject||THEME0.subject;
   THEME.brand=APP.brand||THEME0.brand;THEME.tagline=APP.tagline||THEME0.tagline;SIGN=THEME.teacher;PHONE=THEME.phone;
   $("#brandName").textContent=THEME.brand;$("#brandTag").textContent=THEME.tagline;document.querySelectorAll(".lock-brand b").forEach(b=>b.textContent=THEME.brand);document.querySelectorAll(".lock-brand span").forEach(b=>b.textContent=THEME.tagline)}
-function renderSettings(){renderLeft();
+function renderSettings(){renderPortalStat();renderLeft();
   if(!setFilled){setFilled=true;
     $("#sTeacher").value=THEME.teacher;$("#sPhone").value=THEME.phone;$("#sSubject").value=THEME.subject;$("#sBrand").value=THEME.brand;$("#sTag").value=THEME.tagline;
     {const I=APP.intro||{};$("#iDesc").value=I.desc||"";$("#iFb").value=I.fb??THEME.social.fb;$("#iTt").value=I.tt??THEME.social.tt;$("#iIg").value=I.ig||"";$("#iYt").value=I.yt||""}
@@ -2478,13 +2482,14 @@ async function monthData(m){
   const P=new Map();ps.docs.forEach(d=>{const x=d.data();if(x&&x.studentId)P.set(x.studentId,x)});
   return{P,A:as.docs.map(d=>d.data()),N:(ns.exists&&ns.data().notes)||{},G:grades.get(m)}}
 function pubMonth(s,m,D){if(s.createdAt&&s.createdAt>=monthEnd(m))return null;if(s.leftMonth&&m>=s.leftMonth)return null;
-  const p=D.P.get(s.id),ss=[];D.A.forEach(a=>{const k=a.marks&&a.marks[s.id];if(k==="p"||k==="a")ss.push([a.date,k])});ss.sort((a,b)=>a[0]<b[0]?-1:1);
+  const p=D.P.get(s.id),ss=[];D.A.forEach(a=>{const k=a.marks&&a.marks[s.id];if(k==="p"||k==="a")ss.push({d:a.date,k})});ss.sort((a,b)=>a.d<b.d?-1:1);
   const ex=examsOf(D.G).filter(e=>e.scores&&has(e.scores[s.id])).map(e=>{const all=Object.values(e.scores||{}).map(Number).filter(n=>!isNaN(n)).sort((a,b)=>b-a);return{n:e.name||"امتحان",sc:Number(e.scores[s.id]),of:Number(e.outOf)||20,top:all[0],rk:all.indexOf(Number(e.scores[s.id]))+1,cnt:all.length}});
   const fee=Number(s.fee)||0,amt=p?Number(p.amount)||0:0;
   return{fee,amt,paid:!!(p&&p.paid),ss,ex,note:String((D.N||{})[s.id]||"").trim().slice(0,300)}}
 function pubExams(s){const L=[];exams.forEach(e=>{if(!e.live||!s.code)return;if(!exStudents(e).some(x=>x.id===s.id))return;const c=tsMs(e.closeAt);if(c<Date.now()-86400000*45)return;
   L.push({id:e.id,t:e.title||"امتحان",o:tsMs(e.openAt),c,d:Number(e.dur)||0,q:(e.qs||[]).length,tot:e.total||0,pub:!!e.published})});return L.sort((a,b)=>a.o-b.o)}
-async function syncPub(full){if(ROLE!=="owner"||!db||pubBusy||!students.size)return;pubBusy=true;
+let pubStat=(()=>{try{return JSON.parse(lsGet("pubStat")||"null")}catch(e){return null}})();
+async function syncPub(full){if(ROLE!=="owner"||!db||pubBusy||!students.size)return null;pubBusy=true;let wrote=0;
   try{if(!pubCache){pubCache=new Map();const sn=await db.collection("pub").get();sn.docs.forEach(d=>pubCache.set(d.id,d.data()))}
     const ms=full?monthRange():[month],data={};for(const m of ms)data[m]=await monthData(m);
     const ops=[];
@@ -2493,9 +2498,18 @@ async function syncPub(full){if(ROLE!=="owner"||!db||pubBusy||!students.size)ret
       const doc={name:s.name,code:s.code,left:s.leftMonth||"",g:g?{n:g.name,d:g.days||[],t:g.time||"",y:yearOfG(g)}:null,months,exams:pubExams(s),tch:{n:APP.teacher||THEME.teacher,p:APP.phone||THEME.phone,s:APP.subject||THEME.subject}};
       const o2={...old};delete o2.at;if(stab(doc)!==stab(o2)){const d2={...doc,at:Date.now()};pubCache.set(s.id,d2);ops.push(["set","pub/"+s.id,d2])}}
     pubCache.forEach((v,id)=>{if(!students.has(id)){ops.push(["del","pub/"+id]);pubCache.delete(id)}});
-    for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
+    for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit();wrote+=Math.min(400,ops.length-i)}
     if(full)lsSet("pubFull",todayStr());
-  }catch(e){}finally{pubBusy=false}}
+    const ready=[...students.values()].filter(s=>s.code&&pubCache.has(s.id)).length,miss=[...students.values()].filter(s=>!s.leftMonth&&(!s.code||!pubCache.has(s.id))).map(s=>s.name);
+    pubStat={ok:true,at:Date.now(),ready,miss,wrote};
+  }catch(e){pubCache=null;pubStat={ok:false,at:Date.now(),err:String(e&&(e.code||e.message)||e).slice(0,160)}}
+  finally{pubBusy=false;lsSet("pubStat",JSON.stringify(pubStat));renderPortalStat()}
+  return pubStat}
+function renderPortalStat(){const el=$("#ptStat");if(!el)return;const x=pubStat;
+  if(!x){el.className="ptstat";el.innerHTML="لسه ماتحدّثتش. دوس «حدّث المنصة دلوقتي».";return}
+  const t=new Date(x.at),when=`${fmt(t.getHours()%12||12)}:${fmt(pad(t.getMinutes()))} ${t.getHours()<12?"ص":"م"} · ${fmt(t.getDate())}/${fmt(t.getMonth()+1)}`;
+  if(!x.ok){el.className="ptstat bad";el.innerHTML=`⚠ آخر تحديث فشل (${esc(when)}). الطلبة مش هيشوفوا بيانات جديدة.<br><small dir="ltr">${esc(x.err)}</small><br>ابعت الرسالة دي لـ Claude.`;return}
+  el.className="ptstat ok";el.innerHTML=`✓ اتحدّثت ${esc(when)} · بيانات ${fmt(x.ready)} طالب جاهزة${x.miss&&x.miss.length?`<br><small>ناقص: ${esc(x.miss.slice(0,5).join("، "))}${x.miss.length>5?" …":""}</small>`:""}`}
 /* can a student (not signed in) reach the portal? if not, the new rules aren't published */
 let portalOk=null;
 async function probePortal(){if(portalOk!==null)return portalOk;
@@ -2554,7 +2568,7 @@ async function makeJoinImage(){
 }
 $("#ptCopy").onclick=async()=>{try{await navigator.clipboard.writeText(portalUrl());toast("اللينك اتنسخ")}catch(e){toast(portalUrl())}};
 $("#ptWa").onclick=()=>{const m=`🎓 منصة ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher}\nامتحاناتك الجاية ودرجاتك وتقاريرك وحضورك في مكان واحد:\n${portalUrl()}\n\nأول مرة: دوس «أول مرة؟ فعّل حسابك» واكتب كودك ورقم ولي أمرك، واختار باسورد.\nكودك في الرسالة اللي جاتلك، ولو مش معاك اسألني.`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
-$("#ptSync").onclick=async()=>{const b=$("#ptSync");b.disabled=true;toast("بحدّث المنصة…");await fixCodes();await syncPortalKeys();portalOk=null;if(!(await probePortal())){b.disabled=false;return}lsSet("pubFull","");await syncPub(true);b.disabled=false;toast("✓ المنصة اتحدّثت")};
+$("#ptSync").onclick=async()=>{const b=$("#ptSync");b.disabled=true;toast("بحدّث المنصة…");await fixCodes();await syncPortalKeys();portalOk=null;if(!(await probePortal())){b.disabled=false;return}lsSet("pubFull","");const r=await syncPub(true);b.disabled=false;toast(r&&r.ok?"✓ المنصة اتحدّثت":"⚠ التحديث فشل، شوف السبب تحت")};
 $("#jCopy").onclick=async()=>{try{await navigator.clipboard.writeText(joinUrl());toast("اللينك اتنسخ")}catch(e){toast(joinUrl())}};
 $("#jWa").onclick=()=>{const m=`سجّل في مجموعات ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher} من اللينك ده 👇\n${joinUrl()}`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
 $("#jQr").onclick=async()=>{const b=$("#jQr");b.disabled=true;try{const blob=await makeJoinImage();repBlob=blob;repName="MR-J-تسجيل.png";await shareOrSave(blob,repName)}catch(e){toast("ماقدرتش أعمل الصورة")}b.disabled=false};
