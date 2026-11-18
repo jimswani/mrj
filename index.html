@@ -810,6 +810,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .ptl-i{font-size:22px}.ptl-t{display:grid;flex:1;min-width:150px}.ptl-t b{font-size:14px}.ptl-t small{font-size:12px;color:var(--muted)}
 .ptl-a{display:flex;gap:6px;flex-wrap:wrap}.ptl .pw{color:var(--holo)}
 .del.sm{padding:6px 12px;font-size:13px}
+.warnbox{margin:0;padding:10px 12px;border-radius:12px;background:var(--bad-soft);color:var(--bad);font-size:13px;line-height:1.7;font-weight:700}
 </style>
 </head>
 <body>
@@ -953,6 +954,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="hint" id="leftInfo"></p><div class="bklist" id="leftList"></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg></span><span class="act"><b>منصة الطلبة</b><small>لينك ثابت فيه امتحاناته ودرجاته وتقاريره</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">كل طالب بيدخل بكوده والباسورد بتاعه، ويلاقي امتحاناته الجاية ودرجاته وتقاريره وحضوره وفلوسه. أول مرة بيفعّل حسابه بكوده ورقم ولي الأمر المتسجّل عندك، وبعدين يختار باسورد. الباسورد بيظهرلك في بطاقة الطالب، ومنها تقدر تمسحه لو نسيه.</p>
+      <p class="warnbox" id="ptWarn" hidden>⚠ الطلبة مش هيقدروا يدخلوا المنصة: قواعد Firebase الجديدة مش منشورة. افتح Firestore ← Rules والزق ملف القواعد كله ودوس Publish.</p>
       <p class="hint">بيانات المنصة بتتحدّث لوحدها وانت فاتح البرنامج. اللي المساعد بيسجّله بيظهر للطالب أول ما تفتح البرنامج.</p>
       <div class="prow"><button class="btn" id="ptCopy" type="button">نسخ اللينك</button><button class="btn soft" id="ptWa" type="button">ابعته في جروب</button><button class="btn soft" id="ptSync" type="button">حدّث المنصة دلوقتي</button></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg></span><span class="act"><b>لينك التسجيل</b><small>الطالب يسجّل نفسه، والطلب يوصلك هنا</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
@@ -2494,7 +2496,13 @@ async function syncPub(full){if(ROLE!=="owner"||!db||pubBusy||!students.size)ret
     for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
     if(full)lsSet("pubFull",todayStr());
   }catch(e){}finally{pubBusy=false}}
-function schedulePub(){if(ROLE!=="owner")return;clearTimeout(pubTimer);pubTimer=setTimeout(async()=>{await fixCodes();await syncPortalKeys();syncPub(lsGet("pubFull")!==todayStr())},5000)}
+/* can a student (not signed in) reach the portal? if not, the new rules aren't published */
+let portalOk=null;
+async function probePortal(){if(portalOk!==null)return portalOk;
+  try{const pa=firebase.apps.find(a=>a.name==="probe")||firebase.initializeApp(FIREBASE_CONFIG,"probe");await pa.firestore().doc(ACC.base+"/portalGen/0000").get();portalOk=true}
+  catch(e){portalOk=!(e&&String(e.code||"").includes("permission"));}
+  const w=$("#ptWarn");if(w)w.hidden=portalOk;if(!portalOk)toast("منصة الطلبة مقفولة: انشر قواعد Firebase الجديدة");return portalOk}
+function schedulePub(){if(ROLE!=="owner")return;clearTimeout(pubTimer);pubTimer=setTimeout(async()=>{await fixCodes();await syncPortalKeys();probePortal();syncPub(lsGet("pubFull")!==todayStr())},5000)}
 
 function ownerSubs(){
   if(ROLE!=="owner")return;
@@ -2546,7 +2554,7 @@ async function makeJoinImage(){
 }
 $("#ptCopy").onclick=async()=>{try{await navigator.clipboard.writeText(portalUrl());toast("اللينك اتنسخ")}catch(e){toast(portalUrl())}};
 $("#ptWa").onclick=()=>{const m=`🎓 منصة ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher}\nامتحاناتك الجاية ودرجاتك وتقاريرك وحضورك في مكان واحد:\n${portalUrl()}\n\nأول مرة: دوس «أول مرة؟ فعّل حسابك» واكتب كودك ورقم ولي أمرك، واختار باسورد.\nكودك في الرسالة اللي جاتلك، ولو مش معاك اسألني.`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
-$("#ptSync").onclick=async()=>{const b=$("#ptSync");b.disabled=true;toast("بحدّث المنصة…");await fixCodes();await syncPortalKeys();lsSet("pubFull","");await syncPub(true);b.disabled=false;toast("✓ المنصة اتحدّثت")};
+$("#ptSync").onclick=async()=>{const b=$("#ptSync");b.disabled=true;toast("بحدّث المنصة…");await fixCodes();await syncPortalKeys();portalOk=null;if(!(await probePortal())){b.disabled=false;return}lsSet("pubFull","");await syncPub(true);b.disabled=false;toast("✓ المنصة اتحدّثت")};
 $("#jCopy").onclick=async()=>{try{await navigator.clipboard.writeText(joinUrl());toast("اللينك اتنسخ")}catch(e){toast(joinUrl())}};
 $("#jWa").onclick=()=>{const m=`سجّل في مجموعات ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher} من اللينك ده 👇\n${joinUrl()}`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
 $("#jQr").onclick=async()=>{const b=$("#jQr");b.disabled=true;try{const blob=await makeJoinImage();repBlob=blob;repName="MR-J-تسجيل.png";await shareOrSave(blob,repName)}catch(e){toast("ماقدرتش أعمل الصورة")}b.disabled=false};

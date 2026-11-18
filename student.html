@@ -171,7 +171,7 @@ function drawLogin(){const B=$("#lBody");
       await D("portal/"+cred.user.uid).set({sid:actData.sid,code:actData.code,h:actData.h,pw:p1,at:firebase.firestore.FieldValue.serverTimestamp()});
       lsSet("code",actData.code);actStep=0;start(cred.user)}
     catch(x){err(aErr(x,"ماتفعّلش، جرّب تاني"));busy("#bP",0)}}}
-function aErr(x,d){const c=x&&x.code||"";if(c.includes("network"))return"مفيش نت. اتأكد من النت وجرّب تاني";if(c.includes("too-many"))return"جربت كتير. استنى دقيقة وجرّب تاني";if(c.includes("weak-password"))return"الباسورد ضعيف، خليه ٦ على الأقل";return d}
+function aErr(x,d){const c=x&&x.code||"";console.warn(x);if(c.includes("permission-denied"))return"المنصة لسه مقفولة من Firebase. قول لـ Mr J (كود P1)";if(c.includes("unavailable"))return"مش قادر أوصل للسيرفر. جرّب تاني بعد شوية (كود U1)";if(c.includes("network"))return"مفيش نت. اتأكد من النت وجرّب تاني";if(c.includes("too-many"))return"جربت كتير. استنى دقيقة وجرّب تاني";if(c.includes("weak-password"))return"الباسورد ضعيف، خليه ٦ على الأقل";return d+(c&&!/invalid|wrong-password|user-not-found/.test(c)?" ("+c.replace(/^(auth|firestore)\//,"")+")":"")}
 function err(m){const e=$("#lMsg");if(e)e.textContent=m}
 function busy(s,on){const b=$(s);if(b)b.disabled=!!on}
 /* ---------- signed in ---------- */
