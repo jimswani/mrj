@@ -192,7 +192,7 @@ function loginScreen(msg){
     <div class="code-line"><span class="k">exam</span>.<span class="s">open</span>(<span class="s">"${esc(EID.slice(0,6))}…"</span>) <span class="c">// ${esc(EX.subject||"البرمجة")}</span></div>
     <h1>${esc(EX.title)}</h1>${infoPills()}
     <form id="lf" class="card" style="background:var(--bg);box-shadow:none;padding:14px" autocomplete="off">
-      <label class="lbl">كود الطالب<input id="lCode" class="codein" inputmode="numeric" maxlength="6" placeholder="0000" value="${esc(saved.split("_")[0]||"")}"></label>
+      <label class="lbl">كود الطالب<input id="lCode" class="codein" inputmode="numeric" maxlength="6" placeholder="0000" value="${esc(saved.split("_")[0]||(new URLSearchParams(location.search).get("c")||"").replace(/\D/g,"").slice(0,6))}"></label>
       <label class="lbl">كود الامتحان <small style="font-weight:400">(اتبعت لولي الأمر على واتساب)</small><input id="lPin" class="codein" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"></label>
       <button class="btn" id="lGo">دخول</button>
       <p class="msg" id="lMsg">${esc(msg||"")}</p>

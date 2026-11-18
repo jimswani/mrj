@@ -804,6 +804,12 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
   .exsheet:not(:has(.gq-ans-pages)) .gqs{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stusheet:not(.exsheet){max-width:720px}
 }
+/* student portal box in the student sheet */
+.ptl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;border-radius:16px;border:1px dashed var(--line);background:color-mix(in srgb,var(--holo) 5%,transparent)}
+.ptl.on{border-style:solid;border-color:color-mix(in srgb,var(--holo) 35%,transparent)}
+.ptl-i{font-size:22px}.ptl-t{display:grid;flex:1;min-width:150px}.ptl-t b{font-size:14px}.ptl-t small{font-size:12px;color:var(--muted)}
+.ptl-a{display:flex;gap:6px;flex-wrap:wrap}.ptl .pw{color:var(--holo)}
+.del.sm{padding:6px 12px;font-size:13px}
 </style>
 </head>
 <body>
@@ -945,6 +951,10 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <button class="btn soft" id="bkNow" type="button">اعمل نسخة دلوقتي</button></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 11h5"/></svg></span><span class="act"><b>الطلبة اللي سابوا</b><small>بياناتهم القديمة محفوظة، وتقدر ترجّعهم</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint" id="leftInfo"></p><div class="bklist" id="leftList"></div></div></details>
+    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg></span><span class="act"><b>منصة الطلبة</b><small>لينك ثابت فيه امتحاناته ودرجاته وتقاريره</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
+      <p class="hint">كل طالب بيدخل بكوده والباسورد بتاعه، ويلاقي امتحاناته الجاية ودرجاته وتقاريره وحضوره وفلوسه. أول مرة بيفعّل حسابه بكوده ورقم ولي الأمر المتسجّل عندك، وبعدين يختار باسورد. الباسورد بيظهرلك في بطاقة الطالب، ومنها تقدر تمسحه لو نسيه.</p>
+      <p class="hint">بيانات المنصة بتتحدّث لوحدها وانت فاتح البرنامج. اللي المساعد بيسجّله بيظهر للطالب أول ما تفتح البرنامج.</p>
+      <div class="prow"><button class="btn" id="ptCopy" type="button">نسخ اللينك</button><button class="btn soft" id="ptWa" type="button">ابعته في جروب</button><button class="btn soft" id="ptSync" type="button">حدّث المنصة دلوقتي</button></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg></span><span class="act"><b>لينك التسجيل</b><small>الطالب يسجّل نفسه، والطلب يوصلك هنا</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">ابعت اللينك في جروبات الطلبة، أو اطبع صورة الـ QR وعلّقها في السنتر. الطالب بيكتب اسمه ورقمه ورقم ولي الأمر وسنته، وطلبه بيظهرلك فوق في «الفلوس».</p>
       <b class="sub-h">صفحة «تم التسجيل»</b>
@@ -958,7 +968,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
       <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v6.6</p>
+    <p class="ver">MR-J · v6.7</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1282,6 +1292,7 @@ function sheetHTML(s){
     <div class="sh-top">${avatar(s,1)}<div class="sh-n"><b id="shName">${esc(s.name)}</b><small>${s.code?`كود <span class="code">${esc(s.code)}</span> · `:""}${g?esc(g.name)+" · ":""}${fmt(s.fee)} ج في الشهر</small></div><button class="iconbtn x" data-act="close" aria-label="قفل">✕</button></div>
     <div id="shLive">${liveHTML(s)}</div>
     <div class="shpay" id="shPay" hidden></div>
+    ${ROLE==="owner"?portalHTML(s):""}
     <label class="note">ملاحظة الشهر (بتظهر في التقرير)<textarea id="enote" placeholder="مثلاً: مركز جداً في الحصة">${esc(notes[s.id]||"")}</textarea></label>
     <details class="sh-edit"${s.parentPhone?"":" open"}><summary>بيانات الطالب</summary>
     <div class="fields">
@@ -1319,7 +1330,7 @@ function patchList(box,items){
 let rq=0;function scheduleRender(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()})}
 function render(){
   if(!db)return;
-  if(ROLE==="owner")renderReqBar();
+  if(ROLE==="owner"){renderReqBar();schedulePub()}
   renderLock();
   if(view==="set"){$("#hero").hidden=true;$("#meter").style.width="0";renderSettings();return}
   if(VX.includes(view)){$("#hero").hidden=true;if(!stuLoaded){setH($("#"+view+"View"),`<div class="vload"><i></i><i></i><i></i></div>`);return}
@@ -1958,7 +1969,7 @@ async function openSlip(kind,s){
   $("#modal").hidden=false;$("#toast").hidden=true;
 }
 /* ===== backups: one meta doc per backup + parts subcollection; restore rewrites everything ===== */
-const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent","exams","examKeys","examAccess","subs","examGrades"];
+const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent","exams","examKeys","examAccess","subs","examGrades","portal","portalGen"];
 let bkBusy=false,bkConfirm=null;
 async function snapshotAll(){const out={};for(const c of BK_COLS){const sn=await db.collection(c).get();out[c]=sn.docs.filter(d=>!(c==="settings"&&d.id==="lock")).map(d=>({id:d.id,data:d.data()}))}return out}
 async function makeBackup(kind){
@@ -2414,9 +2425,80 @@ async function boot(){
 }
 $("#staffOut").onclick=()=>{if($("#staffOut").dataset.c){signOutAll();return}$("#staffOut").dataset.c="1";$("#staffOut").classList.add("confirm");$("#staffOut").lastChild.textContent="متأكد؟";setTimeout(()=>{delete $("#staffOut").dataset.c;$("#staffOut").classList.remove("confirm");$("#staffOut").lastChild.textContent="خروج"},3000)};
 /* owner-only live data: sign-up requests and assistants */
+/* ===================== منصة الطلبة (student.html) — owner side =====================
+   portalKeys/{hash(code+parent phone)} → lets a student activate his account the first time
+   portalGen/{code} → account "generation" (bumped when the password is wiped)
+   portal/{uid}     → the student's link to his data + the password he chose (owner reads it)
+   pub/{sid}        → everything the student sees, rebuilt here from the real data */
+let portalBySid=new Map(),pubCache=null,pubTimer=0,pubBusy=false,keysDone=null;
+const portalUrl=()=>appUrl()+"student.html";
+const phone10=p=>String(p||"").replace(/\D/g,"").slice(-10);
+async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+const stab=v=>v&&typeof v==="object"?(Array.isArray(v)?"["+v.map(stab).join(",")+"]":"{"+Object.keys(v).sort().filter(k=>v[k]!==undefined).map(k=>JSON.stringify(k)+":"+stab(v[k])).join(",")+"}"):JSON.stringify(v);
+const portalHash=(code,ph)=>sha("mrj-portal|"+code+"|"+phone10(ph));
+function portalSubs(){if(ROLE!=="owner")return;
+  db.collection("portal").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});portalBySid=m;if(sheetId&&!$("#stuModal").hidden){const b=$("#ptlBox"),s=students.get(sheetId);if(b&&s)b.outerHTML=portalHTML(s)}},()=>{})}
+/* keep the activation keys in step with codes and parent phones */
+async function syncPortalKeys(){if(ROLE!=="owner"||!db)return;
+  try{const sn=await db.collection("portalKeys").get(),have=new Map();sn.docs.forEach(d=>have.set(d.id,d.data()));
+    const gens=await db.collection("portalGen").get(),gHave=new Set(gens.docs.map(d=>d.id));
+    const want=new Map();for(const s of students.values()){if(!s.code||!phone10(s.parentPhone))continue;want.set(await portalHash(s.code,s.parentPhone),{sid:s.id,code:s.code})}
+    const ops=[];
+    want.forEach((v,h)=>{const o=have.get(h);if(!o||o.sid!==v.sid||o.code!==v.code)ops.push(["set","portalKeys/"+h,v])});
+    have.forEach((v,h)=>{if(!want.has(h))ops.push(["del","portalKeys/"+h])});
+    for(const s of students.values())if(s.code&&!gHave.has(s.code))ops.push(["set","portalGen/"+s.code,{gen:0}]);
+    for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
+  }catch(e){}}
+function portalMsg(s){const tch=APP.teacher||THEME.teacher;return `أهلاً ${s.name.split(" ")[0]} 👋
+دي منصتك مع ${tch} 🎓 هتلاقي فيها امتحاناتك الجاية ودرجاتك وتقاريرك وحضورك:
+${portalUrl()}
+
+أول مرة بس: دوس «أول مرة؟ فعّل حسابك» واكتب:
+👤 كودك: ${s.code}
+📱 رقم ولي أمرك اللي متسجّل عندي
+وبعدين اختار باسورد، وبعد كده هتدخل بكودك والباسورد بتاعك.`}
+function portalHTML(s){if(!s.code)return`<div id="ptlBox"></div>`;const p=portalBySid.get(s.id),to=s.phone||s.parentPhone;
+  const send=to?`<a class="btn soft sm" href="${waLink(to,portalMsg(s))}" target="_blank" rel="noopener">ابعت لينك المنصة</a>`:"";
+  if(p)return `<div class="ptl on" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة مفعّلة</b><small>كود <span class="code">${esc(s.code)}</span> · الباسورد <span class="code pw">${esc(p.pw||"—")}</span></small></div><div class="ptl-a">${send}<button class="del sm" type="button" data-pt="reset">امسح الباسورد</button></div></div>`;
+  return `<div class="ptl" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة لسه متفعّلتش</b><small>${phone10(s.parentPhone)?"بيفعّلها بكوده + رقم ولي الأمر":"ضيف رقم ولي الأمر الأول عشان يقدر يفعّلها"}</small></div><div class="ptl-a">${send}</div></div>`}
+$("#stuSheet").addEventListener("click",async e=>{const b=e.target.closest("[data-pt=reset]");if(!b)return;const s=students.get(sheetId),p=s&&portalBySid.get(s.id);if(!p)return;
+  if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ امسحه";setTimeout(()=>{b.classList.remove("confirm");b.textContent="امسح الباسورد"},3000);return}
+  b.disabled=true;
+  try{const g=await db.doc("portalGen/"+s.code).get();await db.doc("portalGen/"+s.code).set({gen:((g.exists&&Number(g.data().gen))||0)+1});await db.doc("portal/"+p.uid).delete();
+    toast("الباسورد اتمسح. "+s.name.split(" ")[0]+" يفعّل حسابه تاني بكوده ورقم ولي الأمر")}
+  catch(x){toast("مااتمسحش، جرّب تاني");b.disabled=false}});
+/* ---------- what each student sees ---------- */
+function monthRange(){const ks=new Set([curKey()]);students.forEach(s=>{if(s.createdAt){const d=new Date(s.createdAt);ks.add(d.getFullYear()+"-"+pad(d.getMonth()+1))}});grades.forEach((v,k)=>ks.add(k));
+  const L=[...ks].sort(),out=[];let m=L[0];while(m<=curKey()&&out.length<24){out.push(m);m=shiftMonth(m,1)}return out}
+async function monthData(m){
+  if(m===month)return{P:new Map([...students.values()].map(s=>[s.id,payOf(s)]).filter(x=>x[1])),A:[...att.values()],N:notes,G:grades.get(m)};
+  const [ps,as,ns]=await Promise.all([db.collection("payments").where("month","==",m).get(),db.collection("attendance").where("month","==",m).get(),db.doc("notes/"+m).get()]);
+  const P=new Map();ps.docs.forEach(d=>{const x=d.data();if(x&&x.studentId)P.set(x.studentId,x)});
+  return{P,A:as.docs.map(d=>d.data()),N:(ns.exists&&ns.data().notes)||{},G:grades.get(m)}}
+function pubMonth(s,m,D){if(s.createdAt&&s.createdAt>=monthEnd(m))return null;if(s.leftMonth&&m>=s.leftMonth)return null;
+  const p=D.P.get(s.id),ss=[];D.A.forEach(a=>{const k=a.marks&&a.marks[s.id];if(k==="p"||k==="a")ss.push([a.date,k])});ss.sort((a,b)=>a[0]<b[0]?-1:1);
+  const ex=examsOf(D.G).filter(e=>e.scores&&has(e.scores[s.id])).map(e=>{const all=Object.values(e.scores||{}).map(Number).filter(n=>!isNaN(n)).sort((a,b)=>b-a);return{n:e.name||"امتحان",sc:Number(e.scores[s.id]),of:Number(e.outOf)||20,top:all[0],rk:all.indexOf(Number(e.scores[s.id]))+1,cnt:all.length}});
+  const fee=Number(s.fee)||0,amt=p?Number(p.amount)||0:0;
+  return{fee,amt,paid:!!(p&&p.paid),ss,ex,note:String((D.N||{})[s.id]||"").trim().slice(0,300)}}
+function pubExams(s){const L=[];exams.forEach(e=>{if(!e.live||!s.code)return;if(!exStudents(e).some(x=>x.id===s.id))return;const c=tsMs(e.closeAt);if(c<Date.now()-86400000*45)return;
+  L.push({id:e.id,t:e.title||"امتحان",o:tsMs(e.openAt),c,d:Number(e.dur)||0,q:(e.qs||[]).length,tot:e.total||0,pub:!!e.published})});return L.sort((a,b)=>a.o-b.o)}
+async function syncPub(full){if(ROLE!=="owner"||!db||pubBusy||!students.size)return;pubBusy=true;
+  try{if(!pubCache){pubCache=new Map();const sn=await db.collection("pub").get();sn.docs.forEach(d=>pubCache.set(d.id,d.data()))}
+    const ms=full?monthRange():[month],data={};for(const m of ms)data[m]=await monthData(m);
+    const ops=[];
+    for(const s of students.values()){if(!s.code)continue;const old=pubCache.get(s.id)||{},g=groups.get(s.groupId),months={...(old.months||{})};
+      ms.forEach(m=>{const x=pubMonth(s,m,data[m]);if(x)months[m]=x;else delete months[m]});
+      const doc={name:s.name,code:s.code,left:s.leftMonth||"",g:g?{n:g.name,d:g.days||[],t:g.time||"",y:yearOfG(g)}:null,months,exams:pubExams(s),tch:{n:APP.teacher||THEME.teacher,p:APP.phone||THEME.phone,s:APP.subject||THEME.subject}};
+      const o2={...old};delete o2.at;if(stab(doc)!==stab(o2)){const d2={...doc,at:Date.now()};pubCache.set(s.id,d2);ops.push(["set","pub/"+s.id,d2])}}
+    pubCache.forEach((v,id)=>{if(!students.has(id)){ops.push(["del","pub/"+id]);pubCache.delete(id)}});
+    for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
+    if(full)lsSet("pubFull",todayStr());
+  }catch(e){}finally{pubBusy=false}}
+function schedulePub(){if(ROLE!=="owner")return;clearTimeout(pubTimer);pubTimer=setTimeout(async()=>{await fixCodes();await syncPortalKeys();syncPub(lsGet("pubFull")!==todayStr())},5000)}
+
 function ownerSubs(){
   if(ROLE!=="owner")return;
-  examSubs();
+  examSubs();portalSubs();
   db.collection("requests").onSnapshot(sn=>{reqs=sn.docs.map(d=>{const x=d.data()||{};let t=0;try{t=x.at&&x.at.toMillis?x.at.toMillis():0}catch(e){}return{id:d.id,t,...x}}).sort((a,b)=>b.t-a.t);renderReqBar();if(!$("#reqModal").hidden)renderReqs()},()=>{});
   fs.collection("staff").onSnapshot(sn=>{staffList=sn.docs.map(d=>({uid:d.id,...d.data()})).filter(x=>x.active!==false).sort((a,b)=>(a.at||0)-(b.at||0));renderStaff()},()=>{});
 }
@@ -2462,6 +2544,9 @@ async function makeJoinImage(){
   ctx.fillStyle=C.acc;ctx.font="700 34px Almarai";ctx.fillText((APP.teacher||THEME.teacher)+" · "+(APP.phone||THEME.phone),W/2,H-60);
   return new Promise(r=>cv.toBlob(r,"image/png"));
 }
+$("#ptCopy").onclick=async()=>{try{await navigator.clipboard.writeText(portalUrl());toast("اللينك اتنسخ")}catch(e){toast(portalUrl())}};
+$("#ptWa").onclick=()=>{const m=`🎓 منصة ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher}\nامتحاناتك الجاية ودرجاتك وتقاريرك وحضورك في مكان واحد:\n${portalUrl()}\n\nأول مرة: دوس «أول مرة؟ فعّل حسابك» واكتب كودك ورقم ولي أمرك، واختار باسورد.\nكودك في الرسالة اللي جاتلك، ولو مش معاك اسألني.`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
+$("#ptSync").onclick=async()=>{const b=$("#ptSync");b.disabled=true;toast("بحدّث المنصة…");await fixCodes();await syncPortalKeys();lsSet("pubFull","");await syncPub(true);b.disabled=false;toast("✓ المنصة اتحدّثت")};
 $("#jCopy").onclick=async()=>{try{await navigator.clipboard.writeText(joinUrl());toast("اللينك اتنسخ")}catch(e){toast(joinUrl())}};
 $("#jWa").onclick=()=>{const m=`سجّل في مجموعات ${APP.subject||THEME.subject} مع ${APP.teacher||THEME.teacher} من اللينك ده 👇\n${joinUrl()}`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank")};
 $("#jQr").onclick=async()=>{const b=$("#jQr");b.disabled=true;try{const blob=await makeJoinImage();repBlob=blob;repName="MR-J-تسجيل.png";await shareOrSave(blob,repName)}catch(e){toast("ماقدرتش أعمل الصورة")}b.disabled=false};
