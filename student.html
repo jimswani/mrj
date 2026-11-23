@@ -136,6 +136,12 @@ label{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:700}
 .lg-feat span{font-size:12px;color:var(--muted);border:1px solid var(--edge);background:rgba(255,255,255,.03);border-radius:999px;padding:6px 12px}
 .lg .foot{margin:0}
 
+/* ===== v7.1: security code ===== */
+.pin.p6{grid-template-columns:repeat(6,1fr);gap:7px}
+.pin.p6 span{height:54px;font-size:24px}
+.mfa-h{display:flex;gap:12px;align-items:flex-start}.mfa-h .mfa-i{font-size:28px;line-height:1}.mfa-h b{display:block;font-size:17px;margin-bottom:4px}.mfa-h small{color:var(--muted);font-size:13px;line-height:1.7}
+.lockbox{margin:0;padding:14px;border-radius:16px;background:rgba(255,123,102,.12);border:1px solid rgba(255,123,102,.4);color:#ffb3a6;font-weight:700;line-height:1.8}
+.link{justify-self:center;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:8px}
 /* ===== v7: the platform ===== */
 html.noscroll,html.noscroll body{overflow:hidden}
 .sec small{font-weight:400;color:var(--dim)}
@@ -218,15 +224,26 @@ const emailOf=(code,gen)=>"p"+code+"g"+(gen||0)+"@"+DOMAIN;
 async function genOf(code){try{const d=await D("portalGen/"+code).get();return d.exists?Number(d.data().gen)||0:0}catch(e){return 0}}
 let PUB=null,unsub=null,tab=lsGet("tab")||"grades",tick=0,mode="login",actStep=1,actData=null;
 function show(h){const a=$("#app");a.innerHTML=h}
+/* ---------- the teacher's security settings ---------- */
+let CFG={mfa:false,max:5,lock:30,days:30};
+const cfgReady=D("portalCfg/main").get().then(d=>{if(d.exists)CFG={...CFG,...d.data()}}).catch(()=>{});
+const tsMs=v=>v&&v.toMillis?v.toMillis():Number(v)||0;
+const minsTxt=m=>m<60?ar(m)+" دقيقة":m<1440?ar(Math.ceil(m/60))+" ساعة":ar(Math.ceil(m/1440))+" يوم";
+/* wrong passwords on this phone: after the limit the form stops for a while */
+function pwTries(code,add){const k="pwt_"+code;let t={n:0,at:0};try{t=JSON.parse(lsGet(k)||"{}");t.n=t.n||0}catch(e){}
+  const lockMs=Math.max(CFG.lock||0,15)*6e4;if(t.n>=CFG.max&&Date.now()>t.at+lockMs)t.n=0;
+  if(add===0)t={n:0,at:0};else if(add)t={n:t.n+1,at:Date.now()};lsSet(k,JSON.stringify(t));return t.n}
+function pwLock(code){let t;try{t=JSON.parse(lsGet("pwt_"+code)||"{}")}catch(e){t={}}const lockMs=Math.max(CFG.lock||0,15)*6e4;
+  if((t.n||0)>=CFG.max&&Date.now()<t.at+lockMs)return`⛔ اتكتب باسورد غلط ${ar(t.n)} مرات. استنى ${minsTxt(Math.ceil((t.at+lockMs-Date.now())/6e4))} وجرّب تاني، أو كلّم Mr J`;return""}
 /* ---------- login / activation ---------- */
 const EYE='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const PEN='<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>';
 let editCode=false;
 if(lsGet("code"))actStep=0;
 /* a 4-cell code display driven by one hidden-in-plain-sight input */
-const pinBox=(id,val)=>`<div class="pin" dir="ltr"><input id="${id}" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="username" aria-label="كودك" value="${esc(val||"")}"><span></span><span></span><span></span><span></span></div>`;
-function wirePin(id){const inp=$("#"+id),cells=[...inp.parentNode.querySelectorAll("span")];
-  const up=()=>{inp.value=inp.value.replace(/\D/g,"").slice(0,4);const v=inp.value,f=document.activeElement===inp;cells.forEach((c,k)=>{c.textContent=v[k]||"";c.classList.toggle("on",f&&k===Math.min(v.length,3));c.classList.toggle("fill",!!v[k])})};
+const pinBox=(id,val,n,lbl)=>{n=n||4;return `<div class="pin${n>4?" p6":""}" dir="ltr"><input id="${id}" inputmode="numeric" pattern="[0-9]*" maxlength="${n}" autocomplete="${n>4?"one-time-code":"username"}" aria-label="${lbl||"كودك"}" value="${esc(val||"")}">${"<span></span>".repeat(n)}</div>`};
+function wirePin(id){const inp=$("#"+id),cells=[...inp.parentNode.querySelectorAll("span")],N=cells.length;
+  const up=()=>{inp.value=inp.value.replace(/\D/g,"").slice(0,N);const v=inp.value,f=document.activeElement===inp;cells.forEach((c,k)=>{c.textContent=v[k]||"";c.classList.toggle("on",f&&k===Math.min(v.length,N-1));c.classList.toggle("fill",!!v[k])})};
   ["input","focus","blur"].forEach(ev=>inp.addEventListener(ev,up));up()}
 const pwBox=(id,ac,ph)=>`<div class="pwf"><input class="in ltr" id="${id}" type="password" autocomplete="${ac}" placeholder="${ph||"••••••"}"><button type="button" class="eye" data-eye="${id}" aria-label="اظهر الباسورد">${EYE}</button></div>`;
 document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=$("#"+b.dataset.eye);i.type=i.type==="password"?"text":"password";b.classList.toggle("on",i.type==="text");i.focus()});
@@ -251,7 +268,9 @@ function drawLogin(){const B=$("#lBody"),sc=lsGet("code");
       <button class="btn" id="bIn"><span>ادخل</span></button></form>`;
     if(fixed){$("#editCode").onclick=()=>{editCode=true;drawLogin();$("#iCode").focus();$("#iCode").select()};setTimeout(()=>$("#iPw").focus(),350)}else wirePin("iCode");
     $("#fIn").onsubmit=async e=>{e.preventDefault();const raw=$("#iCode").value.trim(),code=normCode(raw),pw=$("#iPw").value;if(raw.length<1){err("اكتب كودك");return}if(!pw){err("اكتب الباسورد");$("#iPw").focus();return}
-      busy("#bIn",1);try{const g=await genOf(code);await auth.signInWithEmailAndPassword(emailOf(code,g),pw);lsSet("code",code);editCode=false}catch(x){err(aErr(x,"الكود أو الباسورد غلط"));busy("#bIn",0)}};return}
+      const lk=pwLock(code);if(lk){err(lk);return}
+      busy("#bIn",1);try{const g=await genOf(code);await auth.signInWithEmailAndPassword(emailOf(code,g),pw);lsSet("code",code);editCode=false;pwTries(code,0)}
+      catch(x){const c=String(x&&x.code||"");if(/invalid|wrong-password|user-not-found/.test(c)){const n=pwTries(code,1),left=CFG.max-n;err(left>0?`الكود أو الباسورد غلط. فاضلك ${ar(left)} ${left===1?"محاولة":"محاولات"}`:pwLock(code))}else err(aErr(x,"الكود أو الباسورد غلط"));busy("#bIn",0)}};return}
   if(actStep===1){B.innerHTML=`<p class="hint">اكتب كودك اللي Mr J بعتهولك، ورقم ولي أمرك المتسجّل عنده. ده مرة واحدة بس.</p>
     <form id="fA"><label>كودك${pinBox("aCode",sc||"")}</label>
     <label>رقم ولي الأمر<input class="in ltr" id="aPh" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label><button class="btn" id="bA"><span>كمّل</span></button></form>`;
@@ -283,12 +302,42 @@ tab=["home","lessons","grades","months"].includes(lsGet("tab2"))?lsGet("tab2"):"
 async function start(u){if(started)return;started=true;show(`<div class="load"><i></i><i></i><i></i></div>`);
   try{const l=await D("portal/"+u.uid).get();if(!l.exists){await auth.signOut();started=false;actStep=1;loginView("الباسورد ده اتمسح. فعّل حسابك تاني بكودك ورقم ولي الأمر");return}
     UID=u.uid;SID=l.data().sid;
-    unsub=D("pub/"+SID).onSnapshot(d=>{PUB=d.exists?d.data():null;if(PUB&&PUB.months)Object.values(PUB.months).forEach(M=>{M.ss=(M.ss||[]).map(x=>Array.isArray(x)?{d:x[0],k:x[1]}:x);M.ex=M.ex||[]});if(PUB&&PUB.name)lsSet("name",String(PUB.name).split(" ")[0]);subPlat();draw()},()=>{show(`<div class="card empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)});
-    vUnsub=D("views/"+UID).onSnapshot(d=>{SEEN=(d.exists&&d.data().seen)||{};if(PUB)draw()},()=>{})}
+    await cfgReady;if(CFG.mfa&&!(await sessOk(u))){started=false;mfaView(u);return}
+    unsub=D("pub/"+SID).onSnapshot(d=>{if(!started)return;PUB=d.exists?d.data():null;if(PUB&&PUB.months)Object.values(PUB.months).forEach(M=>{M.ss=(M.ss||[]).map(x=>Array.isArray(x)?{d:x[0],k:x[1]}:x);M.ex=M.ex||[]});if(PUB&&PUB.name)lsSet("name",String(PUB.name).split(" ")[0]);subPlat();draw()},()=>{show(`<div class="card empty">مش قادر أجيب بياناتك دلوقتي. جرّب تاني بعد شوية.</div>`)});
+    vUnsub=D("views/"+UID).onSnapshot(d=>{if(!started)return;SEEN=(d.exists&&d.data().seen)||{};if(PUB)draw()},()=>{})}
   catch(x){started=false;loginView("مفيش نت. جرّب تاني")}}
+/* ---------- security code: needed once on every new phone (or after signing out) ---------- */
+async function authKey(u){const r=await u.getIdTokenResult();return String(r.claims.auth_time)}
+async function sessOk(u){try{const k=await authKey(u),d=await D("sess/"+u.uid).get(),ok=d.exists&&d.data().ok||{};return !!ok[k]&&tsMs(ok[k])+CFG.days*864e5>Date.now()}catch(e){return false}}
+async function triesNow(uid){try{const d=await D("tries/"+uid).get();if(!d.exists)return{n:0,at:0,ex:false};const x=d.data();return{n:x.n||0,at:tsMs(x.at),ex:true}}catch(e){return{n:0,at:0,ex:false}}}
+function lockLeft(t){if(t.n<CFG.max)return 0;if(!CFG.lock)return Infinity;const ms=t.at+CFG.lock*6e4-Date.now();return ms>0?ms:0}
+async function mfaView(u,msg){mode="mfa";const t=await triesNow(u.uid),left=lockLeft(t),nm=lsGet("name");
+  show(`<div class="lg full">
+    <div class="lg-hero fade"><div class="lg-bot">${ROBOT}<i class="scan"></i></div><span class="word">MR-J</span><span class="lg-sub">${nm?"أهلاً يا "+esc(nm)+" 👋":"خطوة أخيرة"}</span></div>
+    <div class="lg-card fade">
+      <div class="mfa-h"><span class="mfa-i">🔒</span><div><b>موبايل جديد؟ اكتب كود الأمان</b><small>كود من ٦ أرقام مع ولي أمرك، Mr J بعتهوله على واتساب. هتكتبه مرة واحدة بس على الموبايل ده.</small></div></div>
+      ${left?`<p class="lockbox">⛔ اتكتب الكود غلط ${ar(t.n)} مرات، فالحساب اتقفل ${left===Infinity?"لحد ما Mr J يفتحه. كلّمه.":"لمدة "+minsTxt(Math.ceil(left/6e4))+"."}</p>`
+        :`<form id="fM"><label>كود الأمان${pinBox("mCode","",6,"كود الأمان")}</label>${t.n?`<p class="hint">فاضلك ${ar(CFG.max-t.n)} ${CFG.max-t.n===1?"محاولة":"محاولات"}</p>`:""}<button class="btn" id="bM"><span>تأكيد</span></button></form>`}
+      <p class="msg" id="lMsg" role="alert">${esc(msg||"")}</p>
+      <button class="link" type="button" id="mOut">مش انت؟ اخرج</button>
+    </div><p class="foot">الكود ده بيحمي حسابك: لو حد عرف الباسورد بتاعك، مش هيقدر يدخل من غيره.</p></div>`);
+  $("#mOut").onclick=()=>{started=false;auth.signOut();actStep=0;loginView()};
+  if(left)return;wirePin("mCode");setTimeout(()=>{const i=$("#mCode");if(i)i.focus()},300);
+  $("#fM").onsubmit=async e=>{e.preventDefault();const g=$("#mCode").value.replace(/\D/g,"");if(g.length!==6){err("الكود ٦ أرقام");return}busy("#bM",1);
+    const now=await triesNow(u.uid);if(lockLeft(now)){mfaView(u);return}
+    let n=now.n;if(n>=CFG.max)n=0;
+    const ref=D("tries/"+u.uid),TS=firebase.firestore.FieldValue.serverTimestamp(),l=await D("portal/"+u.uid).get(),sid=l.data().sid;
+    /* 1) the guess is saved and counted first */
+    try{await ref.set({sid,n:n+1,g,at:TS})}catch(x){busy("#bM",0);mfaView(u,String(x&&x.code||"").includes("permission")?"مش قادر أتأكد دلوقتي. لو المشكلة فضلت كلّم Mr J (كود M1)":aErr(x,"حصلت مشكلة، جرّب تاني"));return}
+    /* 2) only then it's checked: this works only if the saved guess is the right code */
+    try{const k=await authKey(u),sd=await D("sess/"+u.uid).get(),old=sd.exists&&sd.data().ok||{},keep={};
+      Object.entries(old).filter(([kk,v])=>kk!==k&&tsMs(v)+CFG.days*864e5>Date.now()).sort((a,b)=>tsMs(b[1])-tsMs(a[1])).slice(0,5).forEach(([kk,v])=>keep[kk]=v);
+      const b=fs.batch();b.set(D("sess/"+u.uid),{sid,ok:{...keep,[k]:TS}});b.set(ref,{sid,n:0,g:"",at:TS});await b.commit();
+      try{navigator.vibrate&&navigator.vibrate(15)}catch(z){}start(u)}
+    catch(x){const left2=CFG.max-(n+1);busy("#bM",0);mfaView(u,left2>0?`الكود غلط. فاضلك ${ar(left2)} ${left2===1?"محاولة":"محاولات"}`:"")}}}
 /* lessons, live and announcements for the student's year (+ the ones for everyone) */
 function subPlat(){const y=PUB&&PUB.g&&PUB.g.y||null;if(plUnsubs.length&&y===plY)return;plUnsubs.forEach(f=>f());plUnsubs=[];plY=y;PL={all:null,y:null};
-  const on=(k,path)=>plUnsubs.push(D(path).onSnapshot(d=>{PL[k]=d.exists?d.data():null;PLerr=false;draw()},x=>{PLerr=String(x&&x.code||"").includes("permission");draw()}));
+  const on=(k,path)=>plUnsubs.push(D(path).onSnapshot(d=>{if(!started)return;PL[k]=d.exists?d.data():null;PLerr=false;draw()},x=>{PLerr=String(x&&x.code||"").includes("permission");draw()}));
   on("all","plat/all");if(y)on("y","plat/"+y)}
 auth.onAuthStateChanged(u=>{if(u)start(u);else if(!started)loginView()});
 function signOut(){[unsub,vUnsub,...plUnsubs].forEach(f=>f&&f());unsub=vUnsub=null;plUnsubs=[];plY=null;started=false;PUB=null;SEEN={};closeViewer();auth.signOut()}

@@ -906,6 +906,37 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .pl-empty{text-align:center;color:var(--muted);font-size:14px;padding:16px 8px}
 .pl-names{display:flex;gap:6px;flex-wrap:wrap}.pl-names span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--edge)}
 .pl-names span.no{color:var(--muted);border-style:dashed}
+
+/* ===== v7.1: أمان المنصة ===== */
+.sec-row{display:grid;gap:8px}
+.sec-row>b{font-size:14px}.sec-row>small{color:var(--muted);font-size:12px;margin-top:-4px}
+.sec-row .seg{display:grid;width:100%}
+.sec-on{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;border:1px solid var(--edge);background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.sec-on.on{border-color:color-mix(in srgb,var(--ok) 50%,transparent);background:color-mix(in srgb,var(--ok) 8%,transparent)}
+.sec-on .ptl-t b{font-size:15px}
+.sw{flex:none;position:relative;width:56px;height:32px;border-radius:99px;border:0;background:var(--line);cursor:pointer;transition:background .2s}
+.sw::after{content:"";position:absolute;top:4px;inset-inline-start:4px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:inset-inline-start .2s}
+.sw[aria-checked=true]{background:var(--ok)}.sw[aria-checked=true]::after{inset-inline-start:28px}
+.sec-l{display:grid;gap:6px}
+.sec-it{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;border:1px solid var(--edge);background:var(--glass)}
+.sec-it .nt{flex:1;min-width:0;display:grid}.sec-it .nt b{font-size:14px}.sec-it .nt small{font-size:12px;color:var(--muted)}
+.sec-it.lk{border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.pcode{font-family:ui-monospace,Menlo,monospace;letter-spacing:2px;font-weight:800;color:var(--accent-2)}
+.ptl2{display:grid;gap:8px;margin-top:8px;padding-top:10px;border-top:1px dashed var(--line);width:100%}
+.ptl2 .r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.ptl2 .r>span{flex:1;min-width:150px}
+.ptl2 .bad{color:var(--bad);font-weight:700}
+
+/* ===== v7.1: assistant device approval ===== */
+.g-wait{display:grid;gap:12px;justify-items:center;text-align:center}.g-wait b{font-size:18px}.g-wait p{margin:0;color:var(--muted);font-size:14px;line-height:1.8;max-width:320px}
+.sreq{position:fixed;z-index:70;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:grid;gap:8px;max-width:620px;margin:0 auto}
+.sreq-c{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px;border-radius:20px;background:var(--surface);border:2px solid var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.45);animation:sreqIn .35s cubic-bezier(.2,.9,.25,1)}
+@keyframes sreqIn{from{transform:translateY(-20px);opacity:0}}
+.sreq-i{font-size:26px}.sreq-t{flex:1;min-width:180px;display:grid}.sreq-t b{font-size:15px}.sreq-t small{color:var(--muted);font-size:12px}
+.sreq-a{display:flex;gap:6px;flex-wrap:wrap;width:100%}.sreq-a .btn{flex:1}
+
+.bktxt{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.bktxt>small{color:var(--muted);font-size:12px;line-height:1.7}
+#bkPasteBox{display:grid;gap:8px}#bkPasteBox textarea{width:100%;font:12px ui-monospace,monospace;color:var(--ink);background:var(--bg);border:1px solid var(--edge-2);border-radius:12px;padding:10px}
 </style>
 </head>
 <body>
@@ -934,10 +965,12 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <button class="btn big" id="gGo" type="submit">دخول</button>
       <p class="g-hint" id="gHint"></p>
     </form>
+    <div class="g-wait" id="gWait" hidden><div class="g-load"><i></i><i></i><i></i></div><b>مستني موافقة Mr J</b><p>ده أول دخول من الموبايل ده. Mr J هيوصله طلب على البرنامج، وأول ما يوافق هتدخل على طول.</p><button class="btn soft" id="gWaitOut" type="button">خروج</button></div>
     <p class="g-msg" id="gMsg" role="alert"></p>
     <button class="btn soft" id="gRetry" type="button" hidden>جرّب تاني</button>
   </div>
 </div>
+<div class="sreq" id="sreq" hidden></div>
 <div class="join" id="join" hidden>
   <div class="g-in">
     <div class="g-hero"><svg class="g-bot" viewBox="0 0 64 64" aria-hidden="true"><circle cx="8" cy="34" r="7" fill="#ff8a1f"/><circle cx="56" cy="34" r="7" fill="#ff8a1f"/><rect x="7" y="7" width="50" height="50" rx="17" fill="#f4f6f8"/><rect x="7" y="40" width="50" height="17" rx="8" fill="#d7dde2"/><rect x="11.5" y="13" width="41" height="35" rx="12" fill="#ff8a1f"/><rect x="15" y="16.5" width="34" height="28" rx="9" fill="#0a161d"/><text x="32" y="35.5" text-anchor="middle" font-size="15" fill="#3ee6d2">MR/J</text></svg><b class="g-word">MR-J</b><span class="g-sub" id="jTeacher">أ/ محمد جمال · البرمجة</span></div>
@@ -1048,7 +1081,11 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M4 7c0-2 3.6-3 8-3s8 1 8 3-3.6 3-8 3-8-1-8-3z"/><path d="M4 7v10c0 2 3.6 3 8 3s8-1 8-3V7M4 12c0 2 3.6 3 8 3s8-1 8-3"/></svg></span><span class="act"><b>النسخ الاحتياطية</b><small>آخر ٣ نسخ من بياناتك، وبتتجدد كل يوم</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint" id="bkInfo">بتتعمل نسخة لوحدها كل يوم بتفتح فيه البرنامج.</p>
       <div class="bklist" id="bkList"></div>
-      <button class="btn soft" id="bkNow" type="button">اعمل نسخة دلوقتي</button></div></details>
+      <button class="btn soft" id="bkNow" type="button">اعمل نسخة دلوقتي</button>
+      <div class="bktxt"><b>نسخة كنص</b><small>تنسخ بياناتك كلها كنص، وتحطها في واتساب أو أي مكان تاني تحفظه. ولو احتجتها في يوم، تلزقها هنا وترجّعها.</small>
+        <div class="prow"><button class="btn soft" id="bkCopy" type="button">📋 انسخ النسخة كنص</button><button class="btn soft" id="bkFile" type="button">💾 احفظها كملف</button><button class="btn soft" id="bkPasteOpen" type="button">↩ رجّع من نص</button></div>
+        <p class="hint" id="bkTxtInfo">⚠ النص ده فيه أرقام تليفونات الطلبة وأولياء الأمور. ابعته لنفسك بس، ومتنشروش في أي جروب.</p>
+        <div id="bkPasteBox" hidden><textarea id="bkPaste" rows="4" dir="ltr" placeholder="الزق النص هنا (بيبدأ بـ MRJ-BACKUP)"></textarea><button class="btn" id="bkPasteGo" type="button">رجّع البيانات من النص ده</button></div></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 11h5"/></svg></span><span class="act"><b>الطلبة اللي سابوا</b><small>بياناتهم القديمة محفوظة، وتقدر ترجّعهم</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint" id="leftInfo"></p><div class="bklist" id="leftList"></div></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg></span><span class="act"><b>منصة الطلبة</b><small>لينك ثابت فيه امتحاناته ودرجاته وتقاريره</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
@@ -1057,6 +1094,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="warnbox" id="ptWarn" hidden>⚠ الطلبة مش هيقدروا يدخلوا المنصة: قواعد Firebase الجديدة مش منشورة. افتح Firestore ← Rules والزق ملف القواعد كله ودوس Publish.</p>
       <p class="hint">بيانات المنصة بتتحدّث لوحدها وانت فاتح البرنامج. اللي المساعد بيسجّله بيظهر للطالب أول ما تفتح البرنامج.</p>
       <div class="prow"><button class="btn" id="ptCopy" type="button">نسخ اللينك</button><button class="btn soft" id="ptWa" type="button">ابعته في جروب</button><button class="btn soft" id="ptSync" type="button">حدّث المنصة دلوقتي</button></div></div></details>
+    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="act"><b>أمان المنصة</b><small id="secSub">كود أمان لأي موبايل جديد + حد للمحاولات الغلط</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb" id="secBox"></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg></span><span class="act"><b>لينك التسجيل</b><small>الطالب يسجّل نفسه، والطلب يوصلك هنا</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">ابعت اللينك في جروبات الطلبة، أو اطبع صورة الـ QR وعلّقها في السنتر. الطالب بيكتب اسمه ورقمه ورقم ولي الأمر وسنته، وطلبه بيظهرلك فوق في «الفلوس».</p>
       <b class="sub-h">صفحة «تم التسجيل»</b>
@@ -1067,10 +1105,16 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></svg></span><span class="act"><b>المساعد</b><small>يسجّل الدفع والحضور بس</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">انت اللي بتختار الكود اللي المساعد هيدخل بيه. بيشوف الطلبة ويسجّل الدفع والحضور بس، من غير الإجمالي والإعدادات والدرجات. لو شلته مش هيقدر يدخل تاني.</p>
       <div class="bklist" id="stList"></div>
-      <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="٦ حروف إنجليزي أو أرقام على الأقل" dir="ltr"></label></div>
-      <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button></div></details>
+      <div class="fields"><label>اسمه<input id="stName" autocomplete="off"></label><label>رقمه (واتساب)<input id="stPhone" type="tel" inputmode="tel" autocomplete="off"></label><label>الكود اللي هيدخل بيه<input id="stCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="١٠ حروف وأرقام على الأقل" dir="ltr"></label></div>
+      <button class="btn soft" id="stRand" type="button">🎲 اعمل كود عشوائي قوي</button>
+      <button class="btn" id="stAdd" type="button">اعمل حساب للمساعد</button>
+      <p class="hint">🔒 أي موبايل جديد المساعد يدخل منه لازم توافق عليه الأول. هيوصلك طلب فوق في البرنامج.</p></div></details>
+    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span class="act"><b>كود الدخول بتاعك</b><small id="ocSub">غيّره لكود قوي محدش يخمّنه</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
+      <div class="fields"><label>الكود الحالي<input id="ocOld" type="password" autocomplete="current-password"></label><label>الكود الجديد<input id="ocNew" type="text" dir="ltr" autocomplete="new-password" spellcheck="false" placeholder="١٠ على الأقل: حروف وأرقام"></label><label>اكتبه تاني<input id="ocNew2" type="text" dir="ltr" autocomplete="new-password" spellcheck="false"></label></div>
+      <p class="hint">اكتبه في ورقة واحفظه كويس. هتدخل بيه من أي موبايل، ولو نسيته مش هتعرف تدخل.</p>
+      <div class="prow"><button class="btn soft" id="ocRand" type="button">🎲 كود عشوائي قوي</button><button class="btn" id="ocSave" type="button">غيّر الكود</button></div></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v7.0</p>
+    <p class="ver">MR-J · v7.1</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1556,6 +1600,8 @@ function renderHome(){
   if(st.due)al.push(`<button class="al" type="button" data-h="due"><span class="ic bad">${BIC.cash}</span><span class="al-t"><b>${fmt(st.due)} ${st.due===1?"طالب لسه مادفعش":"طلبة لسه مادفعوش"}</b><small>باقي ${fmt(all.reduce((a,s)=>a+remOf(s),0))} ج · دوس عشان تبعتلهم تذكير</small></span><span class="go">‹</span></button>`);
   const po=prevOwe[month];if(cur&&po&&po.length)al.push(`<button class="al" type="button" data-h="prev"><span class="ic warn">${BIC.cal}</span><span class="al-t"><b>${fmt(po.length)} عليهم ${esc(shortMonth(shiftMonth(month,-1)))}</b><small>${esc(po.slice(0,3).map(s=>s.name.split(" ")[0]).join("، "))}${po.length>3?" …":""}</small></span><span class="go">‹</span></button>`);
   absentStreak(all).slice(0,3).forEach(s=>al.push(`<button class="al" type="button" data-h="stu" data-id="${s.id}"><span class="ic warn">${BIC.clock}</span><span class="al-t"><b>${esc(s.name)} غاب حصتين ورا بعض</b><small>${s.parentPhone?"دوس وابعت لولي الأمر":"ضيف رقم ولي الأمر في بطاقته"}</small></span><span class="go">‹</span></button>`));
+  const lockedS=[...students.values()].filter(s=>ptLocked(triesBySid.get(s.id)));
+  if(lockedS.length)al.push(`<button class="al" type="button" data-h="sec"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>${lockedS.length===1?"حساب "+esc(lockedS[0].name.split(" ")[0])+" اتقفل":fmt(lockedS.length)+" حسابات اتقفلت"} على المنصة</b><small>حد كتب كود الأمان غلط كذا مرة · دوس تشوف</small></span><span class="go">‹</span></button>`);
   if(pubStat&&!pubStat.ok)al.push(`<button class="al" type="button" data-h="portal"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>منصة الطلبة ماتحدّثتش</b><small>دوس عشان تشوف السبب</small></span><span class="go">‹</span></button>`);
   if(reqs.length)al.push(`<button class="al" type="button" data-h="req"><span class="ic holo">${BIC.inbox}</span><span class="al-t"><b>${reqs.length===1?"طلب تسجيل جديد":fmt(reqs.length)+" طلبات تسجيل جديدة"}</b><small>من لينك التسجيل · حطهم في مجموعاتهم</small></span><span class="go">‹</span></button>`);
   h+=`<div class="sec">مهام النهارده${al.length?`<small>${fmt(al.length)} ${al.length===1?"حاجة":"حاجات"}</small>`:""}</div><div class="hc-card alerts">${al.length?al.join(""):`<div class="al calm"><span class="ic ok">${BIC.ok}</span><span class="al-t"><b>كله تمام</b><small>مفيش حاجة محتاجة متابعة دلوقتي</small></span></div>`}</div>`;
@@ -1571,6 +1617,7 @@ $("#homeView").addEventListener("click",e=>{const b=e.target.closest("[data-h]")
   else if(a==="groups")setView("groups");
   else if(a==="rep")setView("rep");
   else if(a==="req"){renderReqs();$("#reqModal").hidden=false}
+  else if(a==="sec"){setView("set");setTimeout(()=>{const d=$("#secBox")&&$("#secBox").closest("details");if(d){d.open=true;d.scrollIntoView({block:"center"})}},80)}
   else if(a==="portal"){setView("set");setTimeout(()=>{const d=$("#ptStat")&&$("#ptStat").closest("details");if(d){d.open=true;d.scrollIntoView({block:"center"})}},80)}
   else if(a==="add")openAdd();
   else if(a==="img")$("#backupBtn").click();
@@ -2066,7 +2113,7 @@ function applySettings(){
   if(["day","night","auto"].includes(APP.theme))applyTheme(APP.theme);THEME.teacher=APP.teacher||THEME0.teacher;THEME.phone=APP.phone||THEME0.phone;THEME.subject=APP.subject||THEME0.subject;
   THEME.brand=APP.brand||THEME0.brand;THEME.tagline=APP.tagline||THEME0.tagline;SIGN=THEME.teacher;PHONE=THEME.phone;
   $("#brandName").textContent=THEME.brand;$("#brandTag").textContent=THEME.tagline;document.querySelectorAll(".lock-brand b").forEach(b=>b.textContent=THEME.brand);document.querySelectorAll(".lock-brand span").forEach(b=>b.textContent=THEME.tagline)}
-function renderSettings(){renderPortalStat();renderLeft();
+function renderSettings(){renderPortalStat();renderSecurity();renderLeft();
   if(!setFilled){setFilled=true;
     $("#sTeacher").value=THEME.teacher;$("#sPhone").value=THEME.phone;$("#sSubject").value=THEME.subject;$("#sBrand").value=THEME.brand;$("#sTag").value=THEME.tagline;
     {const I=APP.intro||{};$("#iDesc").value=I.desc||"";$("#iFb").value=I.fb??THEME.social.fb;$("#iTt").value=I.tt??THEME.social.tt;$("#iIg").value=I.ig||"";$("#iYt").value=I.yt||""}
@@ -2126,19 +2173,19 @@ async function openSlip(kind,s){
   $("#modal").hidden=false;$("#toast").hidden=true;
 }
 /* ===== backups: one meta doc per backup + parts subcollection; restore rewrites everything ===== */
-const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent","exams","examKeys","examAccess","subs","examGrades","portal","portalGen"];
+const BK_COLS=["students","groups","payments","attendance","grades","notes","months","settings","requests","sent","exams","examKeys","examAccess","subs","examGrades","portal","portalGen","pcode","portalCfg"];
 let bkBusy=false,bkConfirm=null;
 async function snapshotAll(){const out={};for(const c of BK_COLS){const sn=await db.collection(c).get();out[c]=sn.docs.filter(d=>!(c==="settings"&&d.id==="lock")).map(d=>({id:d.id,data:d.data()}))}return out}
-async function makeBackup(kind){
+async function makeBackup(kind,given){
   if(!db||bkBusy)return null;bkBusy=true;
   try{
-    const data=await snapshotAll();const now=Date.now(),date=todayStr();
+    const data=given||await snapshotAll(),have=new Set(Object.keys(data));BK_COLS.forEach(c=>{if(!data[c])data[c]=[]});const now=Date.now(),date=todayStr();
     const id=kind==="auto"?date:date+"-"+kind[0]+now.toString(36);
     const parts=[];
     for(const c of BK_COLS){let chunk=[],size=0,n=0;const flush=async()=>{const name=c+"-"+n++;await db.doc("backups/"+id).collection("parts").doc(name).set({c,items:chunk});parts.push(name);chunk=[];size=0};
       for(const it of data[c]){const l=JSON.stringify(it).length;if(size+l>180000&&chunk.length)await flush();chunk.push(it);size+=l}
       if(chunk.length||n===0)await flush()}
-    const counts={};BK_COLS.forEach(c=>counts[c]=data[c].length);
+    const counts={};BK_COLS.filter(c=>have.has(c)).forEach(c=>counts[c]=data[c].length);
     await db.doc("backups/"+id).set({id,date,at:now,kind,counts,parts});
     return id}
   finally{bkBusy=false}
@@ -2154,7 +2201,26 @@ async function autoBackup(){
     const L=await listBackups(),prev=L[0];if(prev&&prev.counts&&prev.counts.students>=4&&students.size<prev.counts.students/2){bkWarn=true;return}
     await makeBackup("auto");await rotateBackups();lsSet("lastAutoBk",todayStr());if(view==="set")loadBackups()}catch(e){}
 }
-const BK_KIND={auto:"يومية",manual:"يدوي",restore:"قبل الاسترجاع"};
+const BK_KIND={auto:"يومية",manual:"يدوي",restore:"قبل الاسترجاع",text:"من نص"};
+/* the whole data as one text: copy it to WhatsApp or anywhere, paste it back to restore */
+const BK_HEAD="MRJ-BACKUP-1";
+async function backupText(){const data=await snapshotAll();
+  const rep=(k,v)=>v&&typeof v==="object"&&typeof v.toMillis==="function"?{__ts:v.toMillis()}:v;
+  return BK_HEAD+"\n"+JSON.stringify({at:Date.now(),by:APP.teacher||THEME.teacher,data},rep)}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand("copy")}catch(x){}a.remove();return ok}}
+$("#bkCopy").onclick=async()=>{const b=$("#bkCopy");b.disabled=true;try{const t=await backupText(),kb=Math.round(t.length/1024);
+    if(await copyText(t)){toast("اتنسخت ✓ الزقها في واتساب (رسالة لنفسك)");$("#bkTxtInfo").textContent=`✓ اتنسخت (${fmt(kb)} ك.ب). ${t.length>60000?"⚠ النص كبير على رسالة واتساب واحدة، استخدم «احفظها كملف» وابعت الملف.":"الزقها في شات «رسالة لنفسك» على واتساب."}`;hap()}
+    else toast("ماقدرتش أنسخ، استخدم «احفظها كملف»")}catch(e){toast("ماقدرتش أجهز النسخة، جرّب تاني")}b.disabled=false};
+$("#bkFile").onclick=async()=>{const b=$("#bkFile");b.disabled=true;try{const t=await backupText(),name="MRJ-نسخة-"+todayStr()+".txt",blob=new Blob([t],{type:"text/plain"});
+    try{const f=new File([blob],name,{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});b.disabled=false;return}}catch(e){if(e&&e.name==="AbortError"){b.disabled=false;return}}
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast("اتحفظت ✓")}catch(e){toast("ماقدرتش أحفظها، جرّب تاني")}b.disabled=false};
+$("#bkPasteOpen").onclick=()=>{const x=$("#bkPasteBox");x.hidden=!x.hidden;if(!x.hidden)$("#bkPaste").focus()};
+$("#bkPasteGo").onclick=async()=>{const b=$("#bkPasteGo"),t=$("#bkPaste").value.trim();
+  if(!t.startsWith(BK_HEAD)){toast("النص ده مش نسخة MR-J. لازم يبدأ بـ MRJ-BACKUP");return}
+  let o;try{o=JSON.parse(t.slice(BK_HEAD.length),(k,v)=>v&&typeof v==="object"&&typeof v.__ts==="number"&&Object.keys(v).length===1?firebase.firestore.Timestamp.fromMillis(v.__ts):v)}catch(e){toast("النص ناقص أو اتلخبط. اتأكد إنك نسخته كله");return}
+  const d=o&&o.data;if(!d||!Array.isArray(d.students)){toast("النص ده مافيهوش بيانات طلبة");return}
+  if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent=`متأكد؟ هترجّع ${fmt(d.students.length)} طالب من ${dayLabel(new Date(o.at).toISOString().slice(0,10))}`;setTimeout(()=>{b.classList.remove("confirm");b.textContent="رجّع البيانات من النص ده"},6000);return}
+  b.disabled=true;try{const id=await makeBackup("text",d);if(!id)throw 0;await restoreBackup(id);$("#bkPaste").value="";$("#bkPasteBox").hidden=true}catch(e){toast("مارجعتش، جرّب تاني")}b.disabled=false;b.classList.remove("confirm");b.textContent="رجّع البيانات من النص ده"};
 async function loadBackups(){const box=$("#bkList");if(!db)return;box.innerHTML=`<span class="hint">جاري التحميل…</span>`;
   try{const L=await listBackups();
     $("#bkInfo").textContent=bkWarn?"⚠️ عدد الطلبة قلّ فجأة عن آخر نسخة، فالبرنامج ماعملش نسخة جديدة عشان يحافظ على القديمة. لو ده مقصود اعمل نسخة بإيدك.":L.length?"بيتحفظ هنا آخر ٣ نسخ. كل يوم بتفتح فيه البرنامج بتتعمل نسخة جديدة وبتتمسح أقدم واحدة.":"لسه مفيش نسخة. أول نسخة هتتعمل لوحدها النهاردة.";
@@ -2499,6 +2565,7 @@ const ACC={domain:"mrj.app",base:"t/main"};
 ACC.owner="owner@"+ACC.domain;
 const normCode=c=>String(c||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
 ACC.staff=c=>"staff-"+normCode(c).toLowerCase()+"@"+ACC.domain;
+let staffReqs=[],staffDevs=new Map();
 let fauth=null,fs=null,ROLE=null,ME=null,reqs=[],staffList=[],gDoor=lsGet("door")==="staff"?"staff":"owner",gSetup=false;
 const JOIN_MODE=new URLSearchParams(location.search).has("join");
 const appUrl=()=>location.origin+location.pathname.replace(/index\.html$/,"");
@@ -2515,7 +2582,7 @@ function gate(state,msg){
   const g=$("#gate");g.hidden=false;g.dataset.s=state;$("#lock").hidden=true;
   $("#gMsg").textContent=msg||"";$("#gMsg").className="g-msg"+(msg?" on":"");
   $("#gLoad").hidden=state!=="loading";$("#gForm").hidden=state!=="login";
-  $("#gRetry").hidden=state!=="offline";
+  $("#gRetry").hidden=state!=="offline";$("#gWait").hidden=state!=="wait";
   if(state==="login")gDraw();
 }
 function gDraw(){
@@ -2554,6 +2621,14 @@ $("#gForm").addEventListener("submit",async e=>{e.preventDefault();
   }catch(x){const m=x&&x.msg||authErr(x);$("#gMsg").textContent=m;$("#gMsg").className="g-msg on"}
   btn.disabled=false;
 });
+async function devKey(u){const r=await u.getIdTokenResult();return String(r.claims.auth_time)}
+async function staffDevOk(u){try{const k=await devKey(u),d=await fs.doc("staffDev/"+u.uid).get({source:"server"});return !!(d.exists&&(d.data().ok||{})[k])}catch(e){return false}}
+const devName=()=>{const u=navigator.userAgent;const os=/iPhone|iPad/.test(u)?"آيفون":/Android/.test(u)?"أندرويد":/Windows/.test(u)?"ويندوز":/Mac/.test(u)?"ماك":"جهاز";const br=/Edg\//.test(u)?"Edge":/Chrome\//.test(u)?"Chrome":/Safari\//.test(u)?"Safari":/Firefox\//.test(u)?"Firefox":"";return (os+(br?" · "+br:"")).slice(0,60)};
+async function staffWait(u){gate("wait");const k=await devKey(u);
+  try{await fs.doc("staffReq/"+u.uid).set({key:k,dev:devName(),name:String(ME&&ME.name||"المساعد").slice(0,50),at:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){}
+  const un=fs.doc("staffDev/"+u.uid).onSnapshot(d=>{if(d.exists&&(d.data().ok||{})[k]){un();location.reload()}},()=>{});
+  fs.doc("staff/"+u.uid).onSnapshot(d=>{if(!d.exists||d.data().active!==true){un();fauth.signOut()}},()=>{})}
+$("#gWaitOut").onclick=()=>signOutAll();
 async function signOutAll(){try{await fauth.signOut()}catch(e){}lsSet("view","pay");location.reload()}
 /* ---------- boot ---------- */
 async function boot(){
@@ -2570,7 +2645,9 @@ async function boot(){
     if(u.email===ACC.owner)ROLE="owner";
     else{
       try{const d=await fs.doc("staff/"+u.uid).get();
-        if(d.exists&&d.data().active===true){ROLE="staff";ME=d.data()}
+        if(d.exists&&d.data().active===true){ROLE="staff";ME=d.data();
+          /* a new phone needs the owner's OK before it can see anything (checked by Firebase itself) */
+          if(!(await staffDevOk(u))){staffWait(u);return}}
         else{await fauth.signOut();gDoor="staff";gate("login","الكود ده اتلغى. اطلب كود جديد من Mr J.");return}}
       catch(e){gate("offline","مش قادر أوصل للنت. افتح البرنامج تاني لما النت يرجع.");return}}
     document.documentElement.classList.toggle("staff",ROLE==="staff");
@@ -2587,13 +2664,20 @@ $("#staffOut").onclick=()=>{if($("#staffOut").dataset.c){signOutAll();return}$("
    portalGen/{code} → account "generation" (bumped when the password is wiped)
    portal/{uid}     → the student's link to his data + the password he chose (owner reads it)
    pub/{sid}        → everything the student sees, rebuilt here from the real data */
+let ptCfg={mfa:false,max:5,lock:30,days:30},pcodes=new Map(),triesBySid=new Map(),sessBySid=new Map(),secSendAll=false;
 let portalBySid=new Map(),pubCache=null,pubTimer=0,pubBusy=false,keysDone=null;
 const portalUrl=()=>appUrl()+"student.html";
 const phone10=p=>String(p||"").replace(/\D/g,"").slice(-10);
 async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 const stab=v=>v&&typeof v==="object"?(Array.isArray(v)?"["+v.map(stab).join(",")+"]":"{"+Object.keys(v).sort().filter(k=>v[k]!==undefined).map(k=>JSON.stringify(k)+":"+stab(v[k])).join(",")+"}"):JSON.stringify(v);
 const portalHash=(code,ph)=>sha("mrj-portal|"+code+"|"+phone10(ph));
+const ptLocked=t=>!!t&&t.n>=ptCfg.max&&(ptCfg.lock===0||Date.now()<tsMs(t.at)+ptCfg.lock*6e4);
+function secRefresh(){renderSecurity();if(sheetId&&!$("#stuModal").hidden){const b=$("#ptlBox"),s=students.get(sheetId);if(b&&s)b.outerHTML=portalHTML(s)}if(view==="home")renderHome()}
 function portalSubs(){if(ROLE!=="owner")return;
+  db.doc("portalCfg/main").onSnapshot(d=>{ptCfg={mfa:false,max:5,lock:30,days:30,...(d.exists?d.data():{})};secRefresh()},()=>{});
+  db.collection("pcode").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data().c));pcodes=m;secRefresh()},()=>{});
+  db.collection("tries").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});triesBySid=m;secRefresh()},()=>{});
+  db.collection("sess").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,n:Object.keys(x.ok||{}).length})});sessBySid=m;secRefresh()},()=>{});
   db.collection("portal").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});portalBySid=m;if(sheetId&&!$("#stuModal").hidden){const b=$("#ptlBox"),s=students.get(sheetId);if(b&&s)b.outerHTML=portalHTML(s)}},()=>{})}
 /* keep the activation keys in step with codes and parent phones */
 async function syncPortalKeys(){if(ROLE!=="owner"||!db)return;
@@ -2604,6 +2688,8 @@ async function syncPortalKeys(){if(ROLE!=="owner"||!db)return;
     want.forEach((v,h)=>{const o=have.get(h);if(!o||o.sid!==v.sid||o.code!==v.code)ops.push(["set","portalKeys/"+h,v])});
     have.forEach((v,h)=>{if(!want.has(h))ops.push(["del","portalKeys/"+h])});
     for(const s of students.values())if(s.code&&!gHave.has(s.code))ops.push(["set","portalGen/"+s.code,{gen:0}]);
+    const pcs=await db.collection("pcode").get(),pHave=new Set(pcs.docs.map(d=>d.id));
+    for(const s of students.values())if(s.code&&!pHave.has(s.id))ops.push(["set","pcode/"+s.id,{c:newPcode()}]);
     for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
   }catch(e){}}
 function portalMsg(s){const tch=APP.teacher||THEME.teacher;return `أهلاً ${s.name.split(" ")[0]} 👋
@@ -2616,12 +2702,55 @@ ${portalUrl()}
 وبعدين اختار باسورد، وبعد كده هتدخل بكودك والباسورد بتاعك.`}
 function portalHTML(s){if(!s.code)return`<div id="ptlBox"></div>`;const p=portalBySid.get(s.id),to=s.phone||s.parentPhone;
   const send=to?`<a class="btn soft sm" href="${waLink(to,portalMsg(s))}" target="_blank" rel="noopener">ابعت لينك المنصة</a>`:"";
-  if(p)return `<div class="ptl on" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة مفعّلة</b><small>كود <span class="code">${esc(s.code)}</span> · الباسورد <span class="code pw">${esc(p.pw||"—")}</span></small></div><div class="ptl-a">${send}<button class="del sm" type="button" data-pt="reset">امسح الباسورد</button></div></div>`;
-  return `<div class="ptl" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة لسه متفعّلتش</b><small>${phone10(s.parentPhone)?"بيفعّلها بكوده + رقم ولي الأمر":"ضيف رقم ولي الأمر الأول عشان يقدر يفعّلها"}</small></div><div class="ptl-a">${send}</div></div>`}
+  const pc=pcodes.get(s.id),tr=triesBySid.get(s.id),se=sessBySid.get(s.id),lk=ptLocked(tr),par=s.parentPhone||s.phone;
+  const sec=pc?`<div class="ptl2"><div class="r"><span>🔒 كود الأمان <span class="pcode">${esc(pc)}</span>${ptCfg.mfa?"":" <small>(مقفول من الإعدادات)</small>"}</span>${par?`<a class="btn soft sm" href="${waLink(par,pcodeMsg(s,pc))}" target="_blank" rel="noopener">ابعته لولي الأمر</a>`:""}<button class="btn soft sm" type="button" data-pt="newpc">كود جديد</button></div>
+    ${lk?`<div class="r"><span class="bad">⛔ مقفول: اتكتب كود الأمان غلط ${fmt(tr.n)} مرات</span><button class="btn sm" type="button" data-pt="unlock">افتح القفل</button></div>`:tr&&tr.n?`<div class="r"><span>⚠ ${fmt(tr.n)} ${tr.n===1?"محاولة غلط":"محاولات غلط"} من ${fmt(ptCfg.max)}</span><button class="btn soft sm" type="button" data-pt="unlock">صفّر العدّاد</button></div>`:""}
+    ${se&&se.n?`<div class="r"><span>📱 داخل من ${fmt(se.n)} ${se.n===1?"جهاز":"أجهزة"}</span><button class="del sm" type="button" data-pt="kick">اخرجه من كل الأجهزة</button></div>`:""}</div>`:"";
+  if(p)return `<div class="ptl on" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة مفعّلة</b><small>كود <span class="code">${esc(s.code)}</span> · الباسورد <span class="code pw">${esc(p.pw||"—")}</span></small></div><div class="ptl-a">${send}<button class="del sm" type="button" data-pt="reset">امسح الباسورد</button></div>${sec}</div>`;
+  return `<div class="ptl" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة لسه متفعّلتش</b><small>${phone10(s.parentPhone)?"بيفعّلها بكوده + رقم ولي الأمر":"ضيف رقم ولي الأمر الأول عشان يقدر يفعّلها"}</small></div><div class="ptl-a">${send}</div>${sec}</div>`}
+const newPcode=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return String(100000+a[0]%900000)};
+function pcodeMsg(s,c){const tch=APP.teacher||THEME.teacher;return `🔒 كود الأمان الخاص بـ ${s.name.split(" ").slice(0,2).join(" ")} على منصة ${tch}:
+
+*${c}*
+
+الطالب هيحتاجه مرة واحدة على أي موبايل جديد يدخل منه المنصة.
+متدّيهوش لحد غير ابنك، ولو حد طلبه منك بلّغني.`}
+/* the owner's switches: security code on/off, how many wrong tries, how long the lock lasts, how long a device is remembered */
+const LOCKS=[[15,"١٥ دقيقة"],[60,"ساعة"],[1440,"يوم"],[0,"لحد ما أفتحه"]];
+function renderSecurity(){const box=$("#secBox");if(!box)return;const c=ptCfg;
+  const seg=(k,opts)=>`<div class="seg" role="group" data-sec="${k}">${opts.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${c[k]===v}">${l}</button>`).join("")}</div>`;
+  const L=[...students.values()].filter(s=>s.code),locked=L.filter(s=>ptLocked(triesBySid.get(s.id))),noPc=L.filter(s=>!pcodes.has(s.id)).length;
+  let h=`<div class="sec-on${c.mfa?" on":""}"><div class="ptl-t"><b>كود الأمان لأي موبايل جديد</b><small>${c.mfa?"شغّال: أي حد يدخل بالباسورد من موبايل جديد لازم يكتب كود الأمان اللي مع ولي الأمر":"مقفول: الطالب بيدخل بالكود والباسورد بس"}</small></div><button class="sw" type="button" role="switch" aria-checked="${!!c.mfa}" data-sec="mfa" aria-label="كود الأمان"></button></div>
+  <div class="sec-row"><b>عدد المحاولات الغلط المسموحة</b><small>للباسورد ولكود الأمان</small>${seg("max",[[3,"٣"],[5,"٥"],[10,"١٠"]])}</div>
+  <div class="sec-row"><b>لما المحاولات تخلص، يتقفل</b>${seg("lock",LOCKS)}</div>
+  <div class="sec-row"><b>الموبايل يفضل متذكّر لمدة</b><small>بعدها الطالب يكتب كود الأمان تاني</small>${seg("days",[[7,"أسبوع"],[30,"شهر"],[90,"٣ شهور"]])}</div>`;
+  if(locked.length)h+=`<div class="sec-row"><b>⛔ حسابات مقفولة دلوقتي</b><div class="sec-l">${locked.map(s=>`<div class="sec-it lk"><span class="nt"><b>${esc(s.name)}</b><small>${fmt(triesBySid.get(s.id).n)} محاولات غلط لكود الأمان</small></span><button class="btn sm" type="button" data-unlock="${esc(s.id)}">افتح</button></div>`).join("")}</div></div>`;
+  h+=`<div class="sec-row"><b>أكواد الأمان لأولياء الأمور</b><small>${noPc?"بتتعمل دلوقتي…":"كل طالب ليه كود من ٦ أرقام. ابعته لولي الأمر قبل ما تشغّل الحماية."}</small>
+    <button class="btn soft" type="button" data-sec="list">${secSendAll?"اخفي القايمة":"ابعت الأكواد لأولياء الأمور ("+fmt(L.length)+")"}</button>
+    ${secSendAll?`<div class="sec-l">${L.map(s=>{const pc=pcodes.get(s.id),par=s.parentPhone||s.phone;return `<div class="sec-it"><span class="nt"><b>${esc(s.name)}</b><small>كود الأمان <span class="pcode">${esc(pc||"…")}</span></small></span>${pc&&par?`<a class="btn soft sm" href="${waLink(par,pcodeMsg(s,pc))}" target="_blank" rel="noopener" data-sent>ابعت</a>`:""}</div>`}).join("")}</div>`:""}</div>
+  <p class="hint">⚠ عدد المحاولات للباسورد بيتحسب على الموبايل نفسه. إنما كود الأمان بيتحسب على سيرفر Firebase، فمحدش يقدر يلف عليه. يعني حتى لو حد خمّن الباسورد، مش هيشوف حاجة من غير كود الأمان.</p>`;
+  setH(box,h);const sub=$("#secSub");if(sub)sub.textContent=c.mfa?`شغّال · ${fmt(c.max)} محاولات`+(locked.length?` · ${fmt(locked.length)} مقفول`:""):"مقفول · دوس عشان تشغّله"}
+async function secSet(patch){const prev=ptCfg;ptCfg={...ptCfg,...patch};renderSecurity();hap();
+  try{await db.doc("portalCfg/main").set({mfa:!!ptCfg.mfa,max:Number(ptCfg.max)||5,lock:Number(ptCfg.lock)||0,days:Number(ptCfg.days)||30});return true}catch(e){ptCfg=prev;renderSecurity();toast("ماتحفظش، جرّب تاني");return false}}
+$("#secBox").addEventListener("click",async e=>{const b=e.target.closest("button,a");if(!b)return;
+  if(b.dataset.unlock){const t=triesBySid.get(b.dataset.unlock);if(t)await db.doc("tries/"+t.uid).delete().catch(()=>{});toast("اتفتح ✓");return}
+  if(b.hasAttribute("data-sent")){b.textContent="اتبعت ✓";return}
+  const k=b.dataset.sec||(b.closest("[data-sec]")||{}).dataset?.sec;if(!k)return;
+  if(k==="list"){secSendAll=!secSendAll;if(secSendAll)syncPortalKeys().then(renderSecurity);renderSecurity();return}
+  if(k==="mfa"){const on=!ptCfg.mfa;if(on){await syncPortalKeys();let have=new Set();try{have=new Set((await db.collection("pcode").get()).docs.map(d=>d.id))}catch(x){}
+      const L=[...students.values()].filter(s=>s.code&&!have.has(s.id));if(L.length){toast("مش قادر أعمل أكواد الأمان. جرّب تاني");return}}
+    if(await secSet({mfa:on}))toast(on?"الحماية اشتغلت ✓ أي موبايل جديد هيحتاج كود الأمان":"الحماية اتقفلت");return}
+  if(b.dataset.v!=null)secSet({[k]:Number(b.dataset.v)})});
+$("#stuSheet").addEventListener("click",async e=>{const b=e.target.closest("[data-pt=newpc],[data-pt=unlock],[data-pt=kick]");if(!b)return;const s=students.get(sheetId);if(!s)return;const a=b.dataset.pt;
+  if(a==="newpc"){if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ الكود القديم هيبطل";setTimeout(()=>{b.classList.remove("confirm");b.textContent="كود جديد"},3000);return}
+    const c=newPcode();await db.doc("pcode/"+s.id).set({c});const se=sessBySid.get(s.id);if(se)await db.doc("sess/"+se.uid).delete().catch(()=>{});toast("كود جديد: "+c+". ابعته لولي الأمر");return}
+  if(a==="unlock"){const t=triesBySid.get(s.id);if(t)await db.doc("tries/"+t.uid).delete().catch(()=>{});toast("اتفتح ✓");return}
+  if(a==="kick"){if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟";setTimeout(()=>{b.classList.remove("confirm");b.textContent="اخرجه من كل الأجهزة"},3000);return}
+    const se=sessBySid.get(s.id);if(se)await db.doc("sess/"+se.uid).delete().catch(()=>{});toast("اتطلع من كل الأجهزة. هيحتاج كود الأمان تاني");return}});
 $("#stuSheet").addEventListener("click",async e=>{const b=e.target.closest("[data-pt=reset]");if(!b)return;const s=students.get(sheetId),p=s&&portalBySid.get(s.id);if(!p)return;
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ امسحه";setTimeout(()=>{b.classList.remove("confirm");b.textContent="امسح الباسورد"},3000);return}
   b.disabled=true;
-  try{const g=await db.doc("portalGen/"+s.code).get();await db.doc("portalGen/"+s.code).set({gen:((g.exists&&Number(g.data().gen))||0)+1});await db.doc("portal/"+p.uid).delete();
+  try{const g=await db.doc("portalGen/"+s.code).get();await db.doc("portalGen/"+s.code).set({gen:((g.exists&&Number(g.data().gen))||0)+1});await db.doc("portal/"+p.uid).delete();await Promise.all(["sess","tries"].map(c=>db.doc(c+"/"+p.uid).delete().catch(()=>{})));
     toast("الباسورد اتمسح. "+s.name.split(" ")[0]+" يفعّل حسابه تاني بكوده ورقم ولي الأمر")}
   catch(x){toast("مااتمسحش، جرّب تاني");b.disabled=false}});
 /* ---------- what each student sees ---------- */
@@ -2785,6 +2914,8 @@ function ownerSubs(){
   if(ROLE!=="owner")return;
   examSubs();portalSubs();platSubs();
   db.collection("requests").onSnapshot(sn=>{reqs=sn.docs.map(d=>{const x=d.data()||{};let t=0;try{t=x.at&&x.at.toMillis?x.at.toMillis():0}catch(e){}return{id:d.id,t,...x}}).sort((a,b)=>b.t-a.t);renderReqBar();if(!$("#reqModal").hidden)renderReqs()},()=>{});
+  fs.collection("staffReq").onSnapshot(sn=>{staffReqs=sn.docs.map(d=>({uid:d.id,...d.data()})).filter(r=>r.key);renderSreq();if(view==="home")renderHome()},()=>{});
+  fs.collection("staffDev").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,Object.keys(d.data().ok||{}).length));staffDevs=m;renderStaff()},()=>{});
   fs.collection("staff").onSnapshot(sn=>{staffList=sn.docs.map(d=>({uid:d.id,...d.data()})).filter(x=>x.active!==false).sort((a,b)=>(a.at||0)-(b.at||0));renderStaff()},()=>{});
 }
 /* ---------- sign-up requests inbox ---------- */
@@ -2839,27 +2970,30 @@ $("#jQr").onclick=async()=>{const b=$("#jQr");b.disabled=true;try{const blob=awa
 function staffMsg(x){return `أهلاً ${x.name} 👋\nده برنامج MR-J بتاع ${APP.teacher||THEME.teacher}:\n${appUrl()}\n\n١. افتح اللينك من Safari ودوس زرار المشاركة ← «إضافة إلى الشاشة الرئيسية».\n٢. افتح البرنامج واختار «المساعد» واكتب الكود ده:\n${x.code}`}
 function renderStaff(){const box=$("#stList");if(!box)return;
   box.innerHTML=staffList.length?staffList.map(x=>`<div class="bk" data-uid="${esc(x.uid)}"><div><b>${esc(x.name)}</b><br><small>${esc(x.phone||"")}${x.phone?" · ":""}الكود: <span class="code">${esc(x.code)}</span></small></div>
-    <div class="bka">${x.phone?`<a class="btn soft sm" href="${waLink(x.phone,staffMsg(x))}" target="_blank" rel="noopener">ابعتله</a>`:""}<button class="btn soft sm" data-st="code" type="button">غيّر الكود</button><button class="del" data-st="rm" type="button">شيله</button></div></div>`).join(""):`<p class="hint">مفيش مساعد لسه.</p>`}
+    <div class="bka">${x.phone?`<a class="btn soft sm" href="${waLink(x.phone,staffMsg(x))}" target="_blank" rel="noopener">ابعتله</a>`:""}<button class="btn soft sm" data-st="code" type="button">غيّر الكود</button>${staffDevs.get(x.uid)?`<button class="btn soft sm" data-st="kick" type="button">اطرده من الأجهزة (${fmt(staffDevs.get(x.uid))})</button>`:""}<button class="del" data-st="rm" type="button">شيله</button></div>${codeStrong(x.code)?"":`<p class="warnbox" style="margin:8px 0 0">⚠ الكود ده سهل يتخمّن. غيّره لكود طويل.</p>`}</div>`).join(""):`<p class="hint">مفيش مساعد لسه.</p>`}
 $("#stList").addEventListener("click",async e=>{
+  const kb=e.target.closest("[data-st=kick]");if(kb){const uid=kb.closest("[data-uid]").dataset.uid;await fs.doc("staffDev/"+uid).delete().catch(()=>{});toast("اتطرد من كل الأجهزة. أي دخول جديد هيحتاج موافقتك");return}
+  const rb=e.target.closest("[data-st=rand]");if(rb){const i=rb.closest(".stc").querySelector("input");i.value=randCode();i.type="text";return}
   const cb=e.target.closest("[data-st=code]");
   if(cb){const card=cb.closest("[data-uid]"),old=staffList.find(x=>x.uid===card.dataset.uid);if(!old)return;
-    let f=card.querySelector(".stc");if(!f){card.insertAdjacentHTML("beforeend",`<div class="stc"><input dir="ltr" autocapitalize="characters" spellcheck="false" placeholder="الكود الجديد"><button class="btn sm" type="button" data-st="save">حفظ</button></div>`);card.querySelector(".stc input").focus();return}
+    let f=card.querySelector(".stc");if(!f){card.insertAdjacentHTML("beforeend",`<div class="stc"><input dir="ltr" autocapitalize="characters" spellcheck="false" placeholder="١٠ حروف وأرقام على الأقل"><button class="btn soft sm" type="button" data-st="rand">🎲 عشوائي</button><button class="btn sm" type="button" data-st="save">حفظ</button></div>`);card.querySelector(".stc input").focus();return}
     return}
   const sv=e.target.closest("[data-st=save]");
   if(sv){const card=sv.closest("[data-uid]"),old=staffList.find(x=>x.uid===card.dataset.uid),code=normCode(card.querySelector(".stc input").value);if(!old)return;
-    if(code.length<6){toast("الكود لازم يبقى ٦ حروف إنجليزي أو أرقام على الأقل");return}
+    if(!codeStrong(code)){toast("الكود لازم ١٠ على الأقل، فيه حروف إنجليزي وأرقام. دوس 🎲 عشوائي");return}
     sv.disabled=true;
     try{const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(FIREBASE_CONFIG,"sec");
       const cred=await sec.auth().createUserWithEmailAndPassword(ACC.staff(code),code);const uid=cred.user.uid;await sec.auth().signOut();
       const x={name:old.name,phone:old.phone||"",code,active:true,at:old.at||Date.now()};await fs.doc("staff/"+uid).set(x);await fs.doc("staff/"+old.uid).delete();
+      await Promise.all(["staffDev","staffReq"].map(c=>fs.doc(c+"/"+old.uid).delete().catch(()=>{})));
       toast("الكود اتغيّر. الكود القديم مابقاش شغال");if(x.phone)window.open(waLink(x.phone,staffMsg(x)),"_blank")}
     catch(x){const c=x&&x.code||"";toast(c.includes("email-already")?"الكود ده مستخدم قبل كده، اختار كود تاني":"ماتغيّرش، جرّب تاني");sv.disabled=false}
     return}
   const b=e.target.closest("[data-st=rm]");if(!b)return;const uid=b.closest("[data-uid]").dataset.uid;
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ شيله";setTimeout(()=>{b.classList.remove("confirm");b.textContent="شيله"},3000);return}
-  b.disabled=true;try{await fs.doc("staff/"+uid).delete();toast("المساعد اتشال، ومش هيقدر يدخل تاني")}catch(x){toast("ماتشالش، جرّب تاني");b.disabled=false}});
+  b.disabled=true;try{await fs.doc("staff/"+uid).delete();await Promise.all(["staffDev","staffReq"].map(c=>fs.doc(c+"/"+uid).delete().catch(()=>{})));toast("المساعد اتشال، ومش هيقدر يدخل تاني")}catch(x){toast("ماتشالش، جرّب تاني");b.disabled=false}});
 $("#stAdd").onclick=async()=>{const name=$("#stName").value.trim(),phone=$("#stPhone").value.trim(),code=normCode($("#stCode").value);if(!name){$("#stName").focus();return}
-  if(code.length<6){toast("الكود لازم يبقى ٦ حروف إنجليزي أو أرقام على الأقل");$("#stCode").focus();return}
+  if(!codeStrong(code)){toast("الكود لازم ١٠ على الأقل، فيه حروف إنجليزي وأرقام. دوس 🎲 عشوائي");$("#stCode").focus();return}
   const b=$("#stAdd");b.disabled=true;
   try{const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(FIREBASE_CONFIG,"sec");
     const cred=await sec.auth().createUserWithEmailAndPassword(ACC.staff(code),normCode(code));const uid=cred.user.uid;await sec.auth().signOut();
@@ -2868,6 +3002,23 @@ $("#stAdd").onclick=async()=>{const name=$("#stName").value.trim(),phone=$("#stP
     if(phone)window.open(waLink(phone,staffMsg(x)),"_blank");}
   catch(e){const c=e&&e.code||"";toast(c.includes("email-already")?"الكود ده مستخدم قبل كده، اختار كود تاني":c.includes("network")?"مفيش نت":"ماتعملش، جرّب تاني")}
   b.disabled=false};
+$("#stRand").onclick=()=>{$("#stCode").value=randCode()};
+$("#ocRand").onclick=()=>{const c=randCode();$("#ocNew").value=c;$("#ocNew2").value=c};
+$("#ocSave").onclick=async()=>{const o=$("#ocOld").value,n=$("#ocNew").value.trim(),n2=$("#ocNew2").value.trim(),b=$("#ocSave");
+  if(!o){$("#ocOld").focus();return}if(!codeStrong(n)){toast("الكود الجديد لازم ١٠ على الأقل، فيه حروف إنجليزي وأرقام");return}if(n!==n2){toast("الكودين الجداد مش زي بعض");return}
+  b.disabled=true;try{const u=fauth.currentUser;await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(ACC.owner,o));await u.updatePassword(n);
+    ["#ocOld","#ocNew","#ocNew2"].forEach(k=>$(k).value="");toast("الكود اتغيّر ✓ احفظه كويس");hap(20)}
+  catch(e){const c=e&&e.code||"";toast(/wrong-password|invalid/.test(c)?"الكود الحالي غلط":c.includes("too-many")?"جربت كتير، استنى شوية":"ماتغيّرش، جرّب تاني")}b.disabled=false};
+const codeStrong=c=>{c=String(c||"");return c.length>=10&&/[A-Za-z]/.test(c)&&/[0-9]/.test(c)};
+const randCode=()=>{const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",a=new Uint32Array(12);crypto.getRandomValues(a);let c=[...a].map(x=>A[x%A.length]).join("");if(!/[0-9]/.test(c))c=c.slice(0,11)+"7";if(!/[A-Z]/.test(c))c="K"+c.slice(1);return c};
+/* a new phone of an assistant asks to get in: the owner says yes or no */
+function renderSreq(){const el=$("#sreq");if(!el)return;if(ROLE!=="owner"||!staffReqs.length){el.hidden=true;el.innerHTML="";return}
+  el.hidden=false;el.innerHTML=staffReqs.map(r=>`<div class="sreq-c" data-uid="${esc(r.uid)}"><span class="sreq-i">📱</span><div class="sreq-t"><b>${esc(r.name||"المساعد")} عايز يدخل من جهاز جديد</b><small>${esc(r.dev||"")}${r.at?" · "+esc(ago(tsMs(r.at))):""} · لو مش هو، ارفض وغيّر كوده</small></div><div class="sreq-a"><button class="btn sm" type="button" data-sr="ok">وافق</button><button class="btn soft sm" type="button" data-sr="no">ارفض</button><button class="del sm" type="button" data-sr="block">مش هو! اقفل حسابه</button></div></div>`).join("")}
+const ago=ms=>{const m=Math.round((Date.now()-ms)/60000);return m<1?"دلوقتي":m<60?"من "+fmt(m)+" دقيقة":"من "+fmt(Math.round(m/60))+" ساعة"};
+$("#sreq").addEventListener("click",async e=>{const b=e.target.closest("[data-sr]");if(!b)return;const c=b.closest("[data-uid]"),uid=c.dataset.uid,r=staffReqs.find(x=>x.uid===uid);if(!r)return;b.disabled=true;
+  try{if(b.dataset.sr==="ok"){const d=await fs.doc("staffDev/"+uid).get(),ok={...((d.exists&&d.data().ok)||{})};ok[r.key]=Date.now();await fs.doc("staffDev/"+uid).set({ok});toast("اتوافق ✓ دخل دلوقتي");hap()}
+    else if(b.dataset.sr==="block"){await fs.doc("staff/"+uid).delete();await fs.doc("staffDev/"+uid).delete().catch(()=>{});toast("الحساب اتقفل. ضيف المساعد تاني بكود جديد لو محتاجه")}
+    await fs.doc("staffReq/"+uid).delete();if(b.dataset.sr==="no")toast("اترفض")}catch(x){toast("ماتمّش، جرّب تاني");b.disabled=false}});
 $("#signOut").onclick=()=>{const b=$("#signOut");if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ اخرج";setTimeout(()=>{b.classList.remove("confirm");b.textContent="خروج من الحساب"},3000);return}signOutAll()};
 /* ---------- share / save an image (iPhone share sheet, else download) ---------- */
 async function shareOrSave(blob,name){
