@@ -944,6 +944,16 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .rem-t{flex:1;min-width:0;display:grid;gap:3px}.rem-t b{font-size:15px}.rem-t small{color:var(--muted);font-size:12px}
 .rem-t .bar{display:block;height:6px;border-radius:9px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden;margin-top:4px}.rem-t .bar i{display:block;height:100%;background:var(--accent);border-radius:9px}
 .rem-go{flex:none;font-weight:800;color:var(--accent);font-size:14px}
+
+/* ===== v7.5: edit the group's name from inside the group ===== */
+.gh-nm{display:flex;align-items:center;gap:8px;min-width:0}
+.gh-nm b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gh-edit{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--edge-2);background:var(--glass);display:grid;place-items:center;cursor:pointer;padding:0;transition:background .2s,transform .12s}
+.gh-edit:active{transform:scale(.92)}
+.gh-edit svg{width:17px;height:17px;stroke:var(--accent-2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.gh-edit[aria-pressed=true]{background:var(--accent);border-color:var(--accent)}.gh-edit[aria-pressed=true] svg{stroke:var(--btn-ink)}
+#grpHead #grpEdit{margin-top:12px}
+html.staff .gh-edit{display:none!important}
 </style>
 </head>
 <body>
@@ -1020,7 +1030,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
   <section class="vw" id="platView" hidden></section>
   <section class="vw" id="examsView" hidden></section>
   <div class="gh" id="grpHead" hidden>
-    <div class="gh-top"><button class="gh-back" id="ghBack" type="button">› المجاميع</button><div class="gh-t"><b id="ghName"></b><small id="ghSub"></small></div></div>
+    <div class="gh-top"><button class="gh-back" id="ghBack" type="button">› المجاميع</button><div class="gh-t"><span class="gh-nm"><b id="ghName"></b><button class="gh-edit" id="ghEdit" type="button" aria-label="عدّل اسم المجموعة ومواعيدها" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button></span><small id="ghSub"></small></div></div>
     <div class="seg gh-seg" id="ghSeg" role="group" aria-label="القسم"><button type="button" data-v="att">الحضور</button><button type="button" data-v="grades">الدرجات</button><button type="button" data-v="pay">الدفع</button></div>
   </div>
   <section class="hero" id="hero" hidden><i class="spark" aria-hidden="true">✦</i>
@@ -1121,7 +1131,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="hint">اكتبه في ورقة واحفظه كويس. هتدخل بيه من أي موبايل، ولو نسيته مش هتعرف تدخل.</p>
       <div class="prow"><button class="btn soft" id="ocRand" type="button">🎲 كود عشوائي قوي</button><button class="btn" id="ocSave" type="button">غيّر الكود</button></div></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v7.4</p>
+    <p class="ver">MR-J · v7.5</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1545,6 +1555,7 @@ function setView(v){
   let R=null;try{R=ROLE}catch(e){}
   if(R==="staff"&&!["pay","groups","att"].includes(v))v="pay";
   if(v==="plat"&&platTab==="exams")v="exams";
+  if(v!=="att"&&v!=="grades"){try{grpEditHome()}catch(e){}if(grpMode==="edit")grpMode=null}
   const from=view;view=v;lsSet("view",v);openId=null;confirmDel=null;
   document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===tabOf(v)));moveGlow();
   const S=v==="set",X=VX.includes(v),G=v==="att"||v==="grades";
@@ -1682,10 +1693,19 @@ $("#groupsView").addEventListener("click",e=>{const b=e.target.closest("[data-gv
   if(v==="none"){grp="none";lsSet("grp","none");setView("pay");return}
   grp=v;lsSet("grp",v);autoGrp=false;moving=null;grpMode=null;setView("att")});
 function renderGrpHead(){const g=groups.get(grp);
+  $("#ghEdit").hidden=!g||ROLE!=="owner";$("#ghEdit").setAttribute("aria-pressed",grpMode==="edit");
+  /* editing from inside a group: only the edit box shows, under the group's name */
+  const ed=$("#grpEdit"),inG=grpMode==="edit"&&!!g;
+  if(inG&&ed.parentNode!==$("#grpHead")){$("#grpHead").appendChild(ed);ed.hidden=false}
+  else if(!inG&&ed.parentNode!==$("#grpBar"))$("#grpBar").insertBefore(ed,$("#moveBar"));
   $("#ghName").textContent=grp==="all"?"كل الطلبة":g?g.name:isYearF(grp)?YEARS[grp[1]]:"المجموعة";
   $("#ghSub").textContent=g?[YSHORT[yearOfG(g)]+" ثانوي",schedTxt(g)].filter(Boolean).join(" · "):`${fmt(baseList().length)} طالب`;
   document.querySelectorAll("#ghSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===view))}
-$("#ghBack").onclick=()=>setView("groups");
+$("#ghBack").onclick=()=>{grpMode=null;setView("groups")};
+/* leaving the group page puts the edit box back in its usual place */
+function grpEditHome(){const ed=$("#grpEdit");if(ed.parentNode!==$("#grpBar"))$("#grpBar").insertBefore(ed,$("#moveBar"))}
+$("#ghEdit").onclick=()=>{if(!groups.get(grp))return;$("#grpName").dataset.k="";confirmGrp=false;moving=null;grpMode=grpMode==="edit"?null:"edit";hap(6);render();
+  if(grpMode==="edit")setTimeout(()=>{const i=$("#grpName");i.focus();i.select();$("#grpEdit").scrollIntoView({block:"center",behavior:"smooth"})},60)};
 $("#ghSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.dataset.v===view)return;setView(b.dataset.v)});
 /* ---------- التقارير ---------- */
 async function loadMonthTot(m){if(monthTot[m]!==undefined)return;monthTot[m]=null;
@@ -2039,7 +2059,7 @@ $("#grpSave").onclick=async()=>{const v=$("#grpName").value.trim();if(!v){$("#gr
     grpMode=null;$("#grpName").dataset.k="";if(document.activeElement)document.activeElement.blur();render()}catch(e){toast("ماتحفظش، جرّب تاني")}};
 $("#grpName").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#grpSave").click()}});
 $("#grpDel").onclick=async()=>{if(!confirmGrp){confirmGrp=true;render();return}confirmGrp=false;const id=grp;
-  try{await Promise.all([...students.values()].filter(s=>s.groupId===id).map(s=>db.doc("students/"+s.id).update({groupId:null})));await db.doc("groups/"+id).delete();grp="all";lsSet("grp","all");grpMode=null;toast("اتمسحت المجموعة")}catch(e){toast("ماتمسحتش، جرّب تاني")}};
+  try{await Promise.all([...students.values()].filter(s=>s.groupId===id).map(s=>db.doc("students/"+s.id).update({groupId:null})));await db.doc("groups/"+id).delete();grp="all";lsSet("grp","all");grpMode=null;toast("اتمسحت المجموعة");if(view==="att"||view==="grades")setView("groups")}catch(e){toast("ماتمسحتش، جرّب تاني")}};
 $("#prevM").onclick=()=>setMonth(shiftMonth(month,-1));
 $("#nextM").onclick=()=>setMonth(shiftMonth(month,1));
 $("#todayM").onclick=()=>setMonth(curKey());
