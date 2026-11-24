@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="منصتي">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="student.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=VT323&family=Almarai:wght@400;700;800&display=swap">
 <style>
@@ -435,6 +436,8 @@ function tabHTML(P,ms){
       <div class="kv"><span><b class="holo">${ap==null?"—":ar(ap)+"٪"}</b><small>حضور</small></span><span><b style="color:var(--acc2)">${gp==null?"—":ar(gp)+"٪"}</b><small>درجات</small></span><span><b>${ar(M.ex.length)}</b><small>امتحانات</small></span></div>
       ${M.ss.length?`<div class="days">${M.ss.map(({d,k})=>{const x=new Date(d+"T12:00");return `<span class="dy ${k}"><b>${k==="p"?"✓":"✗"}</b>${DAYS[x.getDay()]} ${ar(x.getDate())}</span>`}).join("")}</div>`:""}
       ${verdict?`<p class="hint">${verdict}</p>`:""}${M.note?`<p class="note"><b>ملاحظة Mr J</b>${esc(M.note)}</p>`:""}</div>`}).join("")}
+
+try{if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
 </script>
 </body>
 </html>
