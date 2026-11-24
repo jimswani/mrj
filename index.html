@@ -937,6 +937,13 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 
 .bktxt{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.bktxt>small{color:var(--muted);font-size:12px;line-height:1.7}
 #bkPasteBox{display:grid;gap:8px}#bkPasteBox textarea{width:100%;font:12px ui-monospace,monospace;color:var(--ink);background:var(--bg);border:1px solid var(--edge-2);border-radius:12px;padding:10px}
+
+/* ===== v7.4: end-of-month reports reminder ===== */
+.hc-card.rem{display:flex;align-items:center;gap:12px;width:100%;text-align:right;font:inherit;color:var(--ink);cursor:pointer;border:1.5px solid color-mix(in srgb,var(--accent) 60%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,transparent),var(--glass))}
+.rem-i{font-size:26px;flex:none}
+.rem-t{flex:1;min-width:0;display:grid;gap:3px}.rem-t b{font-size:15px}.rem-t small{color:var(--muted);font-size:12px}
+.rem-t .bar{display:block;height:6px;border-radius:9px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden;margin-top:4px}.rem-t .bar i{display:block;height:100%;background:var(--accent);border-radius:9px}
+.rem-go{flex:none;font-weight:800;color:var(--accent);font-size:14px}
 </style>
 </head>
 <body>
@@ -1114,7 +1121,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="hint">اكتبه في ورقة واحفظه كويس. هتدخل بيه من أي موبايل، ولو نسيته مش هتعرف تدخل.</p>
       <div class="prow"><button class="btn soft" id="ocRand" type="button">🎲 كود عشوائي قوي</button><button class="btn" id="ocSave" type="button">غيّر الكود</button></div></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v7.3</p>
+    <p class="ver">MR-J · v7.4</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1572,6 +1579,7 @@ function renderHome(){
   const all=inMonth(),st=monthStats(all),ids=all.map(s=>s.id),cur=month===curKey();
   if(cur)loadPrevOwe(month);
   let h=`<button class="h-search" type="button" data-h="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>ابحث بالاسم أو الكود أو الرقم</button>`;
+  h+=repReminderHTML();
   /* the 3 numbers that matter */
   const tA=cur?att.get(todayStr()):null,tP=tA&&tA.marks?ids.filter(id=>tA.marks[id]==="p").length:0,aP=attPctOf(ids);
   const k=(v,l,c,act)=>`<button class="hc-card ${c}" type="button"${act?` data-h="${act}"`:""}><b>${v}</b><small>${l}</small></button>`;
@@ -1614,6 +1622,7 @@ $("#homeView").addEventListener("click",e=>{const b=e.target.closest("[data-h]")
   else if(a==="prev"){setMonth(shiftMonth(month,-1));payF="due";grp="all";setView("pay");document.querySelectorAll("#payFilter button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="due"))}
   else if(a==="att"||a==="grp"){grp=b.dataset.g;lsSet("grp",grp);autoGrp=false;if(a==="att"){session=todayStr();setView("att");startAtt(true)}else setView("att")}
   else if(a==="search")openSearch();
+  else if(a==="reprem"){const m=b.dataset.m;if(m&&m!==month)setMonth(m);setView("rep")}
   else if(a==="groups")setView("groups");
   else if(a==="rep")setView("rep");
   else if(a==="req"){renderReqs();$("#reqModal").hidden=false}
@@ -1623,6 +1632,16 @@ $("#homeView").addEventListener("click",e=>{const b=e.target.closest("[data-h]")
   else if(a==="img")$("#backupBtn").click();
   else if(a==="stu")openSheet(b.dataset.id);
 });
+/* ---------- end of month: remind to send the parents' reports ----------
+   shows on the home page from the day before the month's last day, and stays the first 5 days of the next month until every report is sent */
+let repRem={m:null,sent:null};
+function repTarget(){const d=new Date(),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),day=d.getDate(),ck=curKey();return day>=dim-1?ck:day<=5?shiftMonth(ck,-1):null}
+function repReminderHTML(){if(ROLE!=="owner")return"";const m=repTarget();if(!m)return"";
+  let sent;if(m===month)sent=sentMap;else{if(repRem.m!==m||Date.now()-(repRem.at||0)>20000){const keep=repRem.m===m?repRem.sent:null;repRem={m,sent:keep,at:Date.now()};db.doc("sent/"+m).get().then(d=>{const nw=(d.exists&&d.data())||{},ch=JSON.stringify(nw)!==JSON.stringify(repRem.sent);repRem={m,sent:nw,at:Date.now()};if(ch&&view==="home")renderHome()}).catch(()=>{})}sent=repRem.sent;if(!sent)return""}
+  const end=monthEnd(m),L=[...students.values()].filter(s=>(!s.createdAt||s.createdAt<end)&&!(s.leftMonth&&m>=s.leftMonth));if(!L.length)return"";
+  const n=L.filter(s=>sent[s.id]).length;if(n>=L.length)return"";
+  const early=m!==curKey();
+  return `<button class="hc-card rem" type="button" data-h="reprem" data-m="${esc(m)}"><span class="rem-i">📝</span><span class="rem-t"><b>${early?"لسه ماخلصتش تقارير "+esc(shortMonth(m)):"آخر الشهر: ابعت تقارير "+esc(shortMonth(m))}</b><small>${n?`اتبعت ${fmt(n)} من ${fmt(L.length)} · باقي ${fmt(L.length-n)}`:`ابعت تقرير كل طالب لولي أمره (${fmt(L.length)} طالب)`}</small><span class="bar"><i style="width:${Math.round(n/L.length*100)}%"></i></span></span><span class="rem-go">ابعت ‹</span></button>`}
 /* ---------- v7: one search for the whole app ---------- */
 const normQ=t=>String(t||"").toLowerCase().replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/\s+/g," ").trim();
 function openSearch(){$("#gs").hidden=false;$("#gsQ").value="";drawSearch();setTimeout(()=>$("#gsQ").focus(),30)}
