@@ -315,7 +315,7 @@ async function mfaView(u,msg){mode="mfa";const t=await triesNow(u.uid),left=lock
   show(`<div class="lg full">
     <div class="lg-hero fade"><div class="lg-bot">${ROBOT}<i class="scan"></i></div><span class="word">MR-J</span><span class="lg-sub">${nm?"أهلاً يا "+esc(nm)+" 👋":"خطوة أخيرة"}</span></div>
     <div class="lg-card fade">
-      <div class="mfa-h"><span class="mfa-i">🔒</span><div><b>موبايل جديد؟ اكتب كود الأمان</b><small>كود من ٦ أرقام مع ولي أمرك، Mr J بعتهوله على واتساب. هتكتبه مرة واحدة بس على الموبايل ده.</small></div></div>
+      <div class="mfa-h"><span class="mfa-i">🔒</span><div><b>موبايل جديد؟ اكتب كود الأمان</b><small>كود من ٦ أرقام، هتلاقيه في رسالة المنصة اللي Mr J بعتهالك على واتساب. هتكتبه مرة واحدة بس على الموبايل ده.</small></div></div>
       ${left?`<p class="lockbox">⛔ اتكتب الكود غلط ${ar(t.n)} مرات، فالحساب اتقفل ${left===Infinity?"لحد ما Mr J يفتحه. كلّمه.":"لمدة "+minsTxt(Math.ceil(left/6e4))+"."}</p>`
         :`<form id="fM"><label>كود الأمان${pinBox("mCode","",6,"كود الأمان")}</label>${t.n?`<p class="hint">فاضلك ${ar(CFG.max-t.n)} ${CFG.max-t.n===1?"محاولة":"محاولات"}</p>`:""}<button class="btn" id="bM"><span>تأكيد</span></button></form>`}
       <p class="msg" id="lMsg" role="alert">${esc(msg||"")}</p>
