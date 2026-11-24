@@ -309,32 +309,33 @@ async function start(u){if(started)return;started=true;show(`<div class="load"><
 /* ---------- security code: needed once on every new phone (or after signing out) ---------- */
 async function authKey(u){const r=await u.getIdTokenResult();return String(r.claims.auth_time)}
 async function sessOk(u){try{const k=await authKey(u),d=await D("sess/"+u.uid).get(),ok=d.exists&&d.data().ok||{};return !!ok[k]&&tsMs(ok[k])+CFG.days*864e5>Date.now()}catch(e){return false}}
-async function triesNow(uid){try{const d=await D("tries/"+uid).get();if(!d.exists)return{n:0,at:0,ex:false};const x=d.data();return{n:x.n||0,at:tsMs(x.at),ex:true}}catch(e){return{n:0,at:0,ex:false}}}
+async function triesNow(uid){try{const d=await D("tries/"+uid).get();if(!d.exists)return{n:0,at:0,ex:false};const x=d.data();return{n:x.n||0,at:tsMs(x.at),last:x.last||"",ex:true}}catch(e){return{n:0,at:0,ex:false}}}
 function lockLeft(t){if(t.n<CFG.max)return 0;if(!CFG.lock)return Infinity;const ms=t.at+CFG.lock*6e4-Date.now();return ms>0?ms:0}
 async function mfaView(u,msg){mode="mfa";const t=await triesNow(u.uid),left=lockLeft(t),nm=lsGet("name");
   show(`<div class="lg full">
     <div class="lg-hero fade"><div class="lg-bot">${ROBOT}<i class="scan"></i></div><span class="word">MR-J</span><span class="lg-sub">${nm?"أهلاً يا "+esc(nm)+" 👋":"خطوة أخيرة"}</span></div>
     <div class="lg-card fade">
-      <div class="mfa-h"><span class="mfa-i">🔒</span><div><b>موبايل جديد؟ اكتب كود الأمان</b><small>كود من ٦ أرقام، هتلاقيه في رسالة المنصة اللي Mr J بعتهالك على واتساب. هتكتبه مرة واحدة بس على الموبايل ده.</small></div></div>
+      <div class="mfa-h"><span class="mfa-i">🔒</span><div><b>اكتب كود الدخول</b><small>كود من ٦ أرقام بيبعتهولك Mr J على واتساب في رسالة لوحده. لو ماوصلكش، كلّمه واطلبه. كل كود بيشتغل مرة واحدة بس.</small></div></div>
       ${left?`<p class="lockbox">⛔ اتكتب الكود غلط ${ar(t.n)} مرات، فالحساب اتقفل ${left===Infinity?"لحد ما Mr J يفتحه. كلّمه.":"لمدة "+minsTxt(Math.ceil(left/6e4))+"."}</p>`
-        :`<form id="fM"><label>كود الأمان${pinBox("mCode","",6,"كود الأمان")}</label>${t.n?`<p class="hint">فاضلك ${ar(CFG.max-t.n)} ${CFG.max-t.n===1?"محاولة":"محاولات"}</p>`:""}<button class="btn" id="bM"><span>تأكيد</span></button></form>`}
+        :`<form id="fM"><label>كود الدخول${pinBox("mCode","",6,"كود الدخول")}</label>${t.n?`<p class="hint">فاضلك ${ar(CFG.max-t.n)} ${CFG.max-t.n===1?"محاولة":"محاولات"}</p>`:""}<button class="btn" id="bM"><span>تأكيد</span></button></form>`}
       <p class="msg" id="lMsg" role="alert">${esc(msg||"")}</p>
       <button class="link" type="button" id="mOut">مش انت؟ اخرج</button>
-    </div><p class="foot">الكود ده بيحمي حسابك: لو حد عرف الباسورد بتاعك، مش هيقدر يدخل من غيره.</p></div>`);
+    </div><p class="foot">الكود ده بيحمي حسابك: لو حد عرف الباسورد بتاعك، مش هيقدر يدخل من غير كود جديد من Mr J.</p></div>`);
   $("#mOut").onclick=()=>{started=false;auth.signOut();actStep=0;loginView()};
   if(left)return;wirePin("mCode");setTimeout(()=>{const i=$("#mCode");if(i)i.focus()},300);
   $("#fM").onsubmit=async e=>{e.preventDefault();const g=$("#mCode").value.replace(/\D/g,"");if(g.length!==6){err("الكود ٦ أرقام");return}busy("#bM",1);
     const now=await triesNow(u.uid);if(lockLeft(now)){mfaView(u);return}
+    if(now.last&&g===now.last){busy("#bM",0);err("الكود ده اتستخدم قبل كده، ومابقاش بيشتغل. اطلب كود جديد من Mr J");return}
     let n=now.n;if(n>=CFG.max)n=0;
     const ref=D("tries/"+u.uid),TS=firebase.firestore.FieldValue.serverTimestamp(),l=await D("portal/"+u.uid).get(),sid=l.data().sid;
     /* 1) the guess is saved and counted first */
-    try{await ref.set({sid,n:n+1,g,at:TS})}catch(x){busy("#bM",0);mfaView(u,String(x&&x.code||"").includes("permission")?"مش قادر أتأكد دلوقتي. لو المشكلة فضلت كلّم Mr J (كود M1)":aErr(x,"حصلت مشكلة، جرّب تاني"));return}
+    try{await ref.set({sid,n:n+1,g,at:TS,last:now.last||""})}catch(x){busy("#bM",0);mfaView(u,String(x&&x.code||"").includes("permission")?"مش قادر أتأكد دلوقتي. لو المشكلة فضلت كلّم Mr J (كود M1)":aErr(x,"حصلت مشكلة، جرّب تاني"));return}
     /* 2) only then it's checked: this works only if the saved guess is the right code */
     try{const k=await authKey(u),sd=await D("sess/"+u.uid).get(),old=sd.exists&&sd.data().ok||{},keep={};
       Object.entries(old).filter(([kk,v])=>kk!==k&&tsMs(v)+CFG.days*864e5>Date.now()).sort((a,b)=>tsMs(b[1])-tsMs(a[1])).slice(0,5).forEach(([kk,v])=>keep[kk]=v);
-      const b=fs.batch();b.set(D("sess/"+u.uid),{sid,ok:{...keep,[k]:TS}});b.set(ref,{sid,n:0,g:"",at:TS});await b.commit();
+      const b=fs.batch();b.set(D("sess/"+u.uid),{sid,ok:{...keep,[k]:TS}});b.set(ref,{sid,n:0,g:"",at:TS,last:g});await b.commit();
       try{navigator.vibrate&&navigator.vibrate(15)}catch(z){}start(u)}
-    catch(x){const left2=CFG.max-(n+1);busy("#bM",0);mfaView(u,left2>0?`الكود غلط. فاضلك ${ar(left2)} ${left2===1?"محاولة":"محاولات"}`:"")}}}
+    catch(x){const left2=CFG.max-(n+1);busy("#bM",0);mfaView(u,left2>0?`الكود غلط أو اتستخدم قبل كده. فاضلك ${ar(left2)} ${left2===1?"محاولة":"محاولات"}`:"")}}}
 /* lessons, live and announcements for the student's year (+ the ones for everyone) */
 function subPlat(){const y=PUB&&PUB.g&&PUB.g.y||null;if(plUnsubs.length&&y===plY)return;plUnsubs.forEach(f=>f());plUnsubs=[];plY=y;PL={all:null,y:null};
   const on=(k,path)=>plUnsubs.push(D(path).onSnapshot(d=>{if(!started)return;PL[k]=d.exists?d.data():null;PLerr=false;draw()},x=>{PLerr=String(x&&x.code||"").includes("permission");draw()}));

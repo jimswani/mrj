@@ -1094,7 +1094,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="warnbox" id="ptWarn" hidden>⚠ الطلبة مش هيقدروا يدخلوا المنصة: قواعد Firebase الجديدة مش منشورة. افتح Firestore ← Rules والزق ملف القواعد كله ودوس Publish.</p>
       <p class="hint">بيانات المنصة بتتحدّث لوحدها وانت فاتح البرنامج. اللي المساعد بيسجّله بيظهر للطالب أول ما تفتح البرنامج.</p>
       <div class="prow"><button class="btn" id="ptCopy" type="button">نسخ اللينك</button><button class="btn soft" id="ptWa" type="button">ابعته في جروب</button><button class="btn soft" id="ptSync" type="button">حدّث المنصة دلوقتي</button></div></div></details>
-    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="act"><b>أمان المنصة</b><small id="secSub">كود أمان لأي موبايل جديد + حد للمحاولات الغلط</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb" id="secBox"></div></details>
+    <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="act"><b>أمان المنصة</b><small id="secSub">كود دخول لمرة واحدة + حد للمحاولات الغلط</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb" id="secBox"></div></details>
     <details class="card acc"><summary><span class="aci"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg></span><span class="act"><b>لينك التسجيل</b><small>الطالب يسجّل نفسه، والطلب يوصلك هنا</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="accb">
       <p class="hint">ابعت اللينك في جروبات الطلبة، أو اطبع صورة الـ QR وعلّقها في السنتر. الطالب بيكتب اسمه ورقمه ورقم ولي الأمر وسنته، وطلبه بيظهرلك فوق في «الفلوس».</p>
       <b class="sub-h">صفحة «تم التسجيل»</b>
@@ -1114,7 +1114,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
       <p class="hint">اكتبه في ورقة واحفظه كويس. هتدخل بيه من أي موبايل، ولو نسيته مش هتعرف تدخل.</p>
       <div class="prow"><button class="btn soft" id="ocRand" type="button">🎲 كود عشوائي قوي</button><button class="btn" id="ocSave" type="button">غيّر الكود</button></div></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v7.1</p>
+    <p class="ver">MR-J · v7.2</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1601,7 +1601,7 @@ function renderHome(){
   const po=prevOwe[month];if(cur&&po&&po.length)al.push(`<button class="al" type="button" data-h="prev"><span class="ic warn">${BIC.cal}</span><span class="al-t"><b>${fmt(po.length)} عليهم ${esc(shortMonth(shiftMonth(month,-1)))}</b><small>${esc(po.slice(0,3).map(s=>s.name.split(" ")[0]).join("، "))}${po.length>3?" …":""}</small></span><span class="go">‹</span></button>`);
   absentStreak(all).slice(0,3).forEach(s=>al.push(`<button class="al" type="button" data-h="stu" data-id="${s.id}"><span class="ic warn">${BIC.clock}</span><span class="al-t"><b>${esc(s.name)} غاب حصتين ورا بعض</b><small>${s.parentPhone?"دوس وابعت لولي الأمر":"ضيف رقم ولي الأمر في بطاقته"}</small></span><span class="go">‹</span></button>`));
   const lockedS=[...students.values()].filter(s=>ptLocked(triesBySid.get(s.id)));
-  if(lockedS.length)al.push(`<button class="al" type="button" data-h="sec"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>${lockedS.length===1?"حساب "+esc(lockedS[0].name.split(" ")[0])+" اتقفل":fmt(lockedS.length)+" حسابات اتقفلت"} على المنصة</b><small>حد كتب كود الأمان غلط كذا مرة · دوس تشوف</small></span><span class="go">‹</span></button>`);
+  if(lockedS.length)al.push(`<button class="al" type="button" data-h="sec"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>${lockedS.length===1?"حساب "+esc(lockedS[0].name.split(" ")[0])+" اتقفل":fmt(lockedS.length)+" حسابات اتقفلت"} على المنصة</b><small>حد كتب كود الدخول غلط كذا مرة · دوس تشوف</small></span><span class="go">‹</span></button>`);
   if(pubStat&&!pubStat.ok)al.push(`<button class="al" type="button" data-h="portal"><span class="ic bad">${BIC.inbox}</span><span class="al-t"><b>منصة الطلبة ماتحدّثتش</b><small>دوس عشان تشوف السبب</small></span><span class="go">‹</span></button>`);
   if(reqs.length)al.push(`<button class="al" type="button" data-h="req"><span class="ic holo">${BIC.inbox}</span><span class="al-t"><b>${reqs.length===1?"طلب تسجيل جديد":fmt(reqs.length)+" طلبات تسجيل جديدة"}</b><small>من لينك التسجيل · حطهم في مجموعاتهم</small></span><span class="go">‹</span></button>`);
   h+=`<div class="sec">مهام النهارده${al.length?`<small>${fmt(al.length)} ${al.length===1?"حاجة":"حاجات"}</small>`:""}</div><div class="hc-card alerts">${al.length?al.join(""):`<div class="al calm"><span class="ic ok">${BIC.ok}</span><span class="al-t"><b>كله تمام</b><small>مفيش حاجة محتاجة متابعة دلوقتي</small></span></div>`}</div>`;
@@ -2675,8 +2675,8 @@ const ptLocked=t=>!!t&&t.n>=ptCfg.max&&(ptCfg.lock===0||Date.now()<tsMs(t.at)+pt
 function secRefresh(){renderSecurity();if(sheetId&&!$("#stuModal").hidden){const b=$("#ptlBox"),s=students.get(sheetId);if(b&&s)b.outerHTML=portalHTML(s)}if(view==="home")renderHome()}
 function portalSubs(){if(ROLE!=="owner")return;
   db.doc("portalCfg/main").onSnapshot(d=>{ptCfg={mfa:false,max:5,lock:30,days:30,...(d.exists?d.data():{})};secRefresh()},()=>{});
-  db.collection("pcode").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data().c));pcodes=m;secRefresh()},()=>{});
-  db.collection("tries").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});triesBySid=m;secRefresh()},()=>{});
+  db.collection("pcode").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>m.set(d.id,d.data().c));pcodes=m;renewUsedCodes();secRefresh()},()=>{});
+  db.collection("tries").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});triesBySid=m;renewUsedCodes();secRefresh()},()=>{});
   db.collection("sess").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,n:Object.keys(x.ok||{}).length})});sessBySid=m;secRefresh()},()=>{});
   db.collection("portal").onSnapshot(sn=>{const m=new Map();sn.docs.forEach(d=>{const x=d.data();if(x&&x.sid)m.set(x.sid,{uid:d.id,...x})});portalBySid=m;if(sheetId&&!$("#stuModal").hidden){const b=$("#ptlBox"),s=students.get(sheetId);if(b&&s)b.outerHTML=portalHTML(s)}},()=>{})}
 /* keep the activation keys in step with codes and parent phones */
@@ -2693,35 +2693,45 @@ async function syncPortalKeys(){if(ROLE!=="owner"||!db)return;
     for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(([t,p,d])=>t==="set"?b.set(db.doc(p),d):b.delete(db.doc(p)));await b.commit()}
   }catch(e){}}
 /* one message to the student with everything: link, his code, how to activate, and his security code */
-function portalMsg(s){const tch=APP.teacher||THEME.teacher,pc=pcodes.get(s.id);return `أهلاً ${s.name.split(" ")[0]} 👋
+function portalMsg(s){const tch=APP.teacher||THEME.teacher,pc=ptCfg.mfa;return `أهلاً ${s.name.split(" ")[0]} 👋
 دي منصتك مع ${tch} 🎓
 فيها الدروس والفيديوهات والمذكرات، واللايف، وامتحاناتك ودرجاتك، وتقاريرك وحضورك.
 
 🔗 لينك المنصة:
 ${portalUrl()}
 
-👤 كودك: *${s.code}*${pc?`
-🔒 كود الأمان: *${pc}*`:""}
+👤 كودك: *${s.code}*
 
 أول مرة بس:
 1️⃣ افتح اللينك ودوس «أول مرة؟ فعّل حسابك»
 2️⃣ اكتب كودك ورقم ولي أمرك اللي متسجّل عندي
 3️⃣ اختار باسورد لنفسك واحفظه${pc?`
-4️⃣ لو المنصة طلبت «كود الأمان» اكتبه`:""}
+4️⃣ المنصة هتطلب «كود الدخول»: كلّمني وأنا أبعتهولك في رسالة لوحده 🔒`:""}
 
-بعد كده هتدخل بكودك والباسورد بتاعك بس.${pc?`
-كود الأمان هتحتاجه تاني لو دخلت من موبايل جديد.`:""}
+بعد كده هتدخل بكودك والباسورد بتاعك.${pc?`
+وكل مرة تدخل فيها من موبايل جديد أو بعد ما تعمل خروج، هتحتاج كود دخول جديد مني. كل كود بيشتغل مرة واحدة بس.`:""}
 
-⚠️ متدّيش الباسورد${pc?" ولا كود الأمان":""} لأي حد.`}
+⚠️ متدّيش الباسورد لأي حد.`}
 function portalHTML(s){if(!s.code)return`<div id="ptlBox"></div>`;const p=portalBySid.get(s.id),to=s.phone||s.parentPhone;
   const send=to?`<a class="btn soft sm" href="${waLink(to,portalMsg(s))}" target="_blank" rel="noopener">ابعت لينك المنصة</a>`:"";
   const pc=pcodes.get(s.id),tr=triesBySid.get(s.id),se=sessBySid.get(s.id),lk=ptLocked(tr),par=s.parentPhone||s.phone;
-  const sec=pc?`<div class="ptl2"><div class="r"><span>🔒 كود الأمان <span class="pcode">${esc(pc)}</span>${ptCfg.mfa?"":" <small>(مقفول من الإعدادات)</small>"}</span><button class="btn soft sm" type="button" data-pt="newpc">كود جديد</button></div>
-    ${lk?`<div class="r"><span class="bad">⛔ مقفول: اتكتب كود الأمان غلط ${fmt(tr.n)} مرات</span><button class="btn sm" type="button" data-pt="unlock">افتح القفل</button></div>`:tr&&tr.n?`<div class="r"><span>⚠ ${fmt(tr.n)} ${tr.n===1?"محاولة غلط":"محاولات غلط"} من ${fmt(ptCfg.max)}</span><button class="btn soft sm" type="button" data-pt="unlock">صفّر العدّاد</button></div>`:""}
+  const to2=s.phone||s.parentPhone,used=tr&&tr.last&&tr.last===pc;
+  const sec=pc?`<div class="ptl2"><div class="r"><span>🔒 كود الدخول <span class="pcode">${used?"…":esc(pc)}</span> <small>${!ptCfg.mfa?"(الحماية مقفولة من الإعدادات)":used?"اتستخدم، بيتعمل كود جديد":"بيشتغل مرة واحدة"}</small></span>${to2&&!used?`<a class="btn sm" href="${waLink(to2,loginCodeMsg(s,pc))}" target="_blank" rel="noopener" data-lc="1">ابعت كود الدخول</a>`:""}<button class="btn soft sm" type="button" data-pt="newpc">كود جديد</button></div>
+    ${lk?`<div class="r"><span class="bad">⛔ مقفول: اتكتب كود الدخول غلط ${fmt(tr.n)} مرات</span><button class="btn sm" type="button" data-pt="unlock">افتح القفل</button></div>`:tr&&tr.n?`<div class="r"><span>⚠ ${fmt(tr.n)} ${tr.n===1?"محاولة غلط":"محاولات غلط"} من ${fmt(ptCfg.max)}</span><button class="btn soft sm" type="button" data-pt="unlock">صفّر العدّاد</button></div>`:""}
     ${se&&se.n?`<div class="r"><span>📱 داخل من ${fmt(se.n)} ${se.n===1?"جهاز":"أجهزة"}</span><button class="del sm" type="button" data-pt="kick">اخرجه من كل الأجهزة</button></div>`:""}</div>`:"";
   if(p)return `<div class="ptl on" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة مفعّلة</b><small>كود <span class="code">${esc(s.code)}</span> · الباسورد <span class="code pw">${esc(p.pw||"—")}</span></small></div><div class="ptl-a">${send}<button class="del sm" type="button" data-pt="reset">امسح الباسورد</button></div>${sec}</div>`;
   return `<div class="ptl" id="ptlBox"><span class="ptl-i">🎓</span><div class="ptl-t"><b>المنصة لسه متفعّلتش</b><small>${phone10(s.parentPhone)?"بيفعّلها بكوده + رقم ولي الأمر":"ضيف رقم ولي الأمر الأول عشان يقدر يفعّلها"}</small></div><div class="ptl-a">${send}</div>${sec}</div>`}
+/* a login code works once: as soon as it's used, a new one is made here automatically */
+const renewing=new Set();
+function renewUsedCodes(){if(ROLE!=="owner")return;triesBySid.forEach((t,sid)=>{const pc=pcodes.get(sid);if(!t.last||!pc||t.last!==pc||renewing.has(sid))return;renewing.add(sid);
+  let c=newPcode();while(c===pc)c=newPcode();db.doc("pcode/"+sid).set({c}).catch(()=>{}).finally(()=>setTimeout(()=>renewing.delete(sid),3000))})}
 const newPcode=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return String(100000+a[0]%900000)};
+function loginCodeMsg(s,c){return `🔒 كود الدخول بتاعك يا ${s.name.split(" ")[0]}:
+
+*${c}*
+
+اكتبه في المنصة دلوقتي. الكود ده بيشتغل *مرة واحدة بس*، ولو عملت خروج هتحتاج كود جديد.
+متدّيهوش لأي حد.`}
 function pcodeMsg(s,c){const tch=APP.teacher||THEME.teacher;return `🔒 كود الأمان الخاص بـ ${s.name.split(" ").slice(0,2).join(" ")} على منصة ${tch}:
 
 *${c}*
@@ -2733,15 +2743,15 @@ const LOCKS=[[15,"١٥ دقيقة"],[60,"ساعة"],[1440,"يوم"],[0,"لحد �
 function renderSecurity(){const box=$("#secBox");if(!box)return;const c=ptCfg;
   const seg=(k,opts)=>`<div class="seg" role="group" data-sec="${k}">${opts.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${c[k]===v}">${l}</button>`).join("")}</div>`;
   const L=[...students.values()].filter(s=>s.code),locked=L.filter(s=>ptLocked(triesBySid.get(s.id))),noPc=L.filter(s=>!pcodes.has(s.id)).length;
-  let h=`<div class="sec-on${c.mfa?" on":""}"><div class="ptl-t"><b>كود الأمان لأي موبايل جديد</b><small>${c.mfa?"شغّال: أي حد يدخل بالباسورد من موبايل جديد لازم يكتب كود الأمان اللي في رسالة المنصة":"مقفول: الطالب بيدخل بالكود والباسورد بس"}</small></div><button class="sw" type="button" role="switch" aria-checked="${!!c.mfa}" data-sec="mfa" aria-label="كود الأمان"></button></div>
-  <div class="sec-row"><b>عدد المحاولات الغلط المسموحة</b><small>للباسورد ولكود الأمان</small>${seg("max",[[3,"٣"],[5,"٥"],[10,"١٠"]])}</div>
+  let h=`<div class="sec-on${c.mfa?" on":""}"><div class="ptl-t"><b>كود دخول لمرة واحدة</b><small>${c.mfa?"شغّال: كل مرة الطالب يدخل من موبايل جديد أو بعد خروج، لازم يكتب كود دخول تبعتهوله إنت. الكود بيشتغل مرة واحدة، وبعدها بيتعمل كود جديد لوحده":"مقفول: الطالب بيدخل بالكود والباسورد بس"}</small></div><button class="sw" type="button" role="switch" aria-checked="${!!c.mfa}" data-sec="mfa" aria-label="كود الأمان"></button></div>
+  <div class="sec-row"><b>عدد المحاولات الغلط المسموحة</b><small>للباسورد ولكود الدخول</small>${seg("max",[[3,"٣"],[5,"٥"],[10,"١٠"]])}</div>
   <div class="sec-row"><b>لما المحاولات تخلص، يتقفل</b>${seg("lock",LOCKS)}</div>
-  <div class="sec-row"><b>الموبايل يفضل متذكّر لمدة</b><small>بعدها الطالب يكتب كود الأمان تاني</small>${seg("days",[[7,"أسبوع"],[30,"شهر"],[90,"٣ شهور"]])}</div>`;
-  if(locked.length)h+=`<div class="sec-row"><b>⛔ حسابات مقفولة دلوقتي</b><div class="sec-l">${locked.map(s=>`<div class="sec-it lk"><span class="nt"><b>${esc(s.name)}</b><small>${fmt(triesBySid.get(s.id).n)} محاولات غلط لكود الأمان</small></span><button class="btn sm" type="button" data-unlock="${esc(s.id)}">افتح</button></div>`).join("")}</div></div>`;
-  h+=`<div class="sec-row"><b>أكواد الأمان</b><small>${noPc?"بتتعمل دلوقتي…":"كل طالب ليه كود من ٦ أرقام، وبيتبعت للطالب في نفس رسالة لينك المنصة. ابعتها للطلبة قبل ما تشغّل الحماية."}</small>
-    <button class="btn soft" type="button" data-sec="list">${secSendAll?"اخفي القايمة":"ابعت المنصة والأكواد للطلبة ("+fmt(L.length)+")"}</button>
-    ${secSendAll?`<div class="sec-l">${L.map(s=>{const pc=pcodes.get(s.id),par=s.phone||s.parentPhone;return `<div class="sec-it"><span class="nt"><b>${esc(s.name)}</b><small>كود الأمان <span class="pcode">${esc(pc||"…")}</span></small></span>${pc&&par?`<a class="btn soft sm" href="${waLink(par,portalMsg(s))}" target="_blank" rel="noopener" data-sent>ابعت</a>`:""}</div>`}).join("")}</div>`:""}</div>
-  <p class="hint">⚠ عدد المحاولات للباسورد بيتحسب على الموبايل نفسه. إنما كود الأمان بيتحسب على سيرفر Firebase، فمحدش يقدر يلف عليه. يعني حتى لو حد خمّن الباسورد، مش هيشوف حاجة من غير كود الأمان.</p>`;
+  <div class="sec-row"><b>الموبايل يفضل متذكّر لمدة</b><small>طول ما مش عامل خروج. بعدها يحتاج كود دخول جديد</small>${seg("days",[[7,"أسبوع"],[30,"شهر"],[90,"٣ شهور"]])}</div>`;
+  if(locked.length)h+=`<div class="sec-row"><b>⛔ حسابات مقفولة دلوقتي</b><div class="sec-l">${locked.map(s=>`<div class="sec-it lk"><span class="nt"><b>${esc(s.name)}</b><small>${fmt(triesBySid.get(s.id).n)} محاولات غلط لكود الدخول</small></span><button class="btn sm" type="button" data-unlock="${esc(s.id)}">افتح</button></div>`).join("")}</div></div>`;
+  h+=`<div class="sec-row"><b>رسالة المنصة للطلبة</b><small>رسالة فيها اللينك وكود الطالب وخطوات الدخول. كود الدخول بتبعته من ملف كل طالب لما يطلبه.</small>
+    <button class="btn soft" type="button" data-sec="list">${secSendAll?"اخفي القايمة":"ابعت المنصة للطلبة ("+fmt(L.length)+")"}</button>
+    ${secSendAll?`<div class="sec-l">${L.map(s=>{const pc=pcodes.get(s.id),par=s.phone||s.parentPhone;return `<div class="sec-it"><span class="nt"><b>${esc(s.name)}</b><small>كود ${esc(s.code)}</small></span>${par?`<a class="btn soft sm" href="${waLink(par,portalMsg(s))}" target="_blank" rel="noopener" data-sent>ابعت</a>`:""}</div>`}).join("")}</div>`:""}</div>
+  <p class="hint">🔒 كود الدخول بيتأكد منه سيرفر Firebase نفسه: بيشتغل مرة واحدة بس، والمحاولات الغلط بتتعد عليه. يعني حتى لو حد خمّن باسورد طالب، أو شاف كود اتستخدم قبل كده، مش هيقدر يدخل.</p>`;
   setH(box,h);const sub=$("#secSub");if(sub)sub.textContent=c.mfa?`شغّال · ${fmt(c.max)} محاولات`+(locked.length?` · ${fmt(locked.length)} مقفول`:""):"مقفول · دوس عشان تشغّله"}
 async function secSet(patch){const prev=ptCfg;ptCfg={...ptCfg,...patch};renderSecurity();hap();
   try{await db.doc("portalCfg/main").set({mfa:!!ptCfg.mfa,max:Number(ptCfg.max)||5,lock:Number(ptCfg.lock)||0,days:Number(ptCfg.days)||30});return true}catch(e){ptCfg=prev;renderSecurity();toast("ماتحفظش، جرّب تاني");return false}}
@@ -2752,14 +2762,14 @@ $("#secBox").addEventListener("click",async e=>{const b=e.target.closest("button
   if(k==="list"){secSendAll=!secSendAll;if(secSendAll)syncPortalKeys().then(renderSecurity);renderSecurity();return}
   if(k==="mfa"){const on=!ptCfg.mfa;if(on){await syncPortalKeys();let have=new Set();try{have=new Set((await db.collection("pcode").get()).docs.map(d=>d.id))}catch(x){}
       const L=[...students.values()].filter(s=>s.code&&!have.has(s.id));if(L.length){toast("مش قادر أعمل أكواد الأمان. جرّب تاني");return}}
-    if(await secSet({mfa:on}))toast(on?"الحماية اشتغلت ✓ أي موبايل جديد هيحتاج كود الأمان":"الحماية اتقفلت");return}
+    if(await secSet({mfa:on}))toast(on?"الحماية اشتغلت ✓ أي دخول جديد هيحتاج كود دخول منك":"الحماية اتقفلت");return}
   if(b.dataset.v!=null)secSet({[k]:Number(b.dataset.v)})});
 $("#stuSheet").addEventListener("click",async e=>{const b=e.target.closest("[data-pt=newpc],[data-pt=unlock],[data-pt=kick]");if(!b)return;const s=students.get(sheetId);if(!s)return;const a=b.dataset.pt;
   if(a==="newpc"){if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ الكود القديم هيبطل";setTimeout(()=>{b.classList.remove("confirm");b.textContent="كود جديد"},3000);return}
-    const c=newPcode();await db.doc("pcode/"+s.id).set({c});const se=sessBySid.get(s.id);if(se)await db.doc("sess/"+se.uid).delete().catch(()=>{});toast("كود جديد: "+c+". ابعت للطالب «لينك المنصة» تاني عشان يوصله");return}
+    const c=newPcode();await db.doc("pcode/"+s.id).set({c});toast("كود جديد: "+c+". القديم بطل");return}
   if(a==="unlock"){const t=triesBySid.get(s.id);if(t)await db.doc("tries/"+t.uid).delete().catch(()=>{});toast("اتفتح ✓");return}
   if(a==="kick"){if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟";setTimeout(()=>{b.classList.remove("confirm");b.textContent="اخرجه من كل الأجهزة"},3000);return}
-    const se=sessBySid.get(s.id);if(se)await db.doc("sess/"+se.uid).delete().catch(()=>{});toast("اتطلع من كل الأجهزة. هيحتاج كود الأمان تاني");return}});
+    const se=sessBySid.get(s.id);if(se)await db.doc("sess/"+se.uid).delete().catch(()=>{});toast("اتطلع من كل الأجهزة. هيحتاج كود دخول جديد");return}});
 $("#stuSheet").addEventListener("click",async e=>{const b=e.target.closest("[data-pt=reset]");if(!b)return;const s=students.get(sheetId),p=s&&portalBySid.get(s.id);if(!p)return;
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="متأكد؟ امسحه";setTimeout(()=>{b.classList.remove("confirm");b.textContent="امسح الباسورد"},3000);return}
   b.disabled=true;
