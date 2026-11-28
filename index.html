@@ -954,6 +954,20 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .gh-edit[aria-pressed=true]{background:var(--accent);border-color:var(--accent)}.gh-edit[aria-pressed=true] svg{stroke:var(--btn-ink)}
 #grpHead #grpEdit{margin-top:12px}
 html.staff .gh-edit{display:none!important}
+
+/* ===== v7.6: students split by year and group ===== */
+.sec-all{margin-inline-start:auto;border:0;background:none;color:var(--accent-2);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:6px 4px}
+
+.lsec{display:flex;align-items:center;gap:10px;padding:14px 6px 6px;border-bottom:1px solid var(--line);margin-top:4px}
+#list .lsec:first-child{padding-top:2px}
+.ls-t{flex:1;min-width:0;display:grid}.ls-t b{font-size:15px;color:var(--accent-2)}.ls-t small{font-size:12px;color:var(--muted)}
+.ls-c{flex:none;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-variant-numeric:tabular-nums}
+.ls-c.ok{background:var(--ok-soft);color:var(--ok)}
+.rlist .lsec{padding:12px 4px 6px}.rlist .lsec:first-child{padding-top:0}
+.rchips{margin:0 0 12px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;gap:8px;padding-bottom:2px}
+.rchips::-webkit-scrollbar{display:none}
+.rchips .chip{white-space:nowrap;flex:none;height:36px;display:inline-flex;align-items:center;gap:4px;padding:6px 13px;font-size:14px;min-width:0}
+.rchips .chip.cur{background:var(--accent);border-color:var(--accent);color:var(--btn-ink)}
 </style>
 </head>
 <body>
@@ -1131,7 +1145,7 @@ html.staff .gh-edit{display:none!important}
       <p class="hint">اكتبه في ورقة واحفظه كويس. هتدخل بيه من أي موبايل، ولو نسيته مش هتعرف تدخل.</p>
       <div class="prow"><button class="btn soft" id="ocRand" type="button">🎲 كود عشوائي قوي</button><button class="btn" id="ocSave" type="button">غيّر الكود</button></div></div></details>
     <button class="btn soft signout" id="signOut" type="button">خروج من الحساب</button>
-    <p class="ver">MR-J · v7.5</p>
+    <p class="ver">MR-J · v7.6</p>
   </div>
   <div class="backup" id="backupBox"><button class="btn soft" id="backupBtn" type="button">صورة بيانات الشهر</button><span class="hint" id="backupHint">صورة فيها كل الطلبة: الفلوس والحضور والدرجات للشهر ده</span></div>
 </main></div>
@@ -1223,6 +1237,14 @@ const YEARS={"1":"أولى ثانوي","2":"تانية ثانوي"},YSHORT={"1":
 const yearOfG=g=>g&&g.year==="1"?"1":"2";
 const multiYear=()=>{let a=0,b=0;groups.forEach(g=>yearOfG(g)==="1"?a++:b++);return a>0&&b>0};
 const isYearF=g=>g==="y1"||g==="y2";
+/* v7.6: students split by year and group everywhere */
+const inScope=(s,f)=>f==="all"||(isYearF(f)?yearOfG(groups.get(grpOf(s)))===f[1]:grpOf(s)===f);
+const grpKey=id=>{const g=groups.get(id);return g?(yearOfG(g)==="2"?"0":"1")+"|"+String((grpList().indexOf(g)+1000)):"9|"};
+function byGroup(L){return L.slice().sort((a,b)=>{const ka=grpKey(grpOf(a)),kb=grpKey(grpOf(b));return ka<kb?-1:ka>kb?1:(a.name||"").localeCompare(b.name||"","ar")})}
+/* section title above each group's students: name · year · count · what's done */
+function secHead(gid,L,done,doneLbl){const g=groups.get(gid),n=L.length;
+  return `<div class="lsec" data-id="h:${esc(gid)}"><span class="ls-t"><b>${g?esc(g.name):"من غير مجموعة"}</b><small>${g&&multiYear()?YSHORT[yearOfG(g)]+" · ":""}${g&&schedTxt(g)?esc(schedTxt(g))+" · ":""}${fmt(n)} طالب</small></span>${done!=null?`<span class="ls-c${done>=n?" ok":""}">${done>=n?"✓ ":""}${fmt(done)}/${fmt(n)} ${doneLbl}</span>`:""}</div>`}
+const splitGroups=()=>groups.size>1||[...students.values()].some(s=>grpOf(s)==="none")&&groups.size>0;
 let editYear="2";
 const grpLabel=()=>grp==="all"?"":grp==="none"?"من غير مجموعة":(groups.get(grp)||{}).name||"";
 function inMonth(){const end=monthEnd(month);return[...students.values()].filter(s=>(!s.createdAt||s.createdAt<end)&&!(s.leftMonth&&month>=s.leftMonth))}
@@ -1241,11 +1263,11 @@ function turnGroup(){const d=new Date(),wd=d.getDay(),now=d.getHours()*60+d.getM
 const whenTxt=t=>t.k===0?"النهاردة "+timeTxt(t.g.time):t.k===1?"بكرة "+timeTxt(t.g.time):DSHORT[(new Date().getDay()+t.k)%7]+" "+timeTxt(t.g.time);
 function grpOptions(sel){const L=grpList(),ok=sel&&groups.has(sel);return(ok?"":`<option value="" selected disabled>اختار مجموعة</option>`)+L.map(g=>`<option value="${esc(g.id)}"${g.id===sel?" selected":""}>${esc(g.name)}${multiYear()?" · "+YSHORT[yearOfG(g)]:""}</option>`).join("")}
 function renderGroups(){
-  const L=grpList(),all=inMonth();if(grp!=="all"&&!isYearF(grp)&&!groups.has(grp)&&(groups.size||grp==="none"))grp="all";if(isYearF(grp)&&!multiYear())grp="all";
+  const L=grpList().sort((a,b)=>grpKey(a.id)<grpKey(b.id)?-1:1),all=inMonth();if(grp!=="all"&&!isYearF(grp)&&!groups.has(grp)&&(groups.size||grp==="none"))grp="all";if(isYearF(grp)&&!multiYear())grp="all";
   if(moving&&grp==="all")moving=null;
   const cnt=id=>all.filter(s=>grpOf(s)===id).length,cur=groups.get(grp);
   let h=`<button class="chip${grp==="all"?" cur":""}" data-g="all" aria-pressed="${grp==="all"}">الكل<small>${fmt(all.length)}</small></button>`;
-  if(multiYear())["1","2"].forEach(y=>{const on=grp==="y"+y,n=all.filter(s=>yearOfG(groups.get(grpOf(s)))===y).length;h+=`<button class="chip yr${on?" cur":""}" data-g="y${y}" aria-pressed="${on}">${YSHORT[y]}<small>${fmt(n)}</small></button>`});
+  if(multiYear())["2","1"].forEach(y=>{const on=grp==="y"+y,n=all.filter(s=>yearOfG(groups.get(grpOf(s)))===y).length;h+=`<button class="chip yr${on?" cur":""}" data-g="y${y}" aria-pressed="${on}">${YSHORT[y]}<small>${fmt(n)}</small></button>`});
   L.forEach(g=>{const on=g.id===grp;h+=`<button class="chip${on?" cur":""}" data-g="${esc(g.id)}" aria-pressed="${on}">${multiYear()?`<em class="yb">${YSHORT[yearOfG(g)]}</em>`:""}${esc(g.name)}${on&&schedTxt(g)?`<small class="t">${esc(schedTxt(g))}</small>`:""}<small>${on?"· ":""}${fmt(cnt(g.id))}</small></button>`});
   if(cur){h+=`<button class="chip tool" data-g="edit" aria-label="تعديل المجموعة">✎</button>`;
     if(!moving)h+=`<button class="chip tool" data-g="move">⇄ نقل طلبة هنا</button>`;}
@@ -1515,7 +1537,10 @@ function render(){
   if(!list.length&&(qStr||(view==="pay"&&payF==="due"))&&!moving){box.innerHTML=qStr?`<div class="empty">مفيش طالب بالاسم ده.</div>`:`<div class="empty">كله دفع الشهر ده 👏</div>`;return}
   if(!list.length){box.innerHTML=view==="pay"?`<div class="empty">دوس على زرار «+ طالب» تحت عشان تضيف أول طالب.<br>كل شهر جديد بيفتح لوحده والكل فيه «لسه».</div>`:`<div class="empty">ضيف الطلبة الأول من قسم «الفلوس».</div>`;if(moving)box.innerHTML=`<div class="empty">كل الطلبة موجودين في المجموعة دي خلاص.</div>`;else if(view==="pay"&&grp!=="all"&&inMonth().length)box.innerHTML=`<div class="empty">مفيش طلبة في «${esc(grpLabel())}» لسه.<br>دوس «+ طالب» تحت وهيتحط في المجموعة دي.</div>`;return}
   const d=curDoc(),e=curExam(d),a=curAtt(),multi=d.exams.length>1,LK=isLocked()?" disabled":"";
-  patchList(box,list.map(s=>{
+  const secs=!moving&&(grp==="all"||isYearF(grp))&&splitGroups(),L2=secs?byGroup(list):list,items=[];let lastG=null;
+  L2.forEach(s=>{if(secs&&grpOf(s)!==lastG){lastG=grpOf(s);const G=L2.filter(x=>grpOf(x)===lastG),done=view==="pay"&&payF!=="due"?G.filter(isFull).length:view==="att"?G.filter(x=>a.marks[x.id]==="p").length:null;
+    items.push({id:"h:"+lastG,html:secHead(lastG,G,done,view==="pay"?"دفعوا":"حضروا")})}items.push(s)});
+  patchList(box,items.map(s=>{if(!s.name)return s;
     const open=openId===s.id&&!moving;let cls="row",mid="<span></span>",end="",sub="";
     if(moving){
       const on=moving.has(s.id),gn=grpOf(s)==="none"?"لسه مالوش مجموعة":"في "+groups.get(grpOf(s)).name;
@@ -1683,7 +1708,7 @@ function renderGroupsView(){
       <span class="gc-days">${(g.days||[]).length?WEEK.filter(d=>(g.days||[]).includes(d)).map(d=>`<span>${DSHORT[d]}</span>`).join(""):`<span class="muted">مالهاش أيام لسه</span>`}</span>
       <span class="gc-st"><span><b>${fmt(L.length)}</b><small>طالب</small></span>${own?`<span><b class="${pp==null?"":pp>=80?"ok":pp>=50?"warn":"bad"}">${pp==null?"—":fmt(pp)+"٪"}</b><small>دفعوا</small></span>`:""}<span><b class="holo">${ap==null?"—":fmt(ap)+"٪"}</b><small>حضور</small></span></span></button>`};
   const L=grpList(),yrs=multiYear()?["2","1"]:[null];
-  yrs.forEach(y=>{const G=L.filter(g=>!y||yearOfG(g)===y);if(!G.length)return;if(y)h+=`<div class="sec">${YEARS[y]}</div>`;h+=`<div class="g-list">${G.map(card).join("")}</div>`});
+  yrs.forEach(y=>{const G=L.filter(g=>!y||yearOfG(g)===y);if(!G.length)return;if(y)h+=`<div class="sec">${YEARS[y]}<button class="sec-all" type="button" data-gv="y${y}">كل طلبة ${YSHORT[y]} ‹</button></div>`;h+=`<div class="g-list">${G.map(card).join("")}</div>`});
   const none=all.filter(s=>grpOf(s)==="none");if(none.length)h+=`<button class="g-all" type="button" data-gv="none"><span class="ic warn">!</span><span><b>${fmt(none.length)} من غير مجموعة</b><small>دوس وحطهم في مجموعاتهم</small></span><span class="go">‹</span></button>`;
   if(own)h+=`<button class="h-cta ghost" type="button" data-gv="+">+ مجموعة جديدة</button>`;
   setH($("#groupsView"),h);
@@ -1710,29 +1735,38 @@ $("#ghSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!
 /* ---------- التقارير ---------- */
 async function loadMonthTot(m){if(monthTot[m]!==undefined)return;monthTot[m]=null;
   try{const sn=await db.collection("payments").where("month","==",m).get();let t=0;sn.docs.forEach(d=>{t+=Number(d.data().amount)||0});monthTot[m]=t;if(view==="rep")render()}catch(e){monthTot[m]=undefined}}
+let repF=lsGet("repF")||"all";
+function repChips(){if(!groups.size)return"";const L=grpList(),yr=isYearF(repF)?repF[1]:groups.get(repF)?yearOfG(groups.get(repF)):null;
+  const ch=(f,lbl,n)=>`<button class="chip${repF===f?" cur":""}" type="button" data-rf="${esc(f)}" aria-pressed="${repF===f}">${lbl}<small>${fmt(n)}</small></button>`,cnt=f=>inMonth().filter(s=>inScope(s,f)).length;
+  let h=ch("all","الكل",inMonth().length);if(multiYear())["2","1"].forEach(y=>{h+=ch("y"+y,YSHORT[y],cnt("y"+y))});
+  L.filter(g=>!multiYear()||!yr||yearOfG(g)===yr).forEach(g=>{h+=ch(g.id,(multiYear()&&!yr?`<em class="yb">${YSHORT[yearOfG(g)]}</em>`:"")+esc(g.name),cnt(g.id))});
+  return `<div class="chips rchips" role="group" aria-label="اختار السنة أو المجموعة">${h}</div>`}
+const repList=()=>{if(repF!=="all"&&!isYearF(repF)&&!groups.has(repF))repF="all";return byGroup(inMonth().filter(s=>inScope(s,repF)))};
 function renderRep(){
-  const all=inMonth().slice().sort((a,b)=>a.name.localeCompare(b.name,"ar")),st=monthStats(all),g=grades.get(month);
+  const all=repList(),st=monthStats(all),g=grades.get(month),scopeLbl=repF==="all"?"":isYearF(repF)?YEARS[repF[1]]:groups.get(repF).name;
   const ms=[];for(let k=5;k>=0;k--)ms.push(shiftMonth(month,-k));
   const vals=ms.map(m=>m===month?st.money:(loadMonthTot(m),monthTot[m])),mx=Math.max(1,...vals.map(v=>v||0));
-  let h=`<div class="v-h"><h2>التقارير</h2><small>${esc(shortMonth(month))}</small></div>`;
+  let h=`<div class="v-h"><h2>التقارير</h2><small>${esc(shortMonth(month))}${scopeLbl?" · "+esc(scopeLbl):""}</small></div>`+repChips();
   h+=`<div class="hc-card"><span class="hm-t">المحصّل آخر ٦ شهور</span><div class="chart">${ms.map((m,k)=>{const v=vals[k];return `<div class="${m===month?"cur":""}"><em>${v==null?"…":v>=1000?fmt(Math.round(v/100)/10)+"k":fmt(v)}</em><i style="height:${v?Math.max(4,Math.round(v/mx*84)):2}px"></i><small>${esc(shortMonth(m).split(" ")[0])}</small></div>`}).join("")}</div></div>`;
   h+=`<div class="tiles"><button class="hc-card tile act" type="button" data-r="img"><span class="ti">${BIC.img}</span><small>صورة الشهر</small></button><button class="hc-card tile act" type="button" data-r="due"><span class="ti">${BIC.wa}</span><small>تذكير اللي لسه${st.due?` (${fmt(st.due)})`:""}</small></button><button class="hc-card tile act" type="button" data-r="grades"><span class="ti">${BIC.trophy}</span><small>الدرجات</small></button></div>`;
   const top=all.map(s=>({s,p:pctOf(g,s.id)})).filter(x=>x.p!=null).sort((a,b)=>b.p-a.p).slice(0,3);
   if(top.length)h+=`<div class="sec">الأوائل في ${esc(shortMonth(month))}</div><div class="hc-card podium">${top.map((x,i)=>`<button type="button" class="pd" data-r="stu" data-id="${x.s.id}"><span class="md m${i}">${["🥇","🥈","🥉"][i]}</span>${avatar(x.s)}<b>${esc(x.s.name.split(" ").slice(0,2).join(" "))}</b><small>${fmt(x.p)}٪</small></button>`).join("")}</div>`;
   const sent=all.filter(s=>sentMap[s.id]).length,left=all.filter(s=>!sentMap[s.id]);
   h+=`<div class="sec">تقارير أولياء الأمور <small>${fmt(sent)} من ${fmt(all.length)} اتبعت</small></div>`;
-  h+=`<div class="hc-card rlist">${all.length?all.map(s=>{const a=monthAtt(s.id),gp=pctOf(g,s.id);return `<div class="rr"><button type="button" class="rr-n" data-r="stu" data-id="${s.id}">${avatar(s)}<span class="nt">${esc(s.name)}<span class="sub">${a.n?`حضور ${fmt(Math.round(a.p/a.n*100))}٪`:"لسه مفيش حضور"}${gp!=null?` · درجات ${fmt(gp)}٪`:""}</span></span></button>${sentMap[s.id]?`<button type="button" class="st sent" data-r="rep" data-id="${s.id}">اتبعت ✓</button>`:`<button type="button" class="st send" data-r="rep" data-id="${s.id}">التقرير</button>`}</div>`}).join(""):`<p class="hint">ضيف طلبة الأول.</p>`}</div>`;
+  const secs=repF!=="all"&&!isYearF(repF)?false:splitGroups();let lastG=null;
+  h+=`<div class="hc-card rlist">${all.length?all.map(s=>{let hd="";if(secs&&grpOf(s)!==lastG){lastG=grpOf(s);const G=all.filter(x=>grpOf(x)===lastG);hd=secHead(lastG,G,G.filter(x=>sentMap[x.id]).length,"اتبعت")}return hd+(()=>{const a=monthAtt(s.id),gp=pctOf(g,s.id);return `<div class="rr"><button type="button" class="rr-n" data-r="stu" data-id="${s.id}">${avatar(s)}<span class="nt">${esc(s.name)}<span class="sub">${a.n?`حضور ${fmt(Math.round(a.p/a.n*100))}٪`:"لسه مفيش حضور"}${gp!=null?` · درجات ${fmt(gp)}٪`:""}</span></span></button>${sentMap[s.id]?`<button type="button" class="st sent" data-r="rep" data-id="${s.id}">اتبعت ✓</button>`:`<button type="button" class="st send" data-r="rep" data-id="${s.id}">التقرير</button>`}</div>`})()}).join(""):`<p class="hint">${repF==="all"?"ضيف طلبة الأول.":"مفيش طلبة هنا."}</p>`}</div>`;
   if(left.length&&all.length)h+=`<button class="h-cta" type="button" data-r="next">ابعت التقرير الجاي · باقي ${fmt(left.length)}</button>`;
   else if(all.length)h+=`<div class="done-all">${BIC.ok}<span>كل التقارير اتبعتت الشهر ده</span></div>`;
   setH($("#repView"),h);
 }
 $("#repView").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;const a=b.dataset.r;
   if(a==="img")$("#backupBtn").click();
-  else if(a==="due"){payF="due";grp="all";setView("pay");document.querySelectorAll("#payFilter button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="due"))}
-  else if(a==="grades"){grp="all";setView("grades")}
+  else if(a==="due"){payF="due";grp=repF;setView("pay");document.querySelectorAll("#payFilter button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="due"))}
+  else if(a==="grades"){grp=repF;setView("grades")}
   else if(a==="stu")openSheet(b.dataset.id);
   else if(a==="rep"){const s=students.get(b.dataset.id);if(s)openReport(s)}
-  else if(a==="next"){const s=inMonth().slice().sort((x,y)=>x.name.localeCompare(y.name,"ar")).find(x=>!sentMap[x.id]);if(s)openReport(s)}});
+  else if(a==="next"){const s=repList().find(x=>!sentMap[x.id]);if(s)openReport(s)}});
+$("#repView").addEventListener("click",e=>{const c=e.target.closest("[data-rf]");if(!c)return;repF=c.dataset.rf;lsSet("repF",repF);hap(6);render()});
 function subSent(){if(sentUnsub)sentUnsub();sentMap={};sentUnsub=null;if(ROLE!=="owner")return;sentUnsub=db.doc("sent/"+month).onSnapshot(d=>{sentMap=(d.exists&&d.data())||{};scheduleRender()},()=>{})}
 /* little celebration on the tapped pay button only */
 function payBurst(id){const p=document.querySelector(`#list .row[data-id="${id}"] .pill`);if(!p||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
